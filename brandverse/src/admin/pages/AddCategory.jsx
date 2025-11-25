@@ -2,30 +2,14 @@ import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { FiUpload, FiX } from "react-icons/fi";
 
+import { uploadSigned } from "../../utils/cloudinaryClient";
+
 const uploadImage = async (file) => {
-  if (!file) return null;
-
-  const apiKey = "87b38229ce97791b612d8ccae0d12b16"; // Replace with your ImgBB API key
-
-  const formData = new FormData();
-  formData.append("image", file);
-
-  try {
-    const response = await fetch(
-      `https://api.imgbb.com/1/upload?key=${apiKey}`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await response.json();
-    return data.success ? data.data.url : null;
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    return null;
-  }
+  const res = await uploadSigned(file);
+  if (!res) return null;
+  return res.secure_url; // or return entire res if you want public_id
 };
+
 
 const AddCategoryForm = ({ onAddCategory, categoryID }) => {
   const [categoryData, setCategoryData] = useState({
