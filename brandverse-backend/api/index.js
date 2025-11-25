@@ -6,6 +6,8 @@ const swaggerFile = require("../swagger-output.json");
 const authRoutes = require("../routes/auth");
 const categoryRoutes = require("../routes/category");
 const productRoutes = require("../routes/product");
+const uploadRoutes = require("../routes/uploads");
+
 const cors = require("cors");
 
 const app = express();
@@ -27,6 +29,8 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+
 
 // Swagger setup with CDN links
 const swaggerOptions = {
@@ -60,6 +64,7 @@ app.get("/api-docs", swaggerUi.setup(swaggerFile, swaggerOptions));
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/category", categoryRoutes);
+app.use("/api/uploads", uploadRoutes);
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
