@@ -1,0 +1,13 @@
+/* In your global CSS */
+@media print {
+  body {
+    margin: 0;
+    padding: 1rem;
+    font-family: serif;
+    color: black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
