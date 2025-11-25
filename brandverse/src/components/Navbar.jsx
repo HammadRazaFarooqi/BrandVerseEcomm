@@ -151,7 +151,7 @@ function Navbar() {
             <Link to="/" className="flex items-center space-x-3">
               <div>
                 <img
-                  src="../../src/assets/logo/logo.png"
+                  src="logo.png"
                   className="w-11 h-11 object-contain"
                   alt="Brand Verse"
                 />
