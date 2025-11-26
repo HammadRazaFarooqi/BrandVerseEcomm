@@ -17,11 +17,9 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, trim: true, lowercase: true },
   password: { type: String, required: true, minLength: 6 },
   phone: { type: String, trim: true },
-  addresses: [addressSchema], // <- add this line
+  addresses: [addressSchema],
   role: { type: String, enum: ["user", "admin"], default: "user" },
-  cart: [
-    { productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" }, quantity: { type: Number, default: 1, min: 1 } }
-  ],
+  cart: [{ productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" }, quantity: { type: Number, default: 1, min: 1 } }],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   isEmailVerified: { type: Boolean, default: false },
@@ -45,10 +43,17 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// Compare password method
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Virtual for full name
 userSchema.virtual("fullName").get(function () {
   return this.firstName && this.lastName ? `${this.firstName} ${this.lastName}` : this.username;
 });
 
+// Ensure virtuals are included in JSON output
 userSchema.set("toJSON", { virtuals: true });
 userSchema.set("toObject", { virtuals: true });
 
