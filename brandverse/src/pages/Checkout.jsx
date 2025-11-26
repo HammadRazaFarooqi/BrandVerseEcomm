@@ -17,19 +17,14 @@ function Checkout() {
   const [cartItems, setCartItems] = useState([]);
   const [loader, setLoader] = useState(false);
   const [subtotal, setSubtotal] = useState(0);
+  const [activeAccordion, setActiveAccordion] = useState("cod");
+  const [paymentProof, setPaymentProof] = useState(null);
   const shippingCost = 0;
-
-  // Popup state
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart);
 
-    // Calculate subtotal
-    // const total = storedCart.reduce(
-    //   (acc, item) => acc + item.price * item.quantity,
-    //   0
-    // );
     const total = storedCart.reduce(
       (acc, item) =>
         acc +
@@ -45,19 +40,58 @@ function Checkout() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size should not exceed 5MB");
+        e.target.value = null;
+        return;
+      }
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please upload only image files (JPEG, PNG, GIF, WEBP)");
+        e.target.value = null;
+        return;
+      }
+      
+      setPaymentProof(file);
+    }
+  };
+
+  const toggleAccordion = (method) => {
+    setActiveAccordion(method);
+    setFormData({ ...formData, paymentMethod: method });
+  };
+
   function cartItemsForCheckout() {
     return cartItems.map((item) => ({
       _id: item._id,
       title: item.title,
       price: item.discountRate > 0 ? item.discountedPrice : item.price,
-      images: item.images,
-      selectedSize: item.selectedSize?.size || null, // Extract only the size
-      quantity: item.selectedSize?.quantity || 1, // Ensure quantity is included
+      images: Array.isArray(item.images)
+        ? item.images.map(img => typeof img === "string" ? img : img.primary)
+        : [],
+      selectedSize: item.selectedSize?.size || null,
+      quantity: item.selectedSize?.quantity || 1,
     }));
   }
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate payment proof for bank transfer
+    if (formData.paymentMethod === "bank" && !paymentProof) {
+      alert("Please upload payment proof for bank transfer");
+      return;
+    }
+    
     setLoader(true);
+
+    // Prepare order data
     const orderData = {
       customer: {
         firstName: formData.firstName,
@@ -76,32 +110,50 @@ function Checkout() {
       items: cartItemsForCheckout(),
       totalAmount: subtotal + shippingCost,
     };
+
+    // Create FormData object for multipart/form-data
+    const formDataToSend = new FormData();
+    
+    // Append order data as JSON string
+    formDataToSend.append("orderData", JSON.stringify(orderData));
+    
+    // Append payment proof image if exists
+    if (paymentProof) {
+      formDataToSend.append("paymentProof", paymentProof);
+    }
+
     const BACKEND_URL = import.meta.env.VITE_API_URL;
-    console.log({ orderData });
+    
     try {
-      const response = await fetch(`${BACKEND_URL}/products/checkout`, {
+      const response = await fetch(`${BACKEND_URL}/checkout`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
+        body: formDataToSend,
+        // Don't set Content-Type header - browser will set it automatically with boundary
       });
 
       if (!response.ok) {
-        throw new Error("Failed to place order");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to place order");
       }
 
       const data = await response.json();
 
-      window.location.href = data.url;
+      // Clear cart after successful order
+      localStorage.removeItem("cart");
+      
+      // Redirect to success page or show confirmation
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(`Order placed successfully! Order ID: ${data.orderId}`);
+        window.location.href = "/";
+      }
+      
       setLoader(false);
-      // setOrderId(data.orderId);
-      // setShowPopup(true);
     } catch (error) {
       console.error("Error placing order:", error);
       setLoader(false);
-      // You might want to show an error message to the user here
-      alert("Failed to place order. Please try again.");
+      alert(error.message || "Failed to place order. Please try again.");
     }
   };
 
@@ -116,109 +168,337 @@ function Checkout() {
         </div>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[2fr_1fr]">
-          <form onSubmit={handleSubmit} className="space-y-10">
-            <div className="glass-card rounded-[2rem] p-8">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-ink">
-                  Contact Information
-                </h2>
-                <Link
-                  to="/login"
-                  className="text-xs uppercase tracking-[0.3em] text-ink-muted"
-                >
-                  Login
-                </Link>
-              </div>
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  className="rounded-full border border-surface-muted px-5 py-3"
-                  required
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  className="rounded-full border border-surface-muted px-5 py-3"
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  className="rounded-full border border-surface-muted px-5 py-3"
-                  required
-                />
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Phone"
-                  className="rounded-full border border-surface-muted px-5 py-3"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="glass-card rounded-[2rem] p-8">
-              <h2 className="text-xl font-semibold text-ink">
-                Shipping Address
-              </h2>
-              <div className="mt-6 space-y-4">
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Street Address"
-                  className="rounded-full border border-surface-muted px-5 py-3"
-                  required
-                />
-                <div className="grid gap-4 md:grid-cols-3">
+          <div className="space-y-10">
+            {/* COD Accordion */}
+            <div className="glass-card rounded-[2rem] overflow-hidden">
+              <button
+                type="button"
+                onClick={() => toggleAccordion("cod")}
+                className="w-full p-8 text-left flex items-center justify-between hover:bg-surface-muted/20 transition-colors"
+              >
+                <div className="flex items-center gap-3">
                   <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="City"
-                    className="rounded-full border border-surface-muted px-5 py-3"
-                    required
+                    type="radio"
+                    name="paymentMethod"
+                    checked={activeAccordion === "cod"}
+                    onChange={() => {}}
+                    className="w-5 h-5"
                   />
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    placeholder="Country"
-                    className="rounded-full border border-surface-muted px-5 py-3"
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="zipCode"
-                    value={formData.zipCode}
-                    onChange={handleChange}
-                    placeholder="Postal Code"
-                    className="rounded-full border border-surface-muted px-5 py-3"
-                    required
-                  />
+                  <h2 className="text-xl font-semibold text-ink">
+                    Cash on Delivery
+                  </h2>
                 </div>
-              </div>
+                <svg
+                  className={`w-6 h-6 transition-transform ${
+                    activeAccordion === "cod" ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {activeAccordion === "cod" && (
+                <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-lg font-semibold text-ink">
+                        Contact Information
+                      </h3>
+                      <Link
+                        to="/login"
+                        className="text-xs uppercase tracking-[0.3em] text-ink-muted hover:text-ink"
+                      >
+                        Login
+                      </Link>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        placeholder="First Name"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        placeholder="Last Name"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Email"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="Phone"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-ink mb-6">
+                      Shipping Address
+                    </h3>
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        placeholder="Street Address"
+                        className="w-full rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                          placeholder="City"
+                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                          required
+                        />
+                        <input
+                          type="text"
+                          name="state"
+                          value={formData.state}
+                          onChange={handleChange}
+                          placeholder="Country"
+                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                          required
+                        />
+                        <input
+                          type="text"
+                          name="zipCode"
+                          value={formData.zipCode}
+                          onChange={handleChange}
+                          placeholder="Postal Code"
+                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="btn btn-primary w-full" disabled={loader}>
+                    {loader ? "Placing Order..." : "Place Order"}
+                  </button>
+                </form>
+              )}
             </div>
 
-            <button type="submit" className="btn btn-primary w-full">
-              {loader ? "Placing Order" : "Place Order"}
-            </button>
-          </form>
+            {/* Bank Transfer Accordion */}
+            <div className="glass-card rounded-[2rem] overflow-hidden">
+              <button
+                type="button"
+                onClick={() => toggleAccordion("bank")}
+                className="w-full p-8 text-left flex items-center justify-between hover:bg-surface-muted/20 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    checked={activeAccordion === "bank"}
+                    onChange={() => {}}
+                    className="w-5 h-5"
+                  />
+                  <h2 className="text-xl font-semibold text-ink">
+                    Bank Transfer
+                  </h2>
+                </div>
+                <svg
+                  className={`w-6 h-6 transition-transform ${
+                    activeAccordion === "bank" ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {activeAccordion === "bank" && (
+                <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-6">
+                  <div className="bg-surface-muted/30 rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold text-ink mb-4">
+                      Bank Account Details
+                    </h3>
+                    <div className="space-y-2 text-ink">
+                      <p>
+                        <span className="font-semibold">Bank Name:</span> Meezan Bank
+                      </p>
+                      <p>
+                        <span className="font-semibold">Account Title:</span> Your Company Name
+                      </p>
+                      <p>
+                        <span className="font-semibold">Account Number:</span> 1234567890123456
+                      </p>
+                      <p>
+                        <span className="font-semibold">IBAN:</span> PK12MEZN0000001234567890
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-lg font-semibold text-ink mb-4">
+                      Upload Payment Proof *
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="block w-full text-sm text-ink
+                        file:mr-4 file:py-3 file:px-6
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-ink file:text-white
+                        hover:file:bg-ink/90
+                        file:cursor-pointer cursor-pointer"
+                      required
+                    />
+                    {paymentProof && (
+                      <p className="mt-2 text-sm text-green-600">
+                        ✓ Selected: {paymentProof.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-lg font-semibold text-ink">
+                        Contact Information
+                      </h3>
+                      <Link
+                        to="/login"
+                        className="text-xs uppercase tracking-[0.3em] text-ink-muted hover:text-ink"
+                      >
+                        Login
+                      </Link>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        placeholder="First Name"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        placeholder="Last Name"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Email"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="Phone"
+                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-ink mb-6">
+                      Shipping Address
+                    </h3>
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        placeholder="Street Address"
+                        className="w-full rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                        required
+                      />
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                          placeholder="City"
+                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                          required
+                        />
+                        <input
+                          type="text"
+                          name="state"
+                          value={formData.state}
+                          onChange={handleChange}
+                          placeholder="Country"
+                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                          required
+                        />
+                        <input
+                          type="text"
+                          name="zipCode"
+                          value={formData.zipCode}
+                          onChange={handleChange}
+                          placeholder="Postal Code"
+                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="btn btn-primary w-full" disabled={loader}>
+                    {loader ? "Placing Order..." : "Place Order"}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
 
           <div className="glass-card h-fit rounded-[2rem] p-8">
             <h2 className="text-xl font-semibold text-ink">Order Summary</h2>
@@ -227,12 +507,16 @@ function Checkout() {
                 <span>Subtotal</span>
                 <span>PKR {subtotal.toFixed(2)}</span>
               </div>
+              <div className="flex justify-between text-ink">
+                <span>Shipping</span>
+                <span>{shippingCost === 0 ? "Free" : `PKR ${shippingCost.toFixed(2)}`}</span>
+              </div>
               <div className="border-t border-surface-muted pt-4">
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
                   <span>PKR {(subtotal + shippingCost).toFixed(2)}</span>
                 </div>
-                <p className="text-xs uppercase tracking-[0.3em] text-ink-muted">
+                <p className="text-xs uppercase tracking-[0.3em] text-ink-muted mt-1">
                   Taxes included
                 </p>
               </div>

@@ -8,6 +8,7 @@ const categoryRoutes = require("../routes/category");
 const productRoutes = require("../routes/product");
 const uploadRoutes = require("../routes/uploads");
 const customerRoutes = require("../routes/customer");
+const orderRoutes = require("../routes/orderRoutes");
 const cors = require("cors");
 
 const app = express();
@@ -66,6 +67,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/customer", customerRoutes); 
+app.use('/api', orderRoutes);
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
