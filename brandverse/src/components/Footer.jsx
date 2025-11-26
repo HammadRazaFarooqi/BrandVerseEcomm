@@ -21,7 +21,7 @@ function Footer() {
               69 Wilshaw Lane, Ashton-Under-Lyne, OL7 9QX, United Kingdom
             </p>
             <p className="mt-6 text-white/70">
-              support@urbantuxedo.co.uk · +44 123 456 7890
+              support@brandverse.com · +44 123 456 7890
             </p>
           </div>
 

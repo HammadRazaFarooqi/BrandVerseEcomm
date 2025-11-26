@@ -34,20 +34,21 @@ function FeaturedProducts() {
       <div className="container-custom">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="eyebrow mb-3">Featured curation</p>
+            <p className="eyebrow mb-3">Featured Picks</p>
             <h2 className="text-4xl font-semibold text-ink">
-              The Maison Edit
+              Top Products of the Week
             </h2>
             <p className="mt-3 text-ink-muted">
-              Statement tailoring, architectural silhouettes, and forever pieces
-              handpicked by our stylists.
+              Discover trending items loved by our customers — from electronics and accessories
+              to home essentials and lifestyle products.
             </p>
           </div>
+
           <Link
             to="/category"
             className="inline-flex items-center text-ink font-semibold tracking-[0.3em] uppercase"
           >
-            View all
+            Browse All
             <ChevronRight className="ml-2 h-5 w-5" />
           </Link>
         </div>
@@ -93,7 +94,7 @@ function FeaturedProducts() {
                       {product.title}
                     </h3>
                     <p className="mt-3 text-sm uppercase tracking-[0.4em] text-ink-muted">
-                      Discover details
+                      View Product
                     </p>
                   </div>
                 </div>

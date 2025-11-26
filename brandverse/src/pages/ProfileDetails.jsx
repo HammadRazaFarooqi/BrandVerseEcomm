@@ -55,19 +55,24 @@ function ProfileDetails() {
   };
 
   useEffect(() => {
-    return () => {
-      const storedProfile = JSON.parse(localStorage.getItem("isLogin")).user;
-      setProfile({
-        firstName: storedProfile.firstName,
-        lastName: storedProfile.lastName,
-        email: storedProfile.email,
-        phone: storedProfile.phone,
-        address: storedProfile.addresses[0]
+    const isLogin = localStorage.getItem("isLogin");
+  
+    if (!isLogin) return; // Or redirect user
+  
+    const storedProfile = JSON.parse(isLogin).user;
+  
+    setProfile({
+      firstName: storedProfile?.firstName || "",
+      lastName: storedProfile?.lastName || "",
+      email: storedProfile?.email || "",
+      phone: storedProfile?.phone || "",
+      address:
+        storedProfile?.addresses?.length > 0
           ? `${storedProfile.addresses[0].street} ${storedProfile.addresses[0].state}, ${storedProfile.addresses[0].country}`
-          : ``,
-      });
-    };
+          : "",
+    });
   }, []);
+  
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -75,7 +80,7 @@ function ProfileDetails() {
         <h2 className="text-2xl font-bold">Personal Information</h2>
         <button
           onClick={handleEditClick}
-          className="text-red-500 hover:text-red-600 flex items-center gap-1 transform hover:-translate-y-1 transition"
+          className="text-black hover:text-black flex items-center gap-1 transform hover:-translate-y-1 transition"
         >
           <Edit className="h-4 w-4" />
           <span>{isEditing ? "Cancel" : "Edit"}</span>
@@ -159,7 +164,7 @@ function ProfileDetails() {
             <div className="border-t pt-8">
               <button
                 type="submit"
-                className="px-8 py-3 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>

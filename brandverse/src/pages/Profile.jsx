@@ -23,18 +23,35 @@ function Profile() {
       console.error("Logout failed: ", error.message);
     }
   };
-
   useEffect(() => {
-    return () => {
-      const user = JSON.parse(localStorage.getItem("isLogin"));
-      if (user) {
-        const storedProfile = JSON.parse(localStorage.getItem("isLogin")).user;
-        setName(`${storedProfile.firstName} ${storedProfile.lastName}`);
-        setEmail(storedProfile.email);
-        setInitial(`${user.user.firstName?.charAt(0).toUpperCase()}${user.user.lastName?.charAt(0).toUpperCase()}`);
-      }
-    };
+    const stored = localStorage.getItem("isLogin");
+    if (!stored) return;
+  
+    try {
+      const data = JSON.parse(stored);
+      const u = data.user;
+  
+      if (!u) return;
+  
+      // Use fullName for display
+      setName(u.fullName || u.username || "");
+  
+      // Use first letters of username or fullName for initials
+      const initials = u.fullName
+        ? u.fullName
+            .split(" ")
+            .map((n) => n[0]?.toUpperCase())
+            .join("")
+        : u.username?.[0]?.toUpperCase() || "";
+  
+      setInitial(initials);
+  
+      setEmail(u.email || "");
+    } catch (e) {
+      console.error("Invalid user JSON:", e);
+    }
   }, []);
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,9 +67,9 @@ function Profile() {
         ></div>
         <div className="relative z-10 container mx-auto px-6">
           <h1 className="text-4xl font-bold mb-2 text-white leading-tight">
-            Your <span className="text-red-400">Personal</span> Account
+            Your <span className="text-black">Personal</span> Account
           </h1>
-          <p className="text-xl text-gray-200 max-w-xl mx-auto">
+          <p className="text-xl text-black max-w-xl mx-auto">
             Manage your profile, track orders, and discover your next style
             upgrade
           </p>
@@ -64,8 +81,8 @@ function Profile() {
         <div className="bg-white rounded-xl shadow-lg p-6 mb-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-6 transform">
-              <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center shadow-md">
-                <span className="text-3xl font-bold text-red-500">{initial}</span>
+              <div className="w-24 h-24 bg-black rounded-full flex items-center justify-center shadow-md">
+              <span className="text-3xl font-bold text-white">{initial || "?"}</span>
               </div>
               <div>
                 <h2 className="text-2xl font-bold">{name}</h2>
@@ -74,7 +91,7 @@ function Profile() {
             </div>
             <button
               onClick={onLogout}
-              className="px-6 py-3 flex items-center gap-2 text-white bg-red-500 rounded-full hover:bg-red-600 transition shadow-sm hover:shadow-md transform hover:-translate-y-1"
+              className="px-6 py-3 flex items-center gap-2 text-white bg-black rounded-full hover:bg-black transition shadow-sm hover:shadow-md transform hover:-translate-y-1"
             >
               <LogOut className="h-4 w-4" />
               Logout
@@ -90,7 +107,7 @@ function Profile() {
                 <button
                   className={`w-full flex items-center justify-between px-6 py-4 rounded-xl transition transform ${
                     activeTab === "profile"
-                      ? "bg-red-500 text-white shadow-md"
+                      ? "bg-black text-white shadow-md"
                       : "text-gray-700 hover:bg-gray-100 hover:-translate-y-1"
                   }`}
                   onClick={() => setActiveTab("profile")}
@@ -107,7 +124,7 @@ function Profile() {
                 <button
                   className={`w-full flex items-center justify-between px-6 py-4 rounded-xl transition transform ${
                     activeTab === "orders"
-                      ? "bg-red-500 text-white shadow-md"
+                      ? "bg-black text-white shadow-md"
                       : "text-gray-700 hover:bg-gray-100 hover:-translate-y-1"
                   }`}
                   onClick={() => setActiveTab("orders")}
@@ -124,7 +141,7 @@ function Profile() {
                 <button
                   className={`w-full flex items-center justify-between px-6 py-4 rounded-xl transition transform ${
                     activeTab === "settings"
-                      ? "bg-red-500 text-white shadow-md"
+                      ? "bg-black text-white shadow-md"
                       : "text-gray-700 hover:bg-gray-100 hover:-translate-y-1"
                   }`}
                   onClick={() => setActiveTab("settings")}
@@ -159,7 +176,7 @@ function Profile() {
       </div>
 
       {/* Newsletter Section */}
-      <section className="py-20 bg-red-500 text-white">
+      <section className="py-20 bg-black text-white">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">

@@ -1,23 +1,26 @@
 import { Clock, Shield, ShoppingCart } from "lucide-react";
+import { FiRefreshCcw, FiShield, FiTag, FiTruck } from "react-icons/fi";
 
 const features = [
   {
-    icon: ShoppingCart,
-    title: "Seamless experience",
-    description:
-      "Personalised edits, wishlist syncing, and one-click checkout across devices.",
+    title: "Fast & Reliable Delivery",
+    description: "Nationwide shipping with real-time updates so you know exactly when your order arrives.",
+    icon: FiTruck,
   },
   {
-    icon: Shield,
-    title: "Trusted craftsmanship",
-    description:
-      "Every piece is authenticated and inspected to meet atelier-level standards.",
+    title: "Secure Payments",
+    description: "Shop confidently with trusted payment partners and encrypted checkout.",
+    icon: FiShield,
   },
   {
-    icon: Clock,
-    title: "Express fulfilment",
-    description:
-      "Priority dispatch with real-time tracking and flexible delivery windows.",
+    title: "Easy Returns",
+    description: "Not satisfied? Our flexible return policy makes it simple and stress-free.",
+    icon: FiRefreshCcw,
+  },
+  {
+    title: "Best Deals & Offers",
+    description: "Exclusive discounts, seasonal drops, and bundle pricing across categories.",
+    icon: FiTag,
   },
 ];
 
@@ -27,18 +30,18 @@ function FeatureSection() {
       <div className="container-custom">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
           <div>
-            <p className="eyebrow mb-4">The Brand Verse promise</p>
+            <p className="eyebrow mb-4">Why shop with Brand Verse</p>
             <h2 className="text-4xl font-semibold text-ink">
-              Luxury retailing,
-              <span className="text-accent">&nbsp;reimagined</span>
+              Smart shopping,
+              <span className="text-accent">&nbsp;made simple</span>
             </h2>
             <p className="mt-6 text-lg text-ink-muted">
-              From curated lookbooks to post-purchase care, every touchpoint is
-              crafted to feel personal, polished, and effortless.
+              From quality products and secure payments to hassle-free returns and
+              fast delivery — we’re committed to giving you a seamless shopping experience.
             </p>
             <div className="mt-8 flex gap-4">
-              <button className="btn btn-primary">Discover the story</button>
-              <button className="btn btn-secondary">Book a stylist</button>
+              <button className="btn btn-primary">Start Shopping</button>
+              <button className="btn btn-secondary">View Categories</button>
             </div>
           </div>
 
@@ -61,6 +64,7 @@ function FeatureSection() {
         </div>
       </div>
     </section>
+
   );
 }
 

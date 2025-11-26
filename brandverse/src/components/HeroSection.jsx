@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const heroStats = [
-  { label: "New Arrivals Weekly", value: "60+" },
-  { label: "Premium Designers", value: "25" },
-  { label: "Happy Clients", value: "12k" },
+  { label: "Products Available", value: "10k+" },
+  { label: "Brands", value: "180+" },
+  { label: "Orders Delivered", value: "150k+" },
 ];
 
 function HeroSection() {
@@ -68,21 +68,21 @@ function HeroSection() {
     <div className="relative z-10 flex min-h-[90vh] flex-col justify-center py-20">
       <div className="container-custom grid gap-12 lg:grid-cols-2 lg:items-center">
         <div className="space-y-8 text-left">
-          <p className="eyebrow">Curated for the modern wardrobe</p>
-          <h1 className="text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
-            Elevate your <span className="text-accent-soft">signature</span>{" "}
-            style with tailored essentials.
-          </h1>
-          <p className="text-lg text-white/80 lg:text-xl">
-            Discover limited collections crafted with meticulous detail, premium
-            textiles, and silhouettes designed to transition from boardroom to
-            evening.
-          </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link to="/category" className="btn btn-primary bg-white text-ink">
-              Shop the collection
-            </Link>
-          </div>
+        <p className="eyebrow">Everything you love — in one store</p>
+<h1 className="text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
+  Shop <span className="text-accent-soft">smart</span>, shop{" "}
+  <span className="text-accent-soft">better</span>.
+</h1>
+<p className="text-lg text-white/80 lg:text-xl">
+  Explore trending products across electronics, fashion, beauty, kitchen,
+  gadgets and more — premium quality with exclusive deals.
+</p>
+<div className="flex flex-col gap-3 sm:flex-row">
+  <Link to="/products" className="btn btn-primary bg-white text-ink">
+    Start Shopping
+  </Link>
+</div>
+
           <div className="grid gap-6 sm:grid-cols-3">
             {heroStats.map((stat) => (
               <div key={stat.label} className="rounded-2xl bg-white/10 p-4">
@@ -105,12 +105,13 @@ function HeroSection() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8 text-white">
-              <p className="text-sm uppercase tracking-[0.4em] text-white/70">
-                Limited drop
-              </p>
-              <p className="text-2xl font-semibold">
-                Tailored elegance, redefined.
-              </p>
+            <p className="text-sm uppercase tracking-[0.4em] text-white/70">
+  Top Picks
+</p>
+<p className="text-2xl font-semibold">
+  Best deals, daily.
+</p>
+
             </div>
           </div>
         </div>
@@ -122,7 +123,7 @@ function HeroSection() {
     return (
       <section className="relative overflow-hidden bg-hero-gradient text-white">
         {renderContent(
-          "https://images.unsplash.com/photo-1507679799987-c73779587ccf"
+          "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200"
         )}
       </section>
     );
@@ -136,7 +137,7 @@ function HeroSection() {
           <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-white/20 blur-[180px]" />
         </div>
         {renderContent(
-          "https://images.unsplash.com/photo-1507679799987-c73779587ccf"
+          "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200"
         )}
       </section>
     );

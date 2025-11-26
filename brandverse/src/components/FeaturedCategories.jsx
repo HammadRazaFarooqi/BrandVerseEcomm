@@ -30,11 +30,11 @@ function FeaturedCategories() {
     <section className="section-shell bg-surface">
       <div className="container-custom">
         <div className="max-w-2xl mx-auto text-center mb-16">
-          <p className="eyebrow mb-3">Curated departments</p>
+          <p className="eyebrow mb-3">Featured collections</p>
           <h2 className="text-4xl font-semibold text-ink">Shop by category</h2>
           <p className="mt-4 text-ink-muted">
-            Discover tailored edits across occasionwear, everyday essentials,
-            and statement pieces from our most-loved designers.
+            Browse our most popular product categories — electronics, fashion, home & lifestyle,
+            beauty, and more. Find everything you need in one place.
           </p>
         </div>
 
@@ -64,9 +64,10 @@ function FeaturedCategories() {
                       {category.name}
                     </h3>
                     <span className="mt-3 inline-flex items-center text-sm font-medium text-white/80">
-                      Explore collection
+                      View products
                       <ChevronRight className="ml-1 h-4 w-4 transition group-hover:translate-x-1" />
                     </span>
+
                   </div>
                 </div>
               </Link>

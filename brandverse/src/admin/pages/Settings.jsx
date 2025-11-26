@@ -3,7 +3,7 @@ import { useState } from 'react';
 function Settings() {
   const [settings, setSettings] = useState({
     storeName: 'Brand Verse',
-    email: 'contact@urbantuxedo.com',
+    email: 'contact@brandverse.com',
     phone: '+1 (555) 123-4567',
     address: '123 Fashion Street, New York, NY 10001',
     currency: 'USD',
