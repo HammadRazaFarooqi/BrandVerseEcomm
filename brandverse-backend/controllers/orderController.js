@@ -5,18 +5,21 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-// __dirname equivalent in ES modules
-// ✅ CORRECT (CommonJS Syntax)
+// === START ESM FIX for __filename and __dirname ===
+// Define CJS-like variables using ESM features (Required due to `type: "module"` in package.json)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// === END ESM FIX ===
 
 // If you need the file path:
-const currentFilePath = __filename; 
+const currentFilePath = __filename;
 
 // If you need the directory path:
 const currentDirPath = __dirname;
 // Ensure upload folder exists
 const uploadDir = path.join(__dirname, '../uploads/payment-proofs');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Configure Multer
@@ -75,7 +78,7 @@ export const getAllOrders = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    
+
     // Filter options
     const filter = {};
     if (req.query.status) {
@@ -271,48 +274,48 @@ export const getOrderStats = async (req, res) => {
 // Get orders by Customer Email (For user profile)
 export const getOrdersByCustomerEmail = async (req, res) => {
   try {
-      const email = req.query.email; // Expecting email as query parameter
-      if (!email) {
-          return res.status(400).json({
-              success: false,
-              message: 'Email query parameter is required.'
-          });
-      }
-      
-      // Pagination (optional, but good practice)
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page - 1) * limit;
-
-      // Filter for customer email (case-insensitive search)
-      const filter = {
-          'customer.email': { $regex: email, $options: 'i' }
-      };
-
-      const orders = await Order.find(filter)
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(limit)
-      const totalOrders = await Order.countDocuments(filter);
-
-      res.status(200).json({
-          success: true,
-          data: orders,
-          pagination: {
-              currentPage: page,
-              totalPages: Math.ceil(totalOrders / limit),
-              totalOrders,
-              limit
-          }
+    const email = req.query.email; // Expecting email as query parameter
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email query parameter is required.'
       });
+    }
+
+    // Pagination (optional, but good practice)
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Filter for customer email (case-insensitive search)
+    const filter = {
+      'customer.email': { $regex: email, $options: 'i' }
+    };
+
+    const orders = await Order.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+    const totalOrders = await Order.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / limit),
+        totalOrders,
+        limit
+      }
+    });
 
   } catch (error) {
-      console.error('Error fetching orders by email:', error);
-      res.status(500).json({
-          success: false,
-          message: 'Failed to fetch customer orders',
-          error: error.message
-      });
+    console.error('Error fetching orders by email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch customer orders',
+      error: error.message
+    });
   }
 };
 

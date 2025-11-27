@@ -18,6 +18,7 @@ router.post("/", async (req, res) => {
 router.get("/", categoryController.getAllCategory);
 router.get("/:id", categoryController.getCategoryById);
 router.delete("/:id", categoryController.deleteCategory);
+router.put("/:id", categoryController.updateCategory)
 
 
 module.exports = router;
