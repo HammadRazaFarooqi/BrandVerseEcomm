@@ -30,27 +30,31 @@ function Profile() {
     try {
       const data = JSON.parse(stored);
       const u = data.user;
-  
       if (!u) return;
   
-      // Use fullName for display
+      // Set profile data
       setName(u.fullName || u.username || "");
-  
-      // Use first letters of username or fullName for initials
-      const initials = u.fullName
-        ? u.fullName
-            .split(" ")
-            .map((n) => n[0]?.toUpperCase())
-            .join("")
-        : u.username?.[0]?.toUpperCase() || "";
-  
-      setInitial(initials);
-  
       setEmail(u.email || "");
+      setInitial(u.fullName
+        ? u.fullName.split(" ").map(n => n[0].toUpperCase()).join("")
+        : u.username?.[0]?.toUpperCase() || ""
+      );
+  
+      // For ProfileDetails
+      setProfile({
+        firstName: u.fullName?.split(" ")[0] || "",
+        lastName: u.fullName?.split(" ")[1] || "",
+        email: u.email || "",
+        phone: u.phone || "",
+        address: u.addresses?.length
+          ? `${u.addresses[0].street}, ${u.addresses[0].state}, ${u.addresses[0].country}`
+          : "",
+      });
     } catch (e) {
       console.error("Invalid user JSON:", e);
     }
   }, []);
+  
   
 
   return (

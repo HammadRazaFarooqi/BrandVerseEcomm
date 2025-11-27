@@ -38,7 +38,7 @@ function OrderManagement() {
           paymentProof: order.paymentProof || "",
           title: item._id.title,
           quantity: item.quantity,
-          price: item._id.price,
+          price: order.totalAmount,
         }))
       );
 

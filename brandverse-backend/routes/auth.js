@@ -3,12 +3,13 @@ const router = express.Router();
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-// Register route
+// --- routes/auth.js (Corrected Register Route) ---
+
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password, role, firstName, lastName } = req.body;
 
-    // Check if user already exists
+    // Check if user already exists (unchanged)
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
@@ -19,16 +20,19 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Create new user
-    const user = new User({ username, email, password, role });
+    // Create new user (Sahi hai, fields save ho rahe hain)
+    const user = new User({ username, email, password, role, firstName, lastName });
     await user.save();
 
-    // Generate JWT token
+    // Generate JWT token (unchanged)
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
 
-    res.status(201).json({ token });
+    // 💡 CORRECTION HERE: token ke saath user object bhi bhejein
+    // Is user object mein ab firstName, lastName, aur fullName (virtual) bhi hoga.
+    res.status(201).json({ token, user }); // <-- YEH LINE BADLI GAYI HAI
+
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

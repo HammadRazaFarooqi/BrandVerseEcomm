@@ -49,7 +49,7 @@ function Checkout() {
         e.target.value = null;
         return;
       }
-      
+
       // Validate file type
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
@@ -57,7 +57,7 @@ function Checkout() {
         e.target.value = null;
         return;
       }
-      
+
       setPaymentProof(file);
     }
   };
@@ -75,20 +75,19 @@ function Checkout() {
       images: Array.isArray(item.images)
         ? item.images.map(img => typeof img === "string" ? img : img.primary)
         : [],
-      selectedSize: item.selectedSize?.size || null,
-      quantity: item.selectedSize?.quantity || 1,
+      quantity: item.quantity || 1,
     }));
   }
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate payment proof for bank transfer
     if (formData.paymentMethod === "bank" && !paymentProof) {
       alert("Please upload payment proof for bank transfer");
       return;
     }
-    
+
     setLoader(true);
 
     // Prepare order data
@@ -113,17 +112,17 @@ function Checkout() {
 
     // Create FormData object for multipart/form-data
     const formDataToSend = new FormData();
-    
+
     // Append order data as JSON string
     formDataToSend.append("orderData", JSON.stringify(orderData));
-    
+
     // Append payment proof image if exists
     if (paymentProof) {
       formDataToSend.append("paymentProof", paymentProof);
     }
 
     const BACKEND_URL = import.meta.env.VITE_API_URL;
-    
+
     try {
       const response = await fetch(`${BACKEND_URL}/checkout`, {
         method: "POST",
@@ -140,7 +139,7 @@ function Checkout() {
 
       // Clear cart after successful order
       localStorage.removeItem("cart");
-      
+
       // Redirect to success page or show confirmation
       if (data.url) {
         window.location.href = data.url;
@@ -148,7 +147,7 @@ function Checkout() {
         alert(`Order placed successfully! Order ID: ${data.orderId}`);
         window.location.href = "/";
       }
-      
+
       setLoader(false);
     } catch (error) {
       console.error("Error placing order:", error);
@@ -181,7 +180,7 @@ function Checkout() {
                     type="radio"
                     name="paymentMethod"
                     checked={activeAccordion === "cod"}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     className="w-5 h-5"
                   />
                   <h2 className="text-xl font-semibold text-ink">
@@ -189,9 +188,8 @@ function Checkout() {
                   </h2>
                 </div>
                 <svg
-                  className={`w-6 h-6 transition-transform ${
-                    activeAccordion === "cod" ? "rotate-180" : ""
-                  }`}
+                  className={`w-6 h-6 transition-transform ${activeAccordion === "cod" ? "rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -324,7 +322,7 @@ function Checkout() {
                     type="radio"
                     name="paymentMethod"
                     checked={activeAccordion === "bank"}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     className="w-5 h-5"
                   />
                   <h2 className="text-xl font-semibold text-ink">
@@ -332,9 +330,8 @@ function Checkout() {
                   </h2>
                 </div>
                 <svg
-                  className={`w-6 h-6 transition-transform ${
-                    activeAccordion === "bank" ? "rotate-180" : ""
-                  }`}
+                  className={`w-6 h-6 transition-transform ${activeAccordion === "bank" ? "rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

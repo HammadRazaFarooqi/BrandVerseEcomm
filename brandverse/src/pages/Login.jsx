@@ -38,26 +38,37 @@ function Login() {
       });
 
       if (!response.ok) {
+        setLoader(false);
         const errorData = await response.json();
-        setMessage(`Login failed: ${errorData.message || response.statusText}`);
+        // Backend se agar 'error' field aa raha hai to woh use karein
+        setMessage(`Login failed: ${errorData.error || errorData.message || response.statusText}`);
+        toast.error(`Login failed: ${errorData.error || response.statusText}`);
       } else {
         const data = await response.json();
-        toast.success("Login successful!");
+
         localStorage.setItem("isLogin", JSON.stringify(data));
+        window.dispatchEvent(new Event("userDataUpdated"));
+
+        toast.success("Login successful!");
+
+        // Set loader to false immediately after storing data/dispatching event
+        setLoader(false);
+
+        // 3. Handle Navigation (Delayed for user experience only, state is already updated)
         setTimeout(() => {
           localStorage.removeItem("redirectAfterLogin"); // Clear after use
-          window.dispatchEvent(new Event("storage")); // Notify other components
-          setLoader(false);
+
           const defaultPage = data.user.role === "user" ? "/" : "/admin";
           const redirectUrl =
             localStorage.getItem("redirectAfterLogin") || defaultPage;
+
           navigate(redirectUrl);
-          // navigate('/');
-        }, 2000);
+        }, 100); // Wait for toast to appear briefly before redirect
       }
     } catch (error) {
       setLoader(false);
       setMessage(`Login failed: ${error.message}`);
+      toast.error(`Login failed: ${error.message}`);
     }
   };
 
@@ -129,7 +140,7 @@ function Login() {
               </Link>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full">
+            <button type="submit" className="btn btn-primary w-full" disabled={loader}>
               {loader ? "Signing in..." : "Sign in"}
             </button>
 

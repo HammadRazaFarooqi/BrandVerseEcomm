@@ -261,3 +261,56 @@ export const getOrderStats = async (req, res) => {
     });
   }
 };
+
+// --- In your orderController.js (Add this new function) ---
+
+// Get orders by Customer Email (For user profile)
+export const getOrdersByCustomerEmail = async (req, res) => {
+  try {
+      const email = req.query.email; // Expecting email as query parameter
+      if (!email) {
+          return res.status(400).json({
+              success: false,
+              message: 'Email query parameter is required.'
+          });
+      }
+      
+      // Pagination (optional, but good practice)
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      // Filter for customer email (case-insensitive search)
+      const filter = {
+          'customer.email': { $regex: email, $options: 'i' }
+      };
+
+      const orders = await Order.find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+      const totalOrders = await Order.countDocuments(filter);
+
+      res.status(200).json({
+          success: true,
+          data: orders,
+          pagination: {
+              currentPage: page,
+              totalPages: Math.ceil(totalOrders / limit),
+              totalOrders,
+              limit
+          }
+      });
+
+  } catch (error) {
+      console.error('Error fetching orders by email:', error);
+      res.status(500).json({
+          success: false,
+          message: 'Failed to fetch customer orders',
+          error: error.message
+      });
+  }
+};
+
+// --- orderController.js file mein is function ko export karna na bhulein ---
+// Example: export { createOrder, getAllOrders, getOrderById, ..., getOrdersByCustomerEmail };

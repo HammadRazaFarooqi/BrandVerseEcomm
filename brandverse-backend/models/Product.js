@@ -142,9 +142,22 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.pre("save", function (next) {
-  if (!this.slug && this.title) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
+productSchema.pre("save", async function (next) { // 👈 Change to async
+  if (this.isModified('title') || this.isNew) { // Check if title is modified or it's a new document
+    // 1. Base slug generate karein
+    let baseSlug = slugify(this.title, { lower: true, strict: true });
+    let slug = baseSlug;
+    let counter = 0;
+
+    // 2. Database mein check karein ki slug exist karta hai ya nahi
+    // Is current document ko ignore karne ke liye query mein _id ka use karein
+    while (await mongoose.models.Product.exists({ slug: slug, _id: { $ne: this._id } })) {
+      counter++;
+      slug = `${baseSlug}-${counter}`;
+    }
+    
+    // 3. Unique slug set karein
+    this.slug = slug;
   }
   if (!this.discountedPrice || this.discountedPrice > this.price) {
     this.discountedPrice = undefined;

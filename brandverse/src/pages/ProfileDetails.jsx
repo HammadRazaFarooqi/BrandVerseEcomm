@@ -11,6 +11,7 @@ function ProfileDetails() {
     phone: "",
     address: "",
   });
+
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
   const handleEditClick = () => {
@@ -19,60 +20,98 @@ function ProfileDetails() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+    setProfile((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const storedProfile = JSON.parse(localStorage.getItem("isLogin")).user;
-    const id = storedProfile.id;
 
-    await fetch(`${BACKEND_URL}/customer/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        phone: profile.phone,
-        address: profile.address,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-        const userDetail = JSON.parse(localStorage.getItem("isLogin"));
-        userDetail.user = data.customer;
-        localStorage.setItem("isLogin", JSON.stringify(userDetail));
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+    try {
+      const storedData = localStorage.getItem("isLogin");
+      if (!storedData) {
+        console.error("No user data found");
+        setLoading(false);
+        return;
+      }
+
+      const storedProfile = JSON.parse(storedData).user;
+      const id = storedProfile.id || storedProfile._id;
+
+      const response = await fetch(`${BACKEND_URL}/customer/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          phone: profile.phone,
+          address: profile.address,
+        }),
       });
-    setLoading(false);
-    setIsEditing(false);
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        console.log("Success:", data);
+        
+        // Update localStorage with new data
+        const userDetail = JSON.parse(localStorage.getItem("isLogin"));
+        userDetail.user = data.customer || data.user;
+        localStorage.setItem("isLogin", JSON.stringify(userDetail));
+        
+        // Trigger storage event to update navbar
+        window.dispatchEvent(new Event("storage"));
+        
+        setIsEditing(false);
+      } else {
+        console.error("Update failed:", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     const isLogin = localStorage.getItem("isLogin");
-  
     if (!isLogin) return; // Or redirect user
-  
-    const storedProfile = JSON.parse(isLogin).user;
-  
-    setProfile({
-      firstName: storedProfile?.firstName || "",
-      lastName: storedProfile?.lastName || "",
-      email: storedProfile?.email || "",
-      phone: storedProfile?.phone || "",
-      address:
-        storedProfile?.addresses?.length > 0
-          ? `${storedProfile.addresses[0].street} ${storedProfile.addresses[0].state}, ${storedProfile.addresses[0].country}`
-          : "",
-    });
+
+    try {
+      const storedProfile = JSON.parse(isLogin).user;
+      
+      // Build address string from addresses array or use address field
+      let addressString = "";
+      if (storedProfile?.addresses && Array.isArray(storedProfile.addresses) && storedProfile.addresses.length > 0) {
+        const addr = storedProfile.addresses[0];
+        const parts = [
+          addr.street,
+          addr.city,
+          addr.state,
+          addr.zipCode,
+          addr.country
+        ].filter(Boolean);
+        addressString = parts.join(", ");
+      } else if (storedProfile?.address) {
+        addressString = storedProfile.address;
+      }
+
+      setProfile({
+        firstName: storedProfile?.firstName || "",
+        lastName: storedProfile?.lastName || "",
+        email: storedProfile?.email || "",
+        phone: storedProfile?.phone || storedProfile?.phoneNumber || "",
+        address: addressString,
+      });
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
   }, []);
-  
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -125,7 +164,7 @@ function ProfileDetails() {
               <input
                 type="email"
                 name="email"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
                 value={profile.email}
                 onChange={handleChange}
                 disabled
@@ -153,6 +192,7 @@ function ProfileDetails() {
             </label>
             <textarea
               name="address"
+              rows="3"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
               value={profile.address}
               onChange={handleChange}
@@ -164,7 +204,8 @@ function ProfileDetails() {
             <div className="border-t pt-8">
               <button
                 type="submit"
-                className="px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                disabled={loading}
+                className="px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-gray-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>

@@ -233,27 +233,6 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Parent Category
-                </label>
-                <select
-                  name="parentCategory"
-                  value={categoryData.parentCategory}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-md"
-                >
-                  <option value="">None</option>
-                  {categoryList.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-sm text-gray-500 mt-1">
-                  Select a parent category to create a subcategory
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Description*
                 </label>
                 <textarea

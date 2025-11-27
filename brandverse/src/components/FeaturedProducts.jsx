@@ -31,7 +31,7 @@ function FeaturedProducts() {
 
   return (
     <section className="section-shell bg-white">
-      <div className="container-custom">
+      {/* <div className="container-custom">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow mb-3">Featured Picks</p>
@@ -102,7 +102,7 @@ function FeaturedProducts() {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
     </section>
   );
 }

@@ -95,8 +95,12 @@ const getSortOption = (sort, hasTextSearch = false) => {
 };
 
 // Create a new product
+// --- Updated exports.createProduct in productController.js ---
+
 exports.createProduct = async (req, res) => {
   try {
+    // ... (Aapka existing code jaisa ka waisa rahega)
+
     const { category, defaultQuantity, ...rest } = req.body;
 
     // Find category ObjectId by slug or name
@@ -104,7 +108,7 @@ exports.createProduct = async (req, res) => {
     if (!categoryDoc) {
       return res.status(400).json({
         success: false,
-        message: "Invalid category",
+        message: "Invalid category (Category not found)",
       });
     }
 
@@ -114,8 +118,8 @@ exports.createProduct = async (req, res) => {
     const productData = {
       ...rest,
       category: categoryDoc._id,
-      stock: quantity,          // total stock
-      defaultQuantity: quantity, // store quantity for reference
+      stock: quantity,
+      defaultQuantity: quantity,
       categorySlug: categoryDoc.slug,
     };
 
@@ -124,11 +128,24 @@ exports.createProduct = async (req, res) => {
 
     res.status(201).json({ success: true, product });
   } catch (error) {
-    console.error("createProduct error", error);
-    res.status(400).json({ success: false, message: error.message });
+    console.error("createProduct error:", error); // Console mein pura error object dikhega
+
+    // Check if it's a Mongoose validation error
+    let message = "Product creation failed.";
+    if (error.name === 'ValidationError') {
+      // Validation errors ke details frontend tak bhejte hain
+      const errors = Object.values(error.errors).map(err => err.message);
+      message = `Validation Failed: ${errors.join(', ')}`;
+    } else {
+      message = error.message;
+    }
+
+    res.status(400).json({
+      success: false,
+      message: message
+    });
   }
 };
-
 exports.getAllProducts = async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
@@ -283,7 +300,7 @@ exports.deleteProduct = async (req, res) => {
 //         "_" +
 //         crypto.randomBytes(4).toString("hex");
 
-      
+
 //     // Return the checkout URL
 //     return res.status(200).json({
 //       url: session.url,
