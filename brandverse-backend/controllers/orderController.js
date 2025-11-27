@@ -3,13 +3,19 @@ import cloudinary from "../src/config/cloudinary.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "url"; // fileURLToPath ko rehne denge agar yeh file ESM mode mein chal rahi ho
 
-// === START ESM FIX for __filename and __dirname ===
-// Define CJS-like variables using ESM features (Required due to `type: "module"` in package.json)
+// =================================================================
+// === SOLUTION FOR 'import.meta' SYNTAX ERROR (Cross-Env Pathing) ===
+// Agar aapki file 'type: "module"' mein hai, toh aapko __dirname
+// ko is tarah define karna padega.
+// Agar is block ko hatane ke baad bhi error aaye, toh isko wapas
+// daal dein aur Vercel par Node version check karein.
+// Filhaal, Vercel ki CommonJS compatibility ke liye hum yeh block
+// rakhte hain.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// === END ESM FIX ===
+// =================================================================
 
 // If you need the file path:
 const currentFilePath = __filename;
@@ -17,7 +23,8 @@ const currentFilePath = __filename;
 // If you need the directory path:
 const currentDirPath = __dirname;
 // Ensure upload folder exists
-const uploadDir = path.join(__dirname, '../uploads/payment-proofs');
+// Multer ke liye upload folder ka path sahi kiya gaya hai
+const uploadDir = path.join(__dirname, '..', 'uploads', 'payment-proofs'); 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -42,7 +49,8 @@ export const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024
 // Create order
 export const createOrder = async (req, res) => {
   try {
-    const orderData = JSON.parse(req.body.orderData);
+    // req.body.orderData ko JSON.parse karne se pehle check karein ki woh string hai
+    const orderData = JSON.parse(req.body.orderData); 
 
     if (!orderData.customer || !orderData.items || orderData.items.length === 0) {
       return res.status(400).json({ success: false, message: "Customer info and cart items are required." });
@@ -65,13 +73,15 @@ export const createOrder = async (req, res) => {
 
   } catch (error) {
     console.error("Error creating order:", error);
+    // Local file ko delete karne ka logic agar upload ke dauran error aaye
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlink(req.file.path, err => { if (err) console.error("Failed to delete local file after error:", err); });
+    }
     return res.status(500).json({ success: false, message: "Failed to create order.", error: error.message });
   }
 };
 
-// --- Other APIs (getAllOrders, getOrderById, updateOrderStatus, deleteOrder, getOrderStats)
-// Convert all `export const xxx` → `export const xxx` and replace `require` with `import` as above.
-// The logic remains unchanged.
+// --- Other APIs ---
 
 export const getAllOrders = async (req, res) => {
   try {
@@ -269,8 +279,6 @@ export const getOrderStats = async (req, res) => {
   }
 };
 
-// --- In your orderController.js (Add this new function) ---
-
 // Get orders by Customer Email (For user profile)
 export const getOrdersByCustomerEmail = async (req, res) => {
   try {
@@ -318,6 +326,3 @@ export const getOrdersByCustomerEmail = async (req, res) => {
     });
   }
 };
-
-// --- orderController.js file mein is function ko export karna na bhulein ---
-// Example: export { createOrder, getAllOrders, getOrderById, ..., getOrdersByCustomerEmail };
