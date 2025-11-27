@@ -6,9 +6,13 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 
 // __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// ✅ CORRECT (CommonJS Syntax)
 
+// If you need the file path:
+const currentFilePath = __filename; 
+
+// If you need the directory path:
+const currentDirPath = __dirname;
 // Ensure upload folder exists
 const uploadDir = path.join(__dirname, '../uploads/payment-proofs');
 if (!fs.existsSync(uploadDir)) {
