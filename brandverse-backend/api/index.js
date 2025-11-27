@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 import path from "path";
+import cors from "cors";
 
 import authRoutes from "../routes/auth.js";
 import categoryRoutes from "../routes/category.js";
@@ -15,7 +16,6 @@ import orderRoutes from "../routes/orderRoutes.js";
 const app = express();
 
 // CORS
-import cors from "cors";
 app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
@@ -29,17 +29,28 @@ app.use((req, res, next) => {
   next();
 });
 
-// Read swagger JSON manually
-const swaggerFilePath = path.resolve("./swagger-output.json");
-const swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, "utf-8"));
+// Read swagger JSON safely
+const swaggerFilePath = path.join(process.cwd(), "swagger-output.json");
+
+let swaggerDocument = {};
+try {
+  swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, "utf-8"));
+  console.log("Swagger file loaded successfully");
+} catch (err) {
+  console.error("Swagger file not found or invalid:", err);
+}
 
 // Swagger routes
 app.use("/swagger.json", (req, res) => res.json(swaggerDocument));
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
-  explorer: true,
-  customCss: ".swagger-ui .topbar { display: none }",
-  customSiteTitle: "Brand Verse API Docs",
-}));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    explorer: true,
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "Brand Verse API Docs",
+  })
+);
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -55,12 +66,13 @@ app.get("/", (req, res) => {
 });
 
 // MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("Connected to MongoDB"))
-.catch((err) => console.error("MongoDB connection error:", err));
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Server
 const PORT = process.env.PORT || 3000;
