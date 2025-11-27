@@ -1,7 +1,6 @@
 {
   "name": "brandverse-backend",
   "version": "1.0.0",
-  "type": "module", 
   "main": "/api/index.js",
   "scripts": {
     "start": "nodemon api/index.js",

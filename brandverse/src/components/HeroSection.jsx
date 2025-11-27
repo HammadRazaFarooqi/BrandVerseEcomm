@@ -16,27 +16,27 @@ function HeroSection() {
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    const fetchPromotions = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/promotions`);
+  // useEffect(() => {
+  //   const fetchPromotions = async () => {
+  //     try {
+  //       const response = await fetch(`${BACKEND_URL}/promotions`);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch promotions");
-        }
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch promotions");
+  //       }
 
-        const data = await response.json();
-        setPromotions(data.promotion || []);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching promotions:", err);
-        setError("Failed to load promotional content");
-        setLoading(false);
-      }
-    };
+  //       const data = await response.json();
+  //       setPromotions(data.promotion || []);
+  //       setLoading(false);
+  //     } catch (err) {
+  //       console.error("Error fetching promotions:", err);
+  //       setError("Failed to load promotional content");
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchPromotions();
-  }, [BACKEND_URL]);
+  //   fetchPromotions();
+  // }, [BACKEND_URL]);
 
   useEffect(() => {
     // Auto-advance slides
