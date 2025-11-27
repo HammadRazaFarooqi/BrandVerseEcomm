@@ -3,27 +3,11 @@ import cloudinary from "../src/config/cloudinary.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url"; // fileURLToPath ko rehne denge agar yeh file ESM mode mein chal rahi ho
+import { fileURLToPath } from "url"; 
 
-// =================================================================
-// === SOLUTION FOR 'import.meta' SYNTAX ERROR (Cross-Env Pathing) ===
-// Agar aapki file 'type: "module"' mein hai, toh aapko __dirname
-// ko is tarah define karna padega.
-// Agar is block ko hatane ke baad bhi error aaye, toh isko wapas
-// daal dein aur Vercel par Node version check karein.
-// Filhaal, Vercel ki CommonJS compatibility ke liye hum yeh block
-// rakhte hain.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// =================================================================
 
-// If you need the file path:
-const currentFilePath = __filename;
-
-// If you need the directory path:
-const currentDirPath = __dirname;
-// Ensure upload folder exists
-// Multer ke liye upload folder ka path sahi kiya gaya hai
 const uploadDir = path.join(__dirname, '..', 'uploads', 'payment-proofs'); 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
