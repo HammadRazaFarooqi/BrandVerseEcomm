@@ -5,7 +5,7 @@ function NewsLetterSection() {
       <div className="container-custom">
         <div className="glass-card flex flex-col items-center gap-6 rounded-[2.5rem] bg-ink px-8 py-12 text-center text-white">
           <p className="eyebrow text-white/70">Private client access</p>
-          <h2 className="text-4xl font-semibold">
+          <h2 className="text-4xl font-semibold text-white">
             Join the inner circle for atelier stories, early drops, and
             invitations to private sales.
           </h2>

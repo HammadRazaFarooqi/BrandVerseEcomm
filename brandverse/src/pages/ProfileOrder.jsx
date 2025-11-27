@@ -40,7 +40,7 @@ function ProfileOrder() {
       try {
         // 💡 FIX 2: Dynamic email aur naya API endpoint use karein
         const response = await fetch(
-          `${BACKEND_URL}/customer?email=${customerEmail}`
+          `${BACKEND_URL}/orders/customer?email=${customerEmail}`
         );
 
         if (!response.ok) {

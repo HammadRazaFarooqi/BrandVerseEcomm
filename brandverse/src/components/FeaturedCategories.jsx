@@ -42,7 +42,17 @@ function FeaturedCategories() {
           </p>
         </div>
 
-        {categories.length === 0 ? (
+        {categories.length === 0 && !error ? (
+          // Skeleton Loader
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="rounded-[2rem] border border-white/20 bg-gray-200 animate-pulse h-[300px]"
+              />
+            ))}
+          </div>
+        ) : categories.length === 0 && error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : (
           <div className="relative">
@@ -105,10 +115,9 @@ function FeaturedCategories() {
             </div>
           </div>
         )}
-
-
       </div>
     </section>
+
   );
 }
 

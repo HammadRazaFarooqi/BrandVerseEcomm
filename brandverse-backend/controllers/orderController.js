@@ -1,67 +1,82 @@
 import Order from "../models/Order.js";
 import cloudinary from "../src/config/cloudinary.js";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url"; 
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const uploadDir = path.join(__dirname, '..', 'uploads', 'payment-proofs'); 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure Multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, 'payment-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// MEMORY STORAGE (Required for Vercel / Serverless)
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-  if (allowedTypes.includes(file.mimetype)) cb(null, true);
-  else cb(new Error('Invalid file type. Only JPEG, PNG, GIF allowed'), false);
+  const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+  allowedTypes.includes(file.mimetype)
+    ? cb(null, true)
+    : cb(new Error("Invalid image type"));
 };
 
-export const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
+export const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 
-// Create order
+// ---------------- CREATE ORDER -------------------
 export const createOrder = async (req, res) => {
   try {
-    // req.body.orderData ko JSON.parse karne se pehle check karein ki woh string hai
-    const orderData = JSON.parse(req.body.orderData); 
+    // Parse incoming JSON string from FormData
+    const orderData = JSON.parse(req.body.orderData);
 
-    if (!orderData.customer || !orderData.items || orderData.items.length === 0) {
-      return res.status(400).json({ success: false, message: "Customer info and cart items are required." });
+    if (!orderData.customer || !orderData.items?.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Customer info and cart items are required",
+      });
     }
 
     let paymentProofUrl = null;
+
+    // Bank payments must have proof
     if (orderData.paymentMethod === "bank") {
-      if (!req.file) return res.status(400).json({ success: false, message: "Payment proof required for bank transfer." });
+      if (!req.file)
+        return res.status(400).json({
+          success: false,
+          message: "Payment proof required for bank transfer",
+        });
 
-      const uploadRes = await cloudinary.uploader.upload(req.file.path, { folder: "payment_proofs", resource_type: "image" });
-      paymentProofUrl = uploadRes.secure_url;
+      // Upload buffer directly to Cloudinary
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "payment_proofs",
+            resource_type: "image",
+          },
+          (err, result) => (err ? reject(err) : resolve(result))
+        );
+        stream.end(req.file.buffer);
+      });
 
-      // delete local file
-      fs.unlink(req.file.path, err => { if (err) console.error("Failed to delete local file:", err); });
+      paymentProofUrl = uploadResult.secure_url;
     }
 
-    const newOrder = await Order.create({ ...orderData, paymentProof: paymentProofUrl, status: "processing", createdAt: new Date() });
+    // Save order
+    const newOrder = await Order.create({
+      ...orderData,
+      paymentProof: paymentProofUrl,
+      status: "processing",
+      createdAt: new Date(),
+    });
 
-    return res.status(201).json({ success: true, message: "Order placed successfully.", orderId: newOrder._id, orderNumber: newOrder.orderNumber });
-
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully",
+      orderId: newOrder._id,
+      orderNumber: newOrder.orderNumber,
+    });
   } catch (error) {
-    console.error("Error creating order:", error);
-    // Local file ko delete karne ka logic agar upload ke dauran error aaye
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlink(req.file.path, err => { if (err) console.error("Failed to delete local file after error:", err); });
-    }
-    return res.status(500).json({ success: false, message: "Failed to create order.", error: error.message });
+    console.error("Order creation failed:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create order",
+      error: error.message,
+    });
   }
 };
 

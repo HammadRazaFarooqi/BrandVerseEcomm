@@ -1,10 +1,12 @@
-const crypto = require("crypto");
-const mongoose = require("mongoose");
-const Product = require("../models/Product");
-const User = require("../models/User"); // You'll need to create this model
-const Category = require("../models/Category");
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000"; // Fallback URL
+import crypto from "crypto";
+import mongoose from "mongoose";
+import Product from "../models/Product.js";
+import User from "../models/User.js";
+import Category from "../models/Category.js";
 
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+
+// Helper: Build product filters
 const buildProductFilters = (query = {}, options = {}) => {
   const filters = { status: "published" };
   const {
@@ -32,16 +34,12 @@ const buildProductFilters = (query = {}, options = {}) => {
 
   if (brand && !options.skipBrand) {
     const brands = brand.split(",").map((b) => b.trim()).filter(Boolean);
-    if (brands.length) {
-      filters.brand = { $in: brands };
-    }
+    if (brands.length) filters.brand = { $in: brands };
   }
 
   if (tags) {
-    const tagList = tags.split(",").map((tag) => tag.trim()).filter(Boolean);
-    if (tagList.length) {
-      filters.tags = { $in: tagList };
-    }
+    const tagList = tags.split(",").map((t) => t.trim()).filter(Boolean);
+    if (tagList.length) filters.tags = { $in: tagList };
   }
 
   const parseNumber = (val) => {
@@ -57,62 +55,34 @@ const buildProductFilters = (query = {}, options = {}) => {
     if (max !== undefined) filters.finalPrice.$lte = max;
   }
 
-  if (isFeatured === "true") {
-    filters.isFeatured = true;
-  }
-
-  if (isBestSeller === "true") {
-    filters.isBestSeller = true;
-  }
-
-  if (inStock === "true") {
-    filters.stock = { $gt: 0 };
-  }
-
-  if (search && !options.skipSearch) {
-    filters.$text = { $search: search };
-  }
+  if (isFeatured === "true") filters.isFeatured = true;
+  if (isBestSeller === "true") filters.isBestSeller = true;
+  if (inStock === "true") filters.stock = { $gt: 0 };
+  if (search && !options.skipSearch) filters.$text = { $search: search };
 
   return filters;
 };
 
+// Helper: Determine sort
 const getSortOption = (sort, hasTextSearch = false) => {
-  if (hasTextSearch) {
-    return { score: { $meta: "textScore" }, createdAt: -1 };
-  }
-
+  if (hasTextSearch) return { score: { $meta: "textScore" }, createdAt: -1 };
   switch (sort) {
-    case "price-asc":
-      return { finalPrice: 1 };
-    case "price-desc":
-      return { finalPrice: -1 };
-    case "best-selling":
-      return { totalSold: -1 };
+    case "price-asc": return { finalPrice: 1 };
+    case "price-desc": return { finalPrice: -1 };
+    case "best-selling": return { totalSold: -1 };
     case "newest":
-    default:
-      return { createdAt: -1 };
+    default: return { createdAt: -1 };
   }
 };
 
-// Create a new product
-// --- Updated exports.createProduct in productController.js ---
-
-exports.createProduct = async (req, res) => {
+// CREATE product
+export const createProduct = async (req, res) => {
   try {
-    // ... (Aapka existing code jaisa ka waisa rahega)
-
     const { category, defaultQuantity, ...rest } = req.body;
-
-    // Find category ObjectId by slug or name
     const categoryDoc = await Category.findOne({ name: category });
-    if (!categoryDoc) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid category (Category not found)",
-      });
-    }
+    if (!categoryDoc)
+      return res.status(400).json({ success: false, message: "Invalid category (not found)" });
 
-    // Ensure quantity is a number >= 0
     const quantity = Number(defaultQuantity) || 0;
 
     const productData = {
@@ -128,29 +98,22 @@ exports.createProduct = async (req, res) => {
 
     res.status(201).json({ success: true, product });
   } catch (error) {
-    console.error("createProduct error:", error); // Console mein pura error object dikhega
-
-    // Check if it's a Mongoose validation error
+    console.error("createProduct error:", error);
     let message = "Product creation failed.";
-    if (error.name === 'ValidationError') {
-      // Validation errors ke details frontend tak bhejte hain
-      const errors = Object.values(error.errors).map(err => err.message);
-      message = `Validation Failed: ${errors.join(', ')}`;
-    } else {
-      message = error.message;
-    }
-
-    res.status(400).json({
-      success: false,
-      message: message
-    });
+    if (error.name === "ValidationError") {
+      message = `Validation Failed: ${Object.values(error.errors).map(e => e.message).join(", ")}`;
+    } else message = error.message;
+    res.status(400).json({ success: false, message });
   }
 };
-exports.getAllProducts = async (req, res) => {
+
+// GET all products
+export const getAllProducts = async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit, 10) || 12, 100);
     const skip = (page - 1) * limit;
+
     const filters = buildProductFilters(req.query);
     const hasTextSearch = Boolean(filters.$text);
     const projection = hasTextSearch ? { score: { $meta: "textScore" } } : {};
@@ -182,13 +145,7 @@ exports.getAllProducts = async (req, res) => {
       ),
       Product.aggregate([
         { $match: buildProductFilters(req.query, { skipPrice: true, skipSearch: true }) },
-        {
-          $group: {
-            _id: null,
-            min: { $min: "$finalPrice" },
-            max: { $max: "$finalPrice" },
-          },
-        },
+        { $group: { _id: null, min: { $min: "$finalPrice" }, max: { $max: "$finalPrice" } } },
       ]),
     ]);
 
@@ -198,19 +155,8 @@ exports.getAllProducts = async (req, res) => {
       success: true,
       products,
       meta: {
-        pagination: {
-          page,
-          limit,
-          totalItems: total,
-          totalPages: Math.ceil(total / limit) || 1,
-        },
-        availableFilters: {
-          brands: availableBrands.filter(Boolean).sort(),
-          price: {
-            min: priceRange.min ?? 0,
-            max: priceRange.max ?? 0,
-          },
-        },
+        pagination: { page, limit, totalItems: total, totalPages: Math.ceil(total / limit) || 1 },
+        availableFilters: { brands: availableBrands.filter(Boolean).sort(), price: priceRange },
         appliedFilters: {
           search: req.query.search || "",
           category: req.query.category || req.query.categorySlug || "",
@@ -226,120 +172,53 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-// Get a single product by ID
-exports.getProductById = async (req, res) => {
+// GET product by ID
+export const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (!product)
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
-
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
     res.status(200).json({ success: true, product });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Update a product by ID
-exports.updateProduct = async (req, res) => {
+// UPDATE product
+export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
-    if (!product)
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
-
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
     res.status(200).json({ success: true, product });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// Delete a product by ID
-exports.deleteProduct = async (req, res) => {
+// DELETE product
+export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product)
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
-
-    res
-      .status(200)
-      .json({ success: true, message: "Product deleted successfully" });
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+    res.status(200).json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Validate required environment variables
-
-// exports.createCheckoutSession = async (req, res) => {
-//   try {
-//     const { customer, items, totalAmount } = req.body;
-
-//     // Validate required fields
-//     if (!customer || !items || !totalAmount) {
-//       return res.status(400).json({
-//         error: "Missing required fields",
-//       });
-//     }
-
-//     // Find or create user in MongoDB
-//     let user = await User.findOne({ email: customer.email });
-
-//     if (!user) {
-//       // Generate a temporary password and username for new users
-//       const tempPassword = crypto.randomBytes(8).toString("hex");
-//       const username =
-//         customer.email.split("@")[0] +
-//         "_" +
-//         crypto.randomBytes(4).toString("hex");
-
-
-//     // Return the checkout URL
-//     return res.status(200).json({
-//       url: session.url,
-//       sessionId: session.id,
-//     });
-//   } catch (error) {
-//     console.error("Checkout session creation failed:", error);
-//     return res.status(500).json({
-//       error: "Failed to create checkout session",
-//       details: error.message,
-//     });
-//   }
-// };
-// Webhook to handle successful payments
-
-exports.searchProducts = async (req, res) => {
+// SEARCH products
+export const searchProducts = async (req, res) => {
   try {
     const { q = "", limit = 8 } = req.query;
     const trimmedQuery = q.trim();
-
-    if (!trimmedQuery) {
-      return res.status(200).json({ success: true, results: [] });
-    }
+    if (!trimmedQuery) return res.status(200).json({ success: true, results: [] });
 
     const parsedLimit = Math.min(parseInt(limit, 10) || 8, 20);
-
     const results = await Product.find(
       { $text: { $search: trimmedQuery }, status: "published" },
-      {
-        score: { $meta: "textScore" },
-        title: 1,
-        slug: 1,
-        price: 1,
-        discountedPrice: 1,
-        finalPrice: 1,
-        images: 1,
-        brand: 1,
-        categorySlug: 1,
-      }
+      { score: { $meta: "textScore" }, title: 1, slug: 1, price: 1, discountedPrice: 1, finalPrice: 1, images: 1, brand: 1, categorySlug: 1 }
     )
       .sort({ score: { $meta: "textScore" }, createdAt: -1 })
       .limit(parsedLimit);

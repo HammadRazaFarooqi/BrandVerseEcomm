@@ -1,6 +1,6 @@
-const cloudinary = require("cloudinary").v2;
+import { v2 as cloudinary } from "cloudinary";
 
-exports.getUploadedFile = async (req, res) => {
+export const getUploadedFile = async (req, res) => {
     try {
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -28,18 +28,17 @@ exports.getUploadedFile = async (req, res) => {
     }
 };
 
-// Update a product by ID
-exports.saveUploadFile = async (req, res) => {
-      try {
+export const saveUploadFile = async (req, res) => {
+    try {
         const { public_id } = req.body;
         if (!public_id)
-          return res.status(400).json({ success: false, message: "public_id required" });
+            return res.status(400).json({ success: false, message: "public_id required" });
 
         const result = await cloudinary.uploader.destroy(public_id);
 
         res.json({ success: true, result });
-      } catch (err) {
+    } catch (err) {
         console.error("delete error", err);
         res.status(500).json({ success: false, message: err.message });
-      }
+    }
 };

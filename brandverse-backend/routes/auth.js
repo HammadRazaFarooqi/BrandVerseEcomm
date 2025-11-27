@@ -1,15 +1,15 @@
-const express = require("express");
+import express from "express";
+import User from "../models/User.js";
+import jwt from "jsonwebtoken";
+
 const router = express.Router();
-const User = require("../models/User");
-const jwt = require("jsonwebtoken");
 
-// --- routes/auth.js (Corrected Register Route) ---
-
+// --- Register Route ---
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password, role, firstName, lastName } = req.body;
 
-    // Check if user already exists (unchanged)
+    // Check if user already exists
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
@@ -20,25 +20,24 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Create new user (Sahi hai, fields save ho rahe hain)
+    // Create new user
     const user = new User({ username, email, password, role, firstName, lastName });
     await user.save();
 
-    // Generate JWT token (unchanged)
+    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
 
-    // 💡 CORRECTION HERE: token ke saath user object bhi bhejein
-    // Is user object mein ab firstName, lastName, aur fullName (virtual) bhi hoga.
-    res.status(201).json({ token, user }); // <-- YEH LINE BADLI GAYI HAI
+    // Return token + user
+    res.status(201).json({ token, user });
 
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// Login route
+// --- Login Route ---
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -66,4 +65,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,7 +1,9 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
-const addressSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+
+const addressSchema = new Schema({
   street: { type: String, trim: true },
   city: { type: String, trim: true },
   state: { type: String, trim: true },
@@ -10,7 +12,7 @@ const addressSchema = new mongoose.Schema({
   isDefault: { type: Boolean, default: false },
 });
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   username: { type: String, required: true, unique: true, trim: true },
   firstName: { type: String, trim: true },
   lastName: { type: String, trim: true },
@@ -19,9 +21,14 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, trim: true },
   addresses: [addressSchema],
   role: { type: String, enum: ["user", "admin"], default: "user" },
-  cart: [{ productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" }, quantity: { type: Number, default: 1, min: 1 } }],
-  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
-  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  cart: [
+    { 
+      productId: { type: Schema.Types.ObjectId, ref: "Product" },
+      quantity: { type: Number, default: 1, min: 1 }
+    }
+  ],
+  orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
+  wishlist: [{ type: Schema.Types.ObjectId, ref: "Product" }],
   isEmailVerified: { type: Boolean, default: false },
   lastLogin: { type: Date },
   resetPasswordToken: String,
@@ -31,7 +38,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Update updatedAt timestamp before saving
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
@@ -57,4 +64,4 @@ userSchema.virtual("fullName").get(function () {
 userSchema.set("toJSON", { virtuals: true });
 userSchema.set("toObject", { virtuals: true });
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

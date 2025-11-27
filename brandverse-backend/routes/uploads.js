@@ -1,10 +1,9 @@
+import express from "express";
+import { getUploadedFile, saveUploadFile } from "../controllers/uploadController.js";
 
-const express = require("express");
 const router = express.Router();
-const uploadController = require("../controllers/uploadController");
 
-router.get("/signature", uploadController.getUploadedFile);
-router.post("/destroy", uploadController.saveUploadFile);
+router.get("/signature", getUploadedFile);
+router.post("/destroy", saveUploadFile);
 
-
-module.exports = router;
+export default router;

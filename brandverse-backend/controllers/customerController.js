@@ -1,7 +1,7 @@
-const User = require("../models/User");
+import User from "../models/User.js";
 
 // Update customer profile
-const updateCustomer = async (req, res) => {
+export const updateCustomer = async (req, res) => {
   const { id } = req.params;
   const { firstName, lastName, phone, address } = req.body;
 
@@ -18,7 +18,6 @@ const updateCustomer = async (req, res) => {
 
     // Update address
     if (address) {
-      // You can store it as a single string or parse it
       user.addresses = [
         {
           street: address,
@@ -34,5 +33,3 @@ const updateCustomer = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-module.exports = { updateCustomer };

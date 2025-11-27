@@ -81,16 +81,14 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate payment proof for bank transfer
+  
     if (formData.paymentMethod === "bank" && !paymentProof) {
       alert("Please upload payment proof for bank transfer");
       return;
     }
-
+  
     setLoader(true);
-
-    // Prepare order data
+  
     const orderData = {
       customer: {
         firstName: formData.firstName,
@@ -105,57 +103,40 @@ function Checkout() {
         },
       },
       paymentMethod: formData.paymentMethod,
-      status: "processing",
       items: cartItemsForCheckout(),
       totalAmount: subtotal + shippingCost,
     };
-
-    // Create FormData object for multipart/form-data
+  
     const formDataToSend = new FormData();
-
-    // Append order data as JSON string
     formDataToSend.append("orderData", JSON.stringify(orderData));
-
-    // Append payment proof image if exists
+  
     if (paymentProof) {
-      formDataToSend.append("paymentProof", paymentProof);
+      formDataToSend.append("paymentProof", paymentProof); // must match multer name
     }
-
-    const BACKEND_URL = import.meta.env.VITE_API_URL;
-
+  
     try {
       const response = await fetch(`${BACKEND_URL}/checkout`, {
         method: "POST",
         body: formDataToSend,
-        // Don't set Content-Type header - browser will set it automatically with boundary
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to place order");
-      }
-
+  
       const data = await response.json();
-
-      // Clear cart after successful order
-      localStorage.removeItem("cart");
-
-      // Redirect to success page or show confirmation
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(`Order placed successfully! Order ID: ${data.orderId}`);
-        window.location.href = "/";
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to place order");
       }
-
+  
+      localStorage.removeItem("cart");
+      alert(`Order placed successfully! Order ID: ${data.orderId}`);
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Order Error:", err);
+      alert(err.message);
+    } finally {
       setLoader(false);
-    } catch (error) {
-      console.error("Error placing order:", error);
-      setLoader(false);
-      alert(error.message || "Failed to place order. Please try again.");
     }
   };
-
+  
   return (
     <section className="bg-white py-16">
       <div className="container-custom">

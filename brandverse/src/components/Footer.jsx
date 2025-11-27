@@ -3,7 +3,7 @@ function Footer() {
     { label: "Home", href: "/" },
     { label: "Shop", href: "/category" },
     { label: "Cart", href: "/cart" },
-    { label: "My Account", href: "/profile" },
+    { label: "Profile", href: "/profile" },
   ];
 
   return (

@@ -1,5 +1,6 @@
 import { Clock, Shield, ShoppingCart } from "lucide-react";
 import { FiRefreshCcw, FiShield, FiTag, FiTruck } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const features = [
   {
@@ -40,8 +41,9 @@ function FeatureSection() {
               fast delivery — we’re committed to giving you a seamless shopping experience.
             </p>
             <div className="mt-8 flex gap-4">
-              <button className="btn btn-primary">Start Shopping</button>
-              <button className="btn btn-secondary">View Categories</button>
+              <Link to="/category">
+                <button className="btn btn-primary">Start Shopping</button>
+              </Link>
             </div>
           </div>
 
