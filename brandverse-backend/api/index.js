@@ -29,16 +29,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Swagger: read JSON manually to avoid import issues
+// Read swagger JSON manually
 const swaggerFilePath = path.resolve("./swagger-output.json");
-const swaggerFile = JSON.parse(fs.readFileSync(swaggerFilePath, "utf-8"));
+const swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, "utf-8"));
 
-app.use("/swagger.json", (req, res) => {
-  res.json(swaggerFile);
-});
-
-// Swagger docs
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile, {
+// Swagger routes
+app.use("/swagger.json", (req, res) => res.json(swaggerDocument));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
   explorer: true,
   customCss: ".swagger-ui .topbar { display: none }",
   customSiteTitle: "Brand Verse API Docs",
