@@ -63,7 +63,7 @@ function AdminLogin() {
 
           <button
             type="submit"
-            className=" w-full px-8 py-3 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className=" w-full px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
             Sign in
           </button>

@@ -20,6 +20,8 @@ function Checkout() {
   const [activeAccordion, setActiveAccordion] = useState("cod");
   const [paymentProof, setPaymentProof] = useState(null);
   const shippingCost = 0;
+  
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];

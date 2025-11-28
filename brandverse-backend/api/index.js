@@ -58,7 +58,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/customer", customerRoutes);
-app.use("/api/orders", orderRoutes);
+app.use("/api", orderRoutes);
 
 // Root
 app.get("/", (req, res) => {

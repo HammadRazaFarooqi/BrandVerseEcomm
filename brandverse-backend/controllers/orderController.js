@@ -84,51 +84,21 @@ export const createOrder = async (req, res) => {
 
 export const getAllOrders = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    // Filter options
-    const filter = {};
-    if (req.query.status) {
-      filter.status = req.query.status;
-    }
-    if (req.query.paymentMethod) {
-      filter.paymentMethod = req.query.paymentMethod;
-    }
-    if (req.query.search) {
-      filter.$or = [
-        { orderNumber: { $regex: req.query.search, $options: 'i' } },
-        { 'customer.email': { $regex: req.query.search, $options: 'i' } },
-        { 'customer.phone': { $regex: req.query.search, $options: 'i' } }
-      ];
-    }
-
-    const orders = await Order.find(filter)
+    const orders = await Order.find()
       .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate('items._id', 'title price images');
-
-    const totalOrders = await Order.countDocuments(filter);
+      .populate("items._id", "title price images");
 
     res.status(200).json({
       success: true,
       data: orders,
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(totalOrders / limit),
-        totalOrders,
-        limit
-      }
+      message: "Orders fetched successfully",
     });
-
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error("Error fetching orders:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch orders',
-      error: error.message
+      message: "Failed to fetch orders",
+      error: error.message,
     });
   }
 };
@@ -175,11 +145,7 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
 
-    const order = await Order.findByIdAndUpdate(
-      orderId,
-      { status },
-      { new: true, runValidators: true }
-    );
+    const order = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
 
     if (!order) {
       return res.status(404).json({

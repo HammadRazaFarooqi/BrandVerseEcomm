@@ -23,8 +23,8 @@ function AdminLayout() {
     { path: '/admin', icon: BiCategory, label: 'Category' },
     { path: '/admin/products', icon: FiBox, label: 'Products' },
     { path: '/admin/orders', icon: FiShoppingBag, label: 'Orders' },
-    { path: '/admin/customers', icon: FiUsers, label: 'Customers' },
-    { path: '/admin/promotions', icon: FiSpeaker, label: 'Promotions' },
+    // { path: '/admin/customers', icon: FiUsers, label: 'Customers' },
+    // { path: '/admin/promotions', icon: FiSpeaker, label: 'Promotions' },
     // { path: '/admin/reports', icon: FiBarChart2, label: 'Reports' },
     // { path: '/admin/settings', icon: FiSettings, label: 'Settings' },
   ];

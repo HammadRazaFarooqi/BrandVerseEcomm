@@ -29,10 +29,10 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Generate order number before saving
-orderSchema.pre('save', async function(next) {
+orderSchema.pre('save', function(next) {
   if (!this.orderNumber) {
-    const count = await mongoose.model('Order').countDocuments();
-    this.orderNumber = `ORD-${Date.now()}-${count + 1}`;
+    const random = Math.floor(Math.random() * 9000 + 1000); // 4-digit random
+    this.orderNumber = `ORD-${Date.now()}-${random}`;
   }
   next();
 });

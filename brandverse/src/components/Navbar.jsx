@@ -249,7 +249,7 @@ function Navbar() {
             <div className="flex flex-1 max-w-2xl gap-2 sm:gap-3 mx-4 relative" ref={searchRef}>
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search Categories..."
                 className="flex-1 rounded-full border border-surface-muted px-4 py-2 focus:outline-none"
                 value={searchQuery}
                 onChange={(e) => {
