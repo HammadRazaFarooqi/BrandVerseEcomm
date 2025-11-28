@@ -80,7 +80,7 @@ function Register() {
           localStorage.removeItem("redirectAfterLogin"); // Clear after use
           window.dispatchEvent(new Event("storage")); // Notify other components
           setLoader(false);
-          navigate('/');
+          navigate('/login');
         }, 2000);
       }
     } catch (error) {

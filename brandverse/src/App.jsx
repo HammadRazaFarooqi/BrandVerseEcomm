@@ -30,6 +30,7 @@ import ProtectedRoute from "./core/protected-route";
 import CheckoutSuccess from "./pages/checkoutSuccess";
 import ForgetPassword from "./pages/ForgetPassword";
 import PromotionsManager from "./admin/pages/PromotionManagement";
+import CustomerSupport from "./pages/CustomerSupport";
 
 function ClientLayout() {
   return (
@@ -105,6 +106,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="forget-password" element={<ForgetPassword />} />
+          <Route path="support" element={<CustomerSupport/>} />
           <Route path="order/:orderId" element={<OrderDetail />} />
           <Route
             path="profile"

@@ -285,10 +285,11 @@ function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
+                <Link to="/support">
               <button className="flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
                 <RiCustomerService2Line size={20} />
               </button>
-
+                </Link>
               <button className="relative flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
                 <FiBell size={20} />
                 <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />

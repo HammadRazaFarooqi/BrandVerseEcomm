@@ -7,7 +7,7 @@ function ProfileOrder() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const BACKEND_URL = "http://localhost:3000/api"; // Aapka base API URL
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
 
   // Helper function to get logged-in user's email
   const getCustomerEmail = () => {
