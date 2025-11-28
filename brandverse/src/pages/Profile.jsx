@@ -183,7 +183,7 @@ function Profile() {
       <section className="py-20 bg-black text-white">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl text-white font-bold mb-4">
               Join Our Style Community
             </h2>
             <p className="mb-8">
