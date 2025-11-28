@@ -17,7 +17,7 @@ const router = express.Router();
 router.post("/checkout", upload.single("paymentProof"), createOrder);
 
 // Static routes FIRST
-router.get("/customer", getOrdersByCustomerEmail);
+router.get("/orders/customer", getOrdersByCustomerEmail);
 
 // Admin routes
 router.get("/admin/orders", getAllOrders);
