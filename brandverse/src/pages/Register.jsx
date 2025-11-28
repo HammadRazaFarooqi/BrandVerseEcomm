@@ -196,22 +196,6 @@ function Register() {
               />
             </div>
 
-            <label className="flex items-center gap-3 text-sm text-ink-muted">
-              <input
-                id="terms"
-                name="terms"
-                type="checkbox"
-                required
-                checked={formData.terms}
-                onChange={handleChange}
-                className="accent-ink"
-              />
-              I agree to the{" "}
-              <a href="#" className="text-ink">
-                Terms and Conditions
-              </a>
-            </label>
-
             <button type="submit" className="btn btn-primary w-full">
               {loader ? "Creating Account..." : "Create Account"}
             </button>

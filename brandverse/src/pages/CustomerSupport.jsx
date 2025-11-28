@@ -73,7 +73,7 @@ export default function CustomerSupport() {
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
                                             placeholder="Your name"
-                                            className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-white placeholder-white/50 focus:outline-none"
+                                            className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                             required
                                         />
                                     </label>
@@ -85,7 +85,7 @@ export default function CustomerSupport() {
                                             value={customerEmail}
                                             onChange={(e) => setCustomerEmail(e.target.value)}
                                             placeholder="you@example.com"
-                                            className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-white placeholder-white/50 focus:outline-none"
+                                            className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                             required
                                         />
                                     </label>
@@ -98,7 +98,7 @@ export default function CustomerSupport() {
                                         value={subject}
                                         onChange={(e) => setSubject(e.target.value)}
                                         placeholder="What is this about?"
-                                        className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-white placeholder-white/50 focus:outline-none"
+                                        className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                         required
                                     />
                                 </label>
@@ -110,7 +110,7 @@ export default function CustomerSupport() {
                                         onChange={(e) => setMessage(e.target.value)}
                                         rows={6}
                                         placeholder="Describe your issue or question..."
-                                        className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-white placeholder-white/50 focus:outline-none"
+                                        className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                         required
                                     />
                                 </label>

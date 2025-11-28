@@ -58,14 +58,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route
-            index
-            element={
-              <ProtectedRoute>
-                <CategoryManagement />
-              </ProtectedRoute>
-            }
-          />
+          <Route index element={<CategoryManagement />} />
           <Route path="category" element={<CategoryManagement />} />
           <Route path="products" element={<ProductManagement />} />
           <Route path="orders" element={<OrderManagement />} />
@@ -76,37 +69,16 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
 
-        {/* Client Routes */}
-        <Route path="/" element={<ClientLayout />}>
+        {/* Client Routes WITH Navbar/Footer */}
+        <Route element={<ClientLayout />}>
           <Route index element={<Home />} />
           <Route path="category" element={<Categories />} />
           <Route path="category/:category" element={<Categories />} />
           <Route path="product/:id" element={<ProductDetail />} />
-          <Route
-            path="cart"
-            element={
-              // <ProtectedRoute>
-              <Cart />
-              // </ProtectedRoute>
-            }
-          />
-          <Route
-            path="checkout"
-            element={
-              // <ProtectedRoute>
-              <Checkout />
-              // </ProtectedRoute>
-            }
-          />
-          <Route
-            path="checkout-success"
-            element={<CheckoutSuccess />}
-          />
-
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="forget-password" element={<ForgetPassword />} />
-          <Route path="support" element={<CustomerSupport/>} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="checkout-success" element={<CheckoutSuccess />} />
+          <Route path="support" element={<CustomerSupport />} />
           <Route path="order/:orderId" element={<OrderDetail />} />
           <Route
             path="profile"
@@ -117,9 +89,15 @@ function App() {
             }
           />
         </Route>
+
+        {/* Client Routes WITHOUT Navbar/Footer */}
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="forget-password" element={<ForgetPassword />} />
       </Routes>
     </Router>
   );
 }
+
 
 export default App;

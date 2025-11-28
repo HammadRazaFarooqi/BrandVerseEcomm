@@ -129,8 +129,7 @@ function Checkout() {
       }
   
       localStorage.removeItem("cart");
-      alert(`Order placed successfully! Order ID: ${data.orderId}`);
-      window.location.href = "/";
+      window.location.href = "/checkout-success";
     } catch (err) {
       console.error("Order Error:", err);
       alert(err.message);

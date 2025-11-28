@@ -75,22 +75,12 @@ function CheckoutSuccess() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/"
-              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition shadow-sm"
+              className="px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-black transition shadow-sm"
             >
               Return to Home
             </Link>
-            {/* <Link
-              to="/order-management"
-              className="px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition shadow-sm"
-            >
-              View All Orders
-            </Link> */}
           </div>
         </div>
-
-        {/* <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>Need help? <Link to="/contact" className="text-blue-600 hover:underline">Contact our support team</Link></p>
-        </div> */}
       </div>
     </div>
   );

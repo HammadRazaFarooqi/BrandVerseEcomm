@@ -68,21 +68,15 @@ function HeroSection() {
     <div className="relative z-10 flex min-h-[90vh] flex-col justify-center py-20">
       <div className="container-custom grid gap-12 lg:grid-cols-2 lg:items-center">
         <div className="space-y-8 text-left">
-        <p className="eyebrow">Everything you love — in one store</p>
-<h1 className="text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
-  Shop <span className="text-accent-soft">smart</span>, shop{" "}
-  <span className="text-accent-soft">better</span>.
-</h1>
-<p className="text-lg text-white/80 lg:text-xl">
-  Explore trending products across electronics, fashion, beauty, kitchen,
-  gadgets and more — premium quality with exclusive deals.
-</p>
-<div className="flex flex-col gap-3 sm:flex-row">
-  <Link to="/products" className="btn btn-primary bg-white text-ink">
-    Start Shopping
-  </Link>
-</div>
-
+          <p className="eyebrow">Everything you love — in one store</p>
+          <h1 className="text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
+            Shop <span className="text-accent-soft">smart</span>, shop{" "}
+            <span className="text-accent-soft">better</span>.
+          </h1>
+          <p className="text-lg text-white/80 lg:text-xl">
+            Explore trending products across electronics, fashion, beauty, kitchen,
+            gadgets and more — premium quality with exclusive deals.
+          </p>
           <div className="grid gap-6 sm:grid-cols-3">
             {heroStats.map((stat) => (
               <div key={stat.label} className="rounded-2xl bg-white/10 p-4">
@@ -105,12 +99,12 @@ function HeroSection() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8 text-white">
-            <p className="text-sm uppercase tracking-[0.4em] text-white/70">
-  Top Picks
-</p>
-<p className="text-2xl font-semibold">
-  Best deals, daily.
-</p>
+              <p className="text-sm uppercase tracking-[0.4em] text-white/70">
+                Top Picks
+              </p>
+              <p className="text-2xl font-semibold">
+                Best deals, daily.
+              </p>
 
             </div>
           </div>
@@ -154,11 +148,10 @@ function HeroSection() {
         {promotions.map((promo, index) => (
           <div
             key={promo.id}
-            className={`absolute inset-0 transition-opacity duration-700 ${
-              index === currentSlide
+            className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide
                 ? "opacity-100"
                 : "pointer-events-none opacity-0"
-            }`}
+              }`}
           >
             {renderContent(promo.image)}
           </div>
@@ -187,11 +180,10 @@ function HeroSection() {
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    currentSlide === index
+                  className={`h-2 rounded-full transition-all ${currentSlide === index
                       ? "w-8 bg-white"
                       : "w-2 bg-white/40 hover:bg-white/70"
-                  }`}
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}

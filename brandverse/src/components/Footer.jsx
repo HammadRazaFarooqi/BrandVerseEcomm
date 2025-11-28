@@ -14,9 +14,6 @@ function Footer() {
             <p className="text-xs uppercase tracking-[0.3em] text-white/60">
               Brand Verse
             </p>
-            <h3 className="mt-3 text-3xl font-semibold">
-              M&A TRADAX LIMITED
-            </h3>
             <p className="mt-4 text-white/70">
               69 Wilshaw Lane, Ashton-Under-Lyne, OL7 9QX, United Kingdom
             </p>

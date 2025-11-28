@@ -166,9 +166,8 @@ function Categories() {
 
         <div className="mt-10 flex flex-col gap-8 md:flex-row">
           <div
-            className={`${
-              showFilters ? "block" : "hidden"
-            } md:block w-full md:w-72`}
+            className={`${showFilters ? "block" : "hidden"
+              } md:block w-full md:w-72`}
           >
             <div className="glass-card rounded-3xl p-6">
               <p className="text-sm uppercase tracking-[0.3em] text-ink-muted">
@@ -273,20 +272,26 @@ function Categories() {
                           <h3 className="text-xl font-semibold text-ink">
                             {item.title}
                           </h3>
-                          {item.discountRate > 0 ? (
-                            <div className="mt-3 flex items-center gap-3 text-sm">
-                              <span className="text-ink-muted line-through">
+                          {item.discountedPrice && item.discountedPrice < item.price ? (
+                            <>
+                            <div className="mt-3 flex items-center gap-2">
+                              <span className="text-ink-muted line-through mr-2">
                                 PKR {item.price}
                               </span>
                               <span className="text-xl font-semibold text-ink">
                                 PKR {item.discountedPrice}
                               </span>
+
                             </div>
+                              <span className="inline-block rounded-lg bg-black px-3 mr-5 text-xs font-bold text-white uppercase tracking-wide">
+                                Save {Math.round(((item.price - item.discountedPrice) / item.price) * 100)}%
+                              </span></>
                           ) : (
                             <p className="mt-3 text-xl font-semibold text-ink">
                               PKR {item.price}
                             </p>
                           )}
+
                           <span className="mt-4 inline-flex text-xs uppercase tracking-[0.3em] text-ink-muted">
                             View details
                           </span>

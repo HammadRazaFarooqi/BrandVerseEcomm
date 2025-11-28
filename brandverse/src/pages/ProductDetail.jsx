@@ -57,6 +57,14 @@ function ProductDetail() {
 
   // Add to cart
   const handleAddToCart = () => {
+    const isLogin = localStorage.getItem("isLogin"); // check if user is logged in
+
+    if (!isLogin) {
+      toast.info("Please login first!");
+      navigate("/login");
+      return; // stop execution
+    }
+
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingIndex = cart.findIndex((item) => item._id === selectedProduct._id);
 
@@ -72,10 +80,22 @@ function ProductDetail() {
 
   // Buy now
   const handleBuyNow = () => {
-    localStorage.setItem("cart", JSON.stringify([{ ...selectedProduct, quantity }]));
+    const isLogin = localStorage.getItem("isLogin"); // check if user is logged in
+
+    if (!isLogin) {
+      toast.info("Please login first!");
+      navigate("/login");
+      return; // stop execution
+    }
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify([{ ...selectedProduct, quantity }])
+    );
     toast.success("Product added to cart!");
     navigate("/cart");
   };
+
 
   return (
     <section className="bg-white py-12">
@@ -117,9 +137,8 @@ function ProductDetail() {
                     key={index}
                     src={img}
                     alt={`Product view ${index}`}
-                    className={`h-20 w-full cursor-pointer rounded-2xl object-cover transition ${
-                      selectedImage === img ? "ring-2 ring-ink" : "opacity-80 hover:opacity-100"
-                    }`}
+                    className={`h-20 w-full cursor-pointer rounded-2xl object-cover transition ${selectedImage === img ? "ring-2 ring-ink" : "opacity-80 hover:opacity-100"
+                      }`}
                     onClick={() => handleImageClick(img)}
                   />
                 ))}
@@ -129,12 +148,32 @@ function ProductDetail() {
             {/* Product Details */}
             <div className="space-y-8">
               <div>
-                <h1 className="mt-2 text-4xl font-semibold text-ink">
+                <h1 className="mb-10 text-4xl font-semibold text-ink">
                   {selectedProduct?.title}
                 </h1>
                 <p className="text-3xl font-semibold text-ink mt-2">
-                  PKR {selectedProduct?.discountedPrice || selectedProduct?.price}
+                  {selectedProduct?.discountedPrice && selectedProduct.discountedPrice < selectedProduct.price ? (
+                    <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-ink-muted line-through text-xl">
+                          PKR {selectedProduct.price}
+                        </span>
+                        <span className="text-2xl font-semibold text-ink">
+                          PKR {selectedProduct.discountedPrice}
+                        </span>
+                      </div>
+                      <span className="inline-block rounded-lg bg-black px-3 py-1 ml-6 text-xs font-bold text-white uppercase tracking-wide">
+                        Save {Math.round(((selectedProduct.price - selectedProduct.discountedPrice) / selectedProduct.price) * 100)}%
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="mt-3 text-2xl font-semibold text-ink">
+                      PKR {selectedProduct.price}
+                    </span>
+                  )}
                 </p>
+
+
               </div>
 
               <div>

@@ -28,7 +28,7 @@ function AdminLayout() {
     // { path: '/admin/reports', icon: FiBarChart2, label: 'Reports' },
     // { path: '/admin/settings', icon: FiSettings, label: 'Settings' },
   ];
-  
+
   const handleLogout = async (e) => {
     e.preventDefault();
 
@@ -56,15 +56,19 @@ function AdminLayout() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 bg-white shadow-md`}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 bg-white shadow-md`}
       >
         <div className="h-full flex flex-col">
           {/* Logo */}
           <div className="p-6 border-b">
             <h1 className="text-2xl font-serif text-primary">Brand Verse</h1>
             <p className="text-sm text-gray-600">Admin Panel</p>
+            <Link to="/">
+              <button className="mt-5 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200 transition">
+                Back to Site
+              </button>
+            </Link>
           </div>
 
           {/* Navigation */}
@@ -75,11 +79,10 @@ function AdminLayout() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
-                    location.pathname === item.path
-                      ? 'bg-black text-white'
-                      : 'hover:bg-gray-100'
-                  }`}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${location.pathname === item.path
+                    ? 'bg-black text-white'
+                    : 'hover:bg-gray-100'
+                    }`}
                 >
                   <Icon size={20} />
                   {item.label}

@@ -14,6 +14,7 @@ function Navbar() {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [expandedMobileCategory, setExpandedMobileCategory] = useState(null);
+  const [userRole, setUserRole] = useState("");
   const searchRef = useRef(null);
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
@@ -24,7 +25,7 @@ function Navbar() {
     if (!user) {
       return "";
     }
-    
+
     // Try different field combinations
     const fields = [
       user.fullName,
@@ -43,7 +44,7 @@ function Navbar() {
       if (field && typeof field === 'string' && field.trim()) {
         const trimmed = field.trim();
         const words = trimmed.split(/\s+/);
-        
+
         if (words.length >= 2) {
           // Multiple words: first letter of first word + first letter of last word
           return (words[0][0] + words[words.length - 1][0]).toUpperCase();
@@ -60,18 +61,18 @@ function Navbar() {
   const loadUserData = () => {
     try {
       const storedData = localStorage.getItem("isLogin");
-      
+  
       if (!storedData) {
         setIsLoggedIn(false);
         setInitial('');
+        setUserRole("");
         return;
       }
-
+  
       const userData = JSON.parse(storedData);
-      
-      // Handle different possible structures to extract the core user object
+  
+      // Extract user
       let user = null;
-      
       if (userData.user) {
         user = userData.user;
       } else if (userData.data && userData.data.user) {
@@ -79,24 +80,33 @@ function Navbar() {
       } else if (userData.customer) {
         user = userData.customer;
       } else if (userData.email || userData.username) {
-        // Data might be stored directly
         user = userData;
       }
-
+  
+      // Set role AFTER user is defined
+      if (user && user.role) {
+        setUserRole(user.role);
+      } else {
+        setUserRole("");
+      }
+  
+      // Set login and initials
       if (user && (user.email || user.username || user.name || user.fullName)) {
         setIsLoggedIn(true);
-        const userInitials = getInitials(user);
-        setInitial(userInitials);
+        setInitial(getInitials(user));
       } else {
         setIsLoggedIn(false);
         setInitial('');
       }
+  
     } catch (error) {
       console.error("Error loading user data:", error);
       setIsLoggedIn(false);
       setInitial('');
+      setUserRole("");
     }
   };
+  
 
   // Update cart count
   const updateCartCount = () => {
@@ -112,15 +122,15 @@ function Navbar() {
         setIsLoading(true);
         const response = await fetch(`${BACKEND_URL}/category`);
         const data = await response.json();
-        
+
         if (data.success && data.category) {
           const parentCategories = data.category.filter(cat => !cat.parentCategory);
-          
+
           const formattedCategories = parentCategories.map(parentCat => {
             const childCategories = data.category.filter(
               cat => cat.parentCategory === parentCat.name
             );
-            
+
             return {
               _id: parentCat._id,
               name: parentCat.name.charAt(0).toUpperCase() + parentCat.name.slice(1),
@@ -140,7 +150,7 @@ function Navbar() {
               }))
             };
           });
-          
+
           setCategories(formattedCategories);
         }
       } catch (error) {
@@ -165,7 +175,7 @@ function Navbar() {
           allCategories.push({ name: sub.name, slug: sub.slug });
         });
       });
-      
+
       const filtered = allCategories.filter(cat =>
         cat.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -285,15 +295,24 @@ function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-                <Link to="/support">
-              <button className="flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
-                <RiCustomerService2Line size={20} />
-              </button>
-                </Link>
-              <button className="relative flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
-                <FiBell size={20} />
-                <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
-              </button>
+              <Link to="/support">
+                <button className="flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
+                  <RiCustomerService2Line size={20} />
+                </button>
+              </Link>
+              {isLoggedIn && userRole === "admin" ? (
+  <button
+    onClick={() => navigate("/admin")}
+    className="flex items-center gap-1 border border-surface-muted px-3 py-2 rounded-full hover:bg-gray-100 transition"
+  >
+    Admin Dashboard
+  </button>
+) : (
+  <button className="relative flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
+    <FiBell size={20} />
+    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
+  </button>
+)}
 
               <Link
                 to="/cart"
@@ -379,11 +398,10 @@ function Navbar() {
                           onClick={() => toggleMobileSubcategory(category._id)}
                         >
                           <FiChevronDown
-                            className={`transition ${
-                              expandedMobileCategory === category._id
+                            className={`transition ${expandedMobileCategory === category._id
                                 ? "rotate-180"
                                 : ""
-                            }`}
+                              }`}
                           />
                         </button>
                       )}
