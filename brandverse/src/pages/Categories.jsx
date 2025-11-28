@@ -283,7 +283,7 @@ function Categories() {
                               </span>
 
                             </div>
-                              <span className="inline-block rounded-lg bg-black px-3 mr-5 text-xs font-bold text-white uppercase tracking-wide">
+                              <span className="inline-block rounded-lg bg-black mt-4 px-3 mr-20 text-xs font-bold text-white uppercase tracking-wide">
                                 Save {Math.round(((item.price - item.discountedPrice) / item.price) * 100)}%
                               </span></>
                           ) : (
