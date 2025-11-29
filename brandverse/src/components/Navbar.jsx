@@ -272,14 +272,14 @@ function Navbar() {
                 className="btn btn-primary bg-ink text-white px-4 py-2 rounded-full"
                 onClick={() =>
                   searchQuery &&
-                  filteredCategories.length > 0 &&
+                  filteredCategories?.length > 0 &&
                   handleSelectCategory(filteredCategories[0].slug)
                 }
               >
                 Search
               </button>
 
-              {showSuggestions && filteredCategories.length > 0 && (
+              {showSuggestions && filteredCategories?.length > 0 && (
                 <ul className="absolute top-full mt-1 w-full bg-white border border-gray-200 shadow-lg rounded-lg z-50">
                   {filteredCategories.map((cat, index) => (
                     <li
@@ -374,7 +374,7 @@ function Navbar() {
               </div>
               {isLoading ? (
                 <div className="text-ink-muted">Loading categories...</div>
-              ) : categories.length > 0 ? (
+              ) : categories?.length > 0 ? (
                 categories.map((category) => (
                   <div key={category._id}>
                     <div className="flex items-center justify-between rounded-xl px-3 py-2 text-ink">

@@ -143,7 +143,7 @@ function Categories() {
     return (
       currentCategoryData &&
       currentCategoryData.comingSoon === true &&
-      filteredProducts.length === 0
+      filteredProducts?.length === 0
     );
   };
 
@@ -187,7 +187,7 @@ function Categories() {
                       />
                       {category.name}
                     </label>
-                    {category.children && category.children.length > 0 && (
+                    {category?.children && category.children?.length > 0 && (
                       <div className="ml-6 mt-2 space-y-2 text-sm text-ink-muted">
                         {category.children.map((child) => (
                           <label
@@ -247,7 +247,7 @@ function Categories() {
                     back shortly for fresh arrivals.
                   </p>
                 </div>
-              ) : filteredProducts.length === 0 ? (
+              ) : filteredProducts?.length === 0 ? (
                 <p className="text-center text-red-500">
                   {error || "No products found in this category."}
                 </p>
