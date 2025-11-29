@@ -2,6 +2,8 @@ import Order from "../models/Order.js";
 import cloudinary from "../src/config/cloudinary.js";
 import multer from "multer";
 
+import { connectDB } from "../lib/db.js";
+
 // MEMORY STORAGE (Required for Vercel / Serverless)
 const storage = multer.memoryStorage();
 
@@ -21,6 +23,7 @@ export const upload = multer({
 // ---------------- CREATE ORDER -------------------
 export const createOrder = async (req, res) => {
   try {
+    await connectDB();
     // Parse incoming JSON string from FormData
     const orderData = JSON.parse(req.body.orderData);
 
@@ -84,6 +87,7 @@ export const createOrder = async (req, res) => {
 
 export const getAllOrders = async (req, res) => {
   try {
+    await connectDB();
     const orders = await Order.find()
       .sort({ createdAt: -1 })
       .populate("items._id", "title price images");
@@ -106,6 +110,7 @@ export const getAllOrders = async (req, res) => {
 // Get single order by ID
 export const getOrderById = async (req, res) => {
   try {
+    await connectDB();
     const order = await Order.findById(req.params.id)
       .populate('items._id', 'title price images');
 
@@ -134,6 +139,7 @@ export const getOrderById = async (req, res) => {
 // Update order status (for admin)
 export const updateOrderStatus = async (req, res) => {
   try {
+    await connectDB();
     const { status } = req.body;
     const orderId = req.params.id;
 
@@ -173,6 +179,7 @@ export const updateOrderStatus = async (req, res) => {
 // Delete order (for admin)
 export const deleteOrder = async (req, res) => {
   try {
+    await connectDB();
     const order = await Order.findByIdAndDelete(req.params.id);
 
     if (!order) {
@@ -200,6 +207,7 @@ export const deleteOrder = async (req, res) => {
 // Get order statistics (for admin dashboard)
 export const getOrderStats = async (req, res) => {
   try {
+    await connectDB();
     const totalOrders = await Order.countDocuments();
     const processingOrders = await Order.countDocuments({ status: 'processing' });
     const confirmedOrders = await Order.countDocuments({ status: 'confirmed' });
@@ -247,6 +255,7 @@ export const getOrderStats = async (req, res) => {
 // Get orders by Customer Email (For user profile)
 export const getOrdersByCustomerEmail = async (req, res) => {
   try {
+    await connectDB();
     const email = req.query.email; // Expecting email as query parameter
     if (!email) {
       return res.status(400).json({

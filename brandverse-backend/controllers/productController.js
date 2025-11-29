@@ -6,6 +6,8 @@ import Category from "../models/Category.js";
 
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
+import { connectDB } from "../lib/db.js";
+
 // Helper: Build product filters
 const buildProductFilters = (query = {}, options = {}) => {
   const filters = { status: "published" };
@@ -78,6 +80,7 @@ const getSortOption = (sort, hasTextSearch = false) => {
 // CREATE product
 export const createProduct = async (req, res) => {
   try {
+    await connectDB();
     const { category, defaultQuantity, ...rest } = req.body;
     const categoryDoc = await Category.findOne({ name: category });
     if (!categoryDoc)
@@ -110,6 +113,7 @@ export const createProduct = async (req, res) => {
 // GET all products
 export const getAllProducts = async (req, res) => {
   try {
+    await connectDB();
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit, 10) || 12, 100);
     const skip = (page - 1) * limit;
@@ -175,6 +179,7 @@ export const getAllProducts = async (req, res) => {
 // GET product by ID
 export const getProductById = async (req, res) => {
   try {
+    await connectDB();
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
     res.status(200).json({ success: true, product });
@@ -186,6 +191,7 @@ export const getProductById = async (req, res) => {
 // UPDATE product
 export const updateProduct = async (req, res) => {
   try {
+    await connectDB();
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -200,6 +206,7 @@ export const updateProduct = async (req, res) => {
 // DELETE product
 export const deleteProduct = async (req, res) => {
   try {
+    await connectDB();
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
     res.status(200).json({ success: true, message: "Product deleted successfully" });
@@ -211,6 +218,7 @@ export const deleteProduct = async (req, res) => {
 // SEARCH products
 export const searchProducts = async (req, res) => {
   try {
+    await connectDB();
     const { q = "", limit = 8 } = req.query;
     const trimmedQuery = q.trim();
     if (!trimmedQuery) return res.status(200).json({ success: true, results: [] });

@@ -1,6 +1,7 @@
 import express from "express";
 import * as categoryController from "../controllers/categoryController.js";
 import Category from "../models/Category.js";
+import { connectDB } from "../lib/db.js";
 
 const router = express.Router();
 
@@ -8,6 +9,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   console.log(req.body);
   try {
+    await connectDB();
     const category = new Category(req.body);
     await category.save();
     res.status(201).json({ success: true, category });
