@@ -26,23 +26,25 @@ function CategoryManagement() {
     try {
       setLoading(true);
       const response = await fetch(`${BACKEND_URL}/category/`);
-      
-      if (!response.ok) {
-        throw new Error(`API request failed with status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-  
-      if (data.success) {
-        const formattedCategory = data.category.map((category) => ({
-          id: category._id,  // _id is already a string in actual API response
-          name: category.name,
-          status: category.isActive ? "Active" : "In-active",
-          image: category.image || `https://source.unsplash.com/random/100x100/?tuxedo&sig=${category._id}`,
-          description: category.description,
-        }));
-  
-        setCategory(formattedCategory);
+
+      if (response) {
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          const formattedCategory = data.category.map((category) => ({
+            id: category._id,  // _id is already a string in actual API response
+            name: category.name,
+            status: category.isActive ? "Active" : "In-active",
+            image: category.image || `https://source.unsplash.com/random/100x100/?tuxedo&sig=${category._id}`,
+            description: category.description,
+          }));
+
+          setCategory(formattedCategory);
+        }
       } else {
         throw new Error("Failed to fetch categories from API.");
       }
@@ -53,7 +55,7 @@ function CategoryManagement() {
       setLoading(false);
     }
   };
-  
+
 
   const handleDeleteCategory = async (categoryId) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
@@ -236,11 +238,10 @@ function CategoryManagement() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            category.status === "Active"
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${category.status === "Active"
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
-                          }`}
+                            }`}
                         >
                           {category.status}
                         </span>

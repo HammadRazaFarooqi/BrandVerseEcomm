@@ -22,8 +22,10 @@ function FeaturedCategories() {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      const data = await response.json();
-      setCategories(data.category);
+      if(response){
+        const data = await response?.json();
+        setCategories(data?.category);
+      }
     } catch (error) {
       console.warn(`Failed to fetch categories: ${error.message}`);
       setError("Failed to load categories. Please try again later.");

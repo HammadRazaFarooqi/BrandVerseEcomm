@@ -113,7 +113,7 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
         );
       }
 
-      const data = await response.json();
+      const data = await response?.json();
       onAddCategory(data);
       alert(
         `Category ${isUpdateOperation ? "updated" : "added"} successfully!`
@@ -147,7 +147,8 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      const data = await response.json();
+      if(response){
+        const data = await response.json();
       const formattedCategory = data.category
         .filter((category) => category.parentCategory === null)
         .map((category) => ({
@@ -156,6 +157,7 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
           slug: category.slug,
         }));
       setCategoryList(formattedCategory);
+      }
     } catch (error) {
       console.warn(`Failed to fetch category: ${error.message}`);
     }
@@ -164,9 +166,10 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
   const getCategoryById = async (id) => {
     try {
       const response = await fetch(`${BACKEND_URL}/category/${id}`);
+      if(response){
       if (!response.ok) throw new Error("Failed to fetch category data");
 
-      const data = await response.json();
+        const data = await response.json();
 
       setCategoryData({
         name: data.category.name || "",
@@ -181,6 +184,7 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
       });
 
       setImagePreview(data.category.image || null);
+      }
     } catch (error) {
       console.error("Error fetching category data:", error);
       alert("Failed to fetch category details. Please try again.");

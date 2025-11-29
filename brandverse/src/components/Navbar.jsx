@@ -61,16 +61,16 @@ function Navbar() {
   const loadUserData = () => {
     try {
       const storedData = localStorage.getItem("isLogin");
-  
+
       if (!storedData) {
         setIsLoggedIn(false);
         setInitial('');
         setUserRole("");
         return;
       }
-  
+
       const userData = JSON.parse(storedData);
-  
+
       // Extract user
       let user = null;
       if (userData.user) {
@@ -82,14 +82,14 @@ function Navbar() {
       } else if (userData.email || userData.username) {
         user = userData;
       }
-  
+
       // Set role AFTER user is defined
       if (user && user.role) {
         setUserRole(user.role);
       } else {
         setUserRole("");
       }
-  
+
       // Set login and initials
       if (user && (user.email || user.username || user.name || user.fullName)) {
         setIsLoggedIn(true);
@@ -98,7 +98,7 @@ function Navbar() {
         setIsLoggedIn(false);
         setInitial('');
       }
-  
+
     } catch (error) {
       console.error("Error loading user data:", error);
       setIsLoggedIn(false);
@@ -106,7 +106,7 @@ function Navbar() {
       setUserRole("");
     }
   };
-  
+
 
   // Update cart count
   const updateCartCount = () => {
@@ -121,37 +121,39 @@ function Navbar() {
       try {
         setIsLoading(true);
         const response = await fetch(`${BACKEND_URL}/category`);
-        const data = await response.json();
+        if (response) {
+          const data = await response.json();
 
-        if (data.success && data.category) {
-          const parentCategories = data.category.filter(cat => !cat.parentCategory);
+          if (data.success && data.category) {
+            const parentCategories = data.category.filter(cat => !cat.parentCategory);
 
-          const formattedCategories = parentCategories.map(parentCat => {
-            const childCategories = data.category.filter(
-              cat => cat.parentCategory === parentCat.name
-            );
+            const formattedCategories = parentCategories.map(parentCat => {
+              const childCategories = data.category.filter(
+                cat => cat.parentCategory === parentCat.name
+              );
 
-            return {
-              _id: parentCat._id,
-              name: parentCat.name.charAt(0).toUpperCase() + parentCat.name.slice(1),
-              path: `/category/${parentCat.slug}`,
-              slug: parentCat.slug,
-              image: parentCat.image,
-              description: parentCat.description,
-              comingSoon: parentCat.comingSoon,
-              subcategories: childCategories.map(childCat => ({
-                _id: childCat._id,
-                name: childCat.name.charAt(0).toUpperCase() + childCat.name.slice(1),
-                path: `/category/${childCat.slug}`,
-                slug: childCat.slug,
-                image: childCat.image,
-                description: childCat.description,
-                comingSoon: childCat.comingSoon
-              }))
-            };
-          });
+              return {
+                _id: parentCat._id,
+                name: parentCat.name.charAt(0).toUpperCase() + parentCat.name.slice(1),
+                path: `/category/${parentCat.slug}`,
+                slug: parentCat.slug,
+                image: parentCat.image,
+                description: parentCat.description,
+                comingSoon: parentCat.comingSoon,
+                subcategories: childCategories.map(childCat => ({
+                  _id: childCat._id,
+                  name: childCat.name.charAt(0).toUpperCase() + childCat.name.slice(1),
+                  path: `/category/${childCat.slug}`,
+                  slug: childCat.slug,
+                  image: childCat.image,
+                  description: childCat.description,
+                  comingSoon: childCat.comingSoon
+                }))
+              };
+            });
 
-          setCategories(formattedCategories);
+            setCategories(formattedCategories);
+          }
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -301,18 +303,18 @@ function Navbar() {
                 </button>
               </Link>
               {isLoggedIn && userRole === "admin" ? (
-  <button
-    onClick={() => navigate("/admin")}
-    className="flex items-center gap-1 border border-surface-muted px-3 py-2 rounded-full hover:bg-gray-100 transition"
-  >
-    Admin Dashboard
-  </button>
-) : (
-  <button className="relative flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
-    <FiBell size={20} />
-    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
-  </button>
-)}
+                <button
+                  onClick={() => navigate("/admin")}
+                  className="flex items-center gap-1 border border-surface-muted px-3 py-2 rounded-full hover:bg-gray-100 transition"
+                >
+                  Admin Dashboard
+                </button>
+              ) : (
+                <button className="relative flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
+                  <FiBell size={20} />
+                  <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
+                </button>
+              )}
 
               <Link
                 to="/cart"
@@ -399,8 +401,8 @@ function Navbar() {
                         >
                           <FiChevronDown
                             className={`transition ${expandedMobileCategory === category._id
-                                ? "rotate-180"
-                                : ""
+                              ? "rotate-180"
+                              : ""
                               }`}
                           />
                         </button>

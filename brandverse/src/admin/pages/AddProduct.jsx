@@ -260,15 +260,17 @@ const AddProductForm = ({ onAddProduct, productID }) => {
         body: JSON.stringify(formattedData),
       });
 
-      if (!response.ok) {
-        throw new Error(
-          `Failed to ${isUpdateOperation ? "update" : "add"} product`
-        );
-      }
+      if (response) {
+        if (!response.ok) {
+          throw new Error(
+            `Failed to ${isUpdateOperation ? "update" : "add"} product`
+          );
+        }
 
-      const data = await response.json();
-      onAddProduct(data); // Notify parent component
-      alert(`Product ${isUpdateOperation ? "updated" : "added"} successfully!`);
+        const data = await response.json();
+        onAddProduct(data); // Notify parent component
+        alert(`Product ${isUpdateOperation ? "updated" : "added"} successfully!`);
+      }
     } catch (error) {
       console.error(
         `Error ${productID ? "updating" : "adding"} product:`,
@@ -298,22 +300,24 @@ const AddProductForm = ({ onAddProduct, productID }) => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      const data = await response.json();
-      const formattedCategory = data.category.map((category) => ({
-        id: category._id,
-        name: category.name,
-        slug: category.slug,
-      }));
-      if (!productID) {
-        setProductData((prevData) => ({
-          ...prevData,
-          category:
-            formattedCategory && formattedCategory[0]
-              ? formattedCategory[0].slug
-              : "",
+      if (response) {
+        const data = await response.json();
+        const formattedCategory = data.category.map((category) => ({
+          id: category._id,
+          name: category.name,
+          slug: category.slug,
         }));
+        if (!productID) {
+          setProductData((prevData) => ({
+            ...prevData,
+            category:
+              formattedCategory && formattedCategory[0]
+                ? formattedCategory[0].slug
+                : "",
+          }));
+        }
+        setCategoryList(formattedCategory);
       }
-      setCategoryList(formattedCategory);
     } catch (error) {
       console.warn(`Failed to fetch category: ${error.message}`);
     }

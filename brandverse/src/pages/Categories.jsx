@@ -41,59 +41,61 @@ function Categories() {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      const data = await response.json();
+      if (response) {
+        const data = await response.json();
 
-      // Create a flat list of all categories with proper mappings
-      const formattedCategory = [
-        { id: "all", name: "All", slug: "all" }, // Ensure this is the first item
-        ...data.category.map((category) => ({
-          id: category._id,
-          name: category.name,
-          slug: category.slug,
-          parentCategory: category.parentCategory,
-          comingSoon: category.comingSoon || false,
-        })),
-      ];
-
-      setCategoryList(formattedCategory);
-
-      // Create tree structure
-      const buildCategoryTree = () => {
-        // Find root level categories (those with no parent or parent is null)
-        const rootCategories = [
-          { id: "all", name: "All", slug: "all" }, // Always include "All" at the root
-          ...data.category
-            .filter((cat) => !cat.parentCategory)
-            .map((cat) => ({
-              id: cat._id,
-              name: cat.name,
-              slug: cat.slug,
-              comingSoon: cat.comingSoon || false,
-              parentCategory: null,
-              children: [],
-            })),
+        // Create a flat list of all categories with proper mappings
+        const formattedCategory = [
+          { id: "all", name: "All", slug: "all" }, // Ensure this is the first item
+          ...data.category.map((category) => ({
+            id: category._id,
+            name: category.name,
+            slug: category.slug,
+            parentCategory: category.parentCategory,
+            comingSoon: category.comingSoon || false,
+          })),
         ];
 
-        // Find children for each parent category
-        rootCategories.forEach((parent) => {
-          if (parent.id !== "all") {
-            // Skip "All" category
-            parent.children = data.category
-              .filter((cat) => cat.parentCategory === parent.id)
-              .map((child) => ({
-                id: child._id,
-                name: child.name,
-                slug: child.slug,
-                comingSoon: child.comingSoon || false,
-                parentCategory: child.parentCategory,
-              }));
-          }
-        });
+        setCategoryList(formattedCategory);
 
-        return rootCategories;
-      };
+        // Create tree structure
+        const buildCategoryTree = () => {
+          // Find root level categories (those with no parent or parent is null)
+          const rootCategories = [
+            { id: "all", name: "All", slug: "all" }, // Always include "All" at the root
+            ...data.category
+              .filter((cat) => !cat.parentCategory)
+              .map((cat) => ({
+                id: cat._id,
+                name: cat.name,
+                slug: cat.slug,
+                comingSoon: cat.comingSoon || false,
+                parentCategory: null,
+                children: [],
+              })),
+          ];
 
-      setCategoryTree(buildCategoryTree());
+          // Find children for each parent category
+          rootCategories.forEach((parent) => {
+            if (parent.id !== "all") {
+              // Skip "All" category
+              parent.children = data.category
+                .filter((cat) => cat.parentCategory === parent.id)
+                .map((child) => ({
+                  id: child._id,
+                  name: child.name,
+                  slug: child.slug,
+                  comingSoon: child.comingSoon || false,
+                  parentCategory: child.parentCategory,
+                }));
+            }
+          });
+
+          return rootCategories;
+        };
+
+        setCategoryTree(buildCategoryTree());
+      }
     } catch (error) {
       console.warn(`Failed to fetch categories: ${error.message}`);
       setError("Failed to load categories. Please try again later.");
@@ -274,15 +276,15 @@ function Categories() {
                           </h3>
                           {item.discountedPrice && item.discountedPrice < item.price ? (
                             <>
-                            <div className="mt-3 flex items-center gap-2">
-                              <span className="text-ink-muted line-through mr-2">
-                                PKR {item.price}
-                              </span>
-                              <span className="text-xl font-semibold text-ink">
-                                PKR {item.discountedPrice}
-                              </span>
+                              <div className="mt-3 flex items-center gap-2">
+                                <span className="text-ink-muted line-through mr-2">
+                                  PKR {item.price}
+                                </span>
+                                <span className="text-xl font-semibold text-ink">
+                                  PKR {item.discountedPrice}
+                                </span>
 
-                            </div>
+                              </div>
                               <span className="inline-block rounded-lg bg-black mt-4 px-3 mr-20 text-xs font-bold text-white uppercase tracking-wide">
                                 Save {Math.round(((item.price - item.discountedPrice) / item.price) * 100)}%
                               </span></>
