@@ -14,55 +14,6 @@ function HeroSection() {
   const [error, setError] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const BACKEND_URL = import.meta.env.VITE_API_URL;
-
-  // useEffect(() => {
-  //   const fetchPromotions = async () => {
-  //     try {
-  //       const response = await fetch(`${BACKEND_URL}/promotions`);
-
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch promotions");
-  //       }
-
-  //       const data = await response.json();
-  //       setPromotions(data.promotion || []);
-  //       setLoading(false);
-  //     } catch (err) {
-  //       console.error("Error fetching promotions:", err);
-  //       setError("Failed to load promotional content");
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchPromotions();
-  // }, [BACKEND_URL]);
-
-  useEffect(() => {
-    // Auto-advance slides
-    if (promotions.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % promotions.length);
-    }, 5000); // Change slide every 5 seconds
-
-    return () => clearInterval(interval);
-  }, [promotions.length]);
-
-  const goToSlide = useCallback((index) => {
-    setCurrentSlide(index);
-  }, []);
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % promotions.length);
-  }, [promotions.length]);
-
-  const prevSlide = useCallback(() => {
-    setCurrentSlide(
-      (prev) => (prev - 1 + promotions.length) % promotions.length
-    );
-  }, [promotions.length]);
-
   // Don't render anything if there are no promotions
   const renderContent = (imageUrl) => (
     <div className="relative z-10 flex min-h-[90vh] flex-col justify-center py-20">

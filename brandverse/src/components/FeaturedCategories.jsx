@@ -42,7 +42,7 @@ function FeaturedCategories() {
           </p>
         </div>
 
-        {categories.length === 0 && !error ? (
+        {categories?.length === 0 && !error ? (
           // Skeleton Loader
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, idx) => (
@@ -52,7 +52,7 @@ function FeaturedCategories() {
               />
             ))}
           </div>
-        ) : categories.length === 0 && error ? (
+        ) : categories?.length === 0 && error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : (
           <div className="relative">
