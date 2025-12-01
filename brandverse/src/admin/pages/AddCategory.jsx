@@ -248,23 +248,6 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
                   required
                 ></textarea>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="comingSoon"
-                  name="comingSoon"
-                  checked={categoryData.comingSoon}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-red-500 focus:ring-red-400 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="comingSoon"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Mark as &quot;Coming Soon&quot;
-                </label>
-              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

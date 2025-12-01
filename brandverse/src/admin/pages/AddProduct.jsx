@@ -303,10 +303,19 @@ const AddProductForm = ({ onAddProduct, productID }) => {
       if (response) {
         const data = await response.json();
         const formattedCategory = data.category.map((category) => ({
-          id: category._id,
+          id: category._id, // this is what we send
           name: category.name,
           slug: category.slug,
         }));
+
+        setCategoryList(formattedCategory);
+        if (!productID) {
+          setProductData((prevData) => ({
+            ...prevData,
+            category: formattedCategory[0]?._id || "", // default to first category ID
+          }));
+        }
+
         if (!productID) {
           setProductData((prevData) => ({
             ...prevData,
@@ -445,17 +454,17 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                   </label>
                   <select
                     name="category"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-200 focus:border-red-500"
                     value={productData.category}
                     onChange={handleChange}
                     required
                   >
                     {categoryList.map((category) => (
-                      <option key={category.id} value={category.slug}>
+                      <option key={category.id} value={category.id}>
                         {category.name}
                       </option>
                     ))}
                   </select>
+
                 </div>
               </div>
 

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { FiArrowLeft } from "react-icons/fi";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -7,6 +8,8 @@ function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const imageRef = useRef(null);
+  const location = useLocation();
+
 
   const [selectedProduct, setSelectedProduct] = useState({});
   const [loading, setLoading] = useState(true);
@@ -17,6 +20,8 @@ function ProductDetail() {
 
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isZooming, setIsZooming] = useState(false);
+  const categorySlug = location.state?.category || null;
+
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
@@ -99,6 +104,18 @@ function ProductDetail() {
 
   return (
     <section className="bg-white py-12">
+       <button
+        onClick={() => {
+          if (categorySlug) {
+            navigate(`/category/${categorySlug}`);
+          } else {
+            navigate(-1);
+          }
+        }}
+        className="p-2 mb-6 ml-10 rounded-md hover:bg-gray-100 inline-flex items-center"
+      >
+        <FiArrowLeft size={30} />
+      </button>
       {loading ? (
         <div className="container-custom">Loading...</div>
       ) : !selectedProduct ? (

@@ -14,6 +14,7 @@ function Navbar() {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [expandedMobileCategory, setExpandedMobileCategory] = useState(null);
+  const [focusedIndex, setFocusedIndex] = useState(0);
   const [userRole, setUserRole] = useState("");
   const searchRef = useRef(null);
 
@@ -183,7 +184,10 @@ function Navbar() {
       );
       setFilteredCategories(filtered);
     }
+
+    setFocusedIndex(0);
   }, [searchQuery, categories]);
+
 
   // Close menus when clicking outside (UNCHANGED)
   useEffect(() => {
@@ -269,13 +273,43 @@ function Navbar() {
                   setShowSuggestions(true);
                 }}
                 onFocus={() => searchQuery && setShowSuggestions(true)}
+                onKeyDown={(e) => {
+                  // No suggestions — do nothing
+                  if (!filteredCategories || filteredCategories.length === 0) return;
+
+                  // DOWN ARROW
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setFocusedIndex((prev) =>
+                      prev + 1 < filteredCategories.length ? prev + 1 : 0
+                    );
+                  }
+
+                  // UP ARROW
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setFocusedIndex((prev) =>
+                      prev - 1 >= 0 ? prev - 1 : filteredCategories.length - 1
+                    );
+                  }
+
+                  // ENTER
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const item = filteredCategories[focusedIndex];
+                    if (item) {
+                      handleSelectCategory(item.slug);
+                    }
+                  }
+                }}
               />
+
               <button
                 className="btn btn-primary bg-ink text-white px-4 py-2 rounded-full"
                 onClick={() =>
                   searchQuery &&
                   filteredCategories?.length > 0 &&
-                  handleSelectCategory(filteredCategories[0].slug)
+                  handleSelectCategory(filteredCategories[focusedIndex].slug)
                 }
               >
                 Search
@@ -286,7 +320,9 @@ function Navbar() {
                   {filteredCategories.map((cat, index) => (
                     <li
                       key={index}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      className={`px-4 py-2 cursor-pointer ${index === focusedIndex ? "bg-gray-100" : "hover:bg-gray-100"
+                        }`}
+                      onMouseEnter={() => setFocusedIndex(index)}
                       onClick={() => handleSelectCategory(cat.slug)}
                     >
                       {cat.name}

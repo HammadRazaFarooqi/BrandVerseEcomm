@@ -82,9 +82,25 @@ export const createProduct = async (req, res) => {
   try {
     await connectDB();
     const { category, defaultQuantity, ...rest } = req.body;
-    const categoryDoc = await Category.findOne({ name: category });
+
+    let categoryDoc = null;
+
+    // If ID -> find by ID
+    if (mongoose.Types.ObjectId.isValid(category)) {
+      categoryDoc = await Category.findById(category);
+    }
+    // If string -> try slug or name
+    else {
+      categoryDoc = await Category.findOne({
+        $or: [
+          { slug: category.toLowerCase() },
+          { name: category }
+        ]
+      });
+    }
+
     if (!categoryDoc)
-      return res.status(400).json({ success: false, message: "Invalid category (not found)" });
+      return res.status(400).json({ success: false, message: "Invalid category" });
 
     const quantity = Number(defaultQuantity) || 0;
 
@@ -101,14 +117,10 @@ export const createProduct = async (req, res) => {
 
     res.status(201).json({ success: true, product });
   } catch (error) {
-    console.error("createProduct error:", error);
-    let message = "Product creation failed.";
-    if (error.name === "ValidationError") {
-      message = `Validation Failed: ${Object.values(error.errors).map(e => e.message).join(", ")}`;
-    } else message = error.message;
-    res.status(400).json({ success: false, message });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
+
 
 // GET all products
 export const getAllProducts = async (req, res) => {

@@ -24,6 +24,7 @@ export const upload = multer({
 export const createOrder = async (req, res) => {
   try {
     await connectDB();
+
     // Parse incoming JSON string from FormData
     const orderData = JSON.parse(req.body.orderData);
 
@@ -36,15 +37,9 @@ export const createOrder = async (req, res) => {
 
     let paymentProofUrl = null;
 
-    // Bank payments must have proof
-    if (orderData.paymentMethod === "bank") {
-      if (!req.file)
-        return res.status(400).json({
-          success: false,
-          message: "Payment proof required for bank transfer",
-        });
-
-      // Upload buffer directly to Cloudinary
+    // Only handle payment proof if payment method is bank
+    if (orderData.paymentMethod === "bank" && req.file) {
+      // Upload directly to Cloudinary
       const uploadResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           {
@@ -59,7 +54,7 @@ export const createOrder = async (req, res) => {
       paymentProofUrl = uploadResult.secure_url;
     }
 
-    // Save order
+    // Save order to MongoDB
     const newOrder = await Order.create({
       ...orderData,
       paymentProof: paymentProofUrl,
@@ -82,7 +77,6 @@ export const createOrder = async (req, res) => {
     });
   }
 };
-
 // --- Other APIs ---
 
 export const getAllOrders = async (req, res) => {

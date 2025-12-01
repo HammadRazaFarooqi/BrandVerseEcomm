@@ -250,13 +250,14 @@ function Categories() {
                   </p>
                 </div>
               ) : filteredProducts?.length === 0 ? (
-                <p className="text-center text-red-500">
+                <p className="text-center text-black">
                   {error || "No products found in this category."}
                 </p>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredProducts.map((item) => (
                     <Link key={item._id} to={`/product/${item._id}`}>
+                      
                       <div className="glass-card h-full overflow-hidden rounded-[2rem]">
                         <div className="relative h-64 overflow-hidden">
                           <img
@@ -283,7 +284,6 @@ function Categories() {
                                 <span className="text-xl font-semibold text-ink">
                                   PKR {item.discountedPrice}
                                 </span>
-
                               </div>
                               <span className="inline-block rounded-lg bg-black mt-4 px-3 mr-20 text-xs font-bold text-white uppercase tracking-wide">
                                 Save {Math.round(((item.price - item.discountedPrice) / item.price) * 100)}%
