@@ -383,19 +383,19 @@ function Navbar() {
               </Link>
             </div>
 
-            <button
+            {/* <button
               className="md:hidden rounded-full border border-surface-muted p-3 text-ink"
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle menu"
             >
               {isOpen ? <FiX size={20} /> : <FiMenu size={20} />}
-            </button>
+            </button> */}
           </div>
         </div>
       </nav>
 
       {/* Mobile Menu (UNCHANGED) */}
-      {isOpen && (
+      {/* {isOpen && (
         <div className="md:hidden border-b border-white/60 bg-white/90 backdrop-blur">
           <div className="container-custom py-6 space-y-6">
             <Link
@@ -509,7 +509,7 @@ function Navbar() {
             </Link>
           </div>
         </div>
-      )}
+      )} */}
     </header>
   );
 }

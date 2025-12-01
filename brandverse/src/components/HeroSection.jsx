@@ -20,13 +20,13 @@ function HeroSection() {
     setCurrentSlide((prev) =>
       prev === sliderImages.length - 1 ? 0 : prev + 1
     );
-  }, []);
+  }, [sliderImages.length]);
 
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) =>
       prev === 0 ? sliderImages.length - 1 : prev - 1
     );
-  }, []);
+  }, [sliderImages.length]);
 
   const goToSlide = (index) => setCurrentSlide(index);
 
@@ -73,15 +73,15 @@ function HeroSection() {
       <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-2 lg:items-center py-20">
         {renderLeftContent()}
 
-        {/* IMAGE CAROUSEL ONLY — everything else remains */}
-        <div className="relative hidden lg:block">
-          <div className="relative h-[520px] overflow-hidden rounded-[2.5rem] glass-card">
+        {/* IMAGE CAROUSEL - Mobile and Desktop */}
+        <div className="relative">
+          <div className="relative h-[400px] lg:h-[520px] overflow-hidden rounded-[2.5rem] glass-card">
 
             {sliderImages.map((img, index) => (
               <img
                 key={index}
                 src={img}
-                alt="Slide"
+                alt={`Slide ${index + 1}`}
                 className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
                   currentSlide === index ? "opacity-100" : "opacity-0"
                 }`}
@@ -101,19 +101,19 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* SLIDER CONTROLS */}
+      {/* SLIDER CONTROLS - Desktop Only */}
       {sliderImages.length > 1 && (
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-8 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/30 bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20"
+            className="hidden lg:block absolute left-8 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/30 bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20"
             aria-label="Previous slide"
           >
             <FiChevronLeft size={24} />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-8 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/30 bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20"
+            className="hidden lg:block absolute right-8 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/30 bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20"
             aria-label="Next slide"
           >
             <FiChevronRight size={24} />

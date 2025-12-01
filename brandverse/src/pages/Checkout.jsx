@@ -76,7 +76,10 @@ function Checkout() {
       price: item.discountRate > 0 ? item.discountedPrice : item.price,
       images: Array.isArray(item.images)
         ? item.images.map(img => typeof img === "string" ? img : img.primary)
-        : [],
+        : item.images?.primary 
+          ? [item.images.primary] 
+          : [],
+      selectedSize: item.selectedSize || null,
       quantity: item.quantity || 1,
     }));
   }
@@ -113,7 +116,7 @@ function Checkout() {
     formDataToSend.append("orderData", JSON.stringify(orderData));
   
     if (paymentProof) {
-      formDataToSend.append("paymentProof", paymentProof); // must match multer name
+      formDataToSend.append("paymentProof", paymentProof);
     }
   
     try {

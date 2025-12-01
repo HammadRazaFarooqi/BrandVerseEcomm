@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiXSquare } from "react-icons/fi";
 import AddCategoryForm from "./AddCategory";
+import { Plus } from "lucide-react";
 // import AddCategoryForm from "./AddCategory";
 
 function CategoryManagement() {
@@ -109,14 +110,14 @@ function CategoryManagement() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-serif">Category Management</h1>
-        <div className="flex gap-4">
-          <button
-            className="flex items-center gap-2 px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            onClick={() => setShowAddModal(true)}
-          >
-            <FiPlus /> Add New Category
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif">
+          Category Management
+        </h1>
+        <div className="flex gap-3">
+          <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base">
+            <Plus className="w-5 h-5" />
+            Add New Category
           </button>
         </div>
       </div>
@@ -239,8 +240,8 @@ function CategoryManagement() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${category.status === "Active"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
                             }`}
                         >
                           {category.status}

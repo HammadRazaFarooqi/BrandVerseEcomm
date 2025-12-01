@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiXSquare } from "react-icons/fi";
 import AddProductForm from "./AddProduct";
+import { Plus } from "lucide-react";
 
 function ProductManagement() {
   const [products, setProducts] = useState([]);
@@ -116,14 +117,14 @@ function ProductManagement() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-serif">Product Management</h1>
-        <div className="flex gap-4">
-          <button
-            className="flex items-center gap-2 px-8 py-3 bg-black text-white font-medium rounded-full transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            onClick={() => setShowAddModal(true)}
-          >
-            <FiPlus /> Add New Product
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif">
+          Product Management
+        </h1>
+        <div className="flex gap-3">
+          <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base">
+            <Plus className="w-5 h-5" />
+            Add New Product
           </button>
         </div>
       </div>
@@ -265,7 +266,7 @@ function ProductManagement() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {product.category|| "-"}
+                          {product.category || "-"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
