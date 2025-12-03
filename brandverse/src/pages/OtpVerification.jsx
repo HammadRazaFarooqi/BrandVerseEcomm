@@ -71,7 +71,7 @@ function OtpVerification() {
             placeholder="Enter OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
-            className="w-full rounded-full border border-surface-muted px-5 py-3 bg-black text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full rounded-full border border-surface-muted px-5 py-3 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:black"
           />
 
           <button

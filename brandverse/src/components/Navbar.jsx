@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FiBell, FiLogIn, FiShoppingCart } from "react-icons/fi";
+import { FiLogIn, FiShoppingCart } from "react-icons/fi";
 import { RiCustomerService2Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -346,10 +346,7 @@ function Navbar() {
                   Admin Dashboard
                 </button>
               ) : (
-                <button className="relative flex items-center justify-center border border-surface-muted p-2 rounded-full hover:bg-gray-100 transition">
-                  <FiBell size={20} />
-                  <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
-                </button>
+                <></>
               )}
 
               <Link
