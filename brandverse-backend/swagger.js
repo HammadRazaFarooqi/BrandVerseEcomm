@@ -3,8 +3,8 @@ const swaggerAutogen = require("swagger-autogen")();
 const doc = {
   info: {
     version: "1.0.0",
-    title: "Brand Verse API",
-    description: "API documentation for Brand Verse Backend",
+    title: "Affi Mall API",
+    description: "API documentation for Affi Mall Backend",
   },
   host: "urban-tuxedo-backend.vercel.app",
   basePath: "/",

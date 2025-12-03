@@ -12,13 +12,13 @@ function Footer() {
         <div className="grid gap-10 md:grid-cols-[2fr_1fr]">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-white/60">
-              Brand Verse
+              Affi Mall
             </p>
             <p className="mt-4 text-white/70">
               69 Wilshaw Lane, Ashton-Under-Lyne, OL7 9QX, United Kingdom
             </p>
             <p className="mt-6 text-white/70">
-              support@brandverse.com · +44 123 456 7890
+              affimall50@gmail.com
             </p>
           </div>
 
@@ -42,7 +42,7 @@ function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-center text-white/60">
-          &copy; {new Date().getFullYear()} Brand Verse. All rights reserved.
+          &copy; {new Date().getFullYear()} Affi Mall. All rights reserved.
         </div>
       </div>
     </footer>

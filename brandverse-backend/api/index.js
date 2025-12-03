@@ -1,10 +1,10 @@
 import "dotenv/config";
 import express from "express";
-import mongoose from "mongoose";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 import path from "path";
 import cors from "cors";
+import { connectDB } from "../lib/db.js"; // <-- connectDB import
 
 import authRoutes from "../routes/auth.js";
 import categoryRoutes from "../routes/category.js";
@@ -15,7 +15,7 @@ import orderRoutes from "../routes/orderRoutes.js";
 
 const app = express();
 
-// CORS
+// --- Middleware ---
 app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
@@ -29,9 +29,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Read swagger JSON safely
+// --- Swagger ---
 const swaggerFilePath = path.join(process.cwd(), "swagger-output.json");
-
 let swaggerDocument = {};
 try {
   swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, "utf-8"));
@@ -39,8 +38,6 @@ try {
 } catch (err) {
   console.error("Swagger file not found or invalid:", err);
 }
-
-// Swagger routes
 app.use("/swagger.json", (req, res) => res.json(swaggerDocument));
 app.use(
   "/api-docs",
@@ -48,11 +45,11 @@ app.use(
   swaggerUi.setup(swaggerDocument, {
     explorer: true,
     customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "Brand Verse API Docs",
+    customSiteTitle: "Affi Mall API Docs",
   })
 );
 
-// Routes
+// --- Routes ---
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/category", categoryRoutes);
@@ -60,25 +57,21 @@ app.use("/api/uploads", uploadRoutes);
 app.use("/api/customer", customerRoutes);
 app.use("/api", orderRoutes);
 
-// Root
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Brand Verse API" });
-});
+app.get("/", (req, res) => res.json({ message: "Welcome to Affi Mall API" }));
 
-// MongoDB
-
-
-// Server
+// --- Start Server after DB connection ---
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-server.on("error", (err) => {
-  if (err.code === "EADDRINUSE") {
-    console.error(`Port ${PORT} is already in use.`);
+connectDB()
+  .then(() => {
+    console.log("MongoDB connected");
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    console.log("Auth Routes Loaded");
+
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
     process.exit(1);
-  } else {
-    console.error("Server error:", err);
-  }
-});
+  });
 
 export default app;

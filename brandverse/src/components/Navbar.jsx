@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from "react";
-import { FiLogIn, FiMenu, FiShoppingCart, FiX, FiChevronDown, FiBell } from "react-icons/fi";
+import { useEffect, useRef, useState } from "react";
+import { FiBell, FiLogIn, FiShoppingCart } from "react-icons/fi";
 import { RiCustomerService2Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -253,11 +253,11 @@ function Navbar() {
           <div className="flex items-center justify-between gap-4 py-4 flex-wrap">
             <Link to="/" className="flex items-center space-x-3">
               <div>
-                <img src="logo.png" className="w-11 h-11 object-contain" alt="Brand Verse" />
+                <img src="logo.png" className="w-11 h-11 object-contain" alt="Affi Mall" />
               </div>
               <div>
                 <span className="font-serif text-2xl font-semibold text-ink block leading-tight">
-                  Brand Verse
+                Affi Mall
                 </span>
               </div>
             </Link>
@@ -354,7 +354,7 @@ function Navbar() {
 
               <Link
                 to="/cart"
-                className="relative flex items-center gap-2 rounded-full border border-surface-muted bg-white/70 px-4 py-2 text-ink transition hover:-translate-y-0.5 hover:border-ink"
+                className="relative flex items-center gap-2 rounded-full border border-surface-muted bg-transparent px-4 py-2 text-ink transition hover:-translate-y-0.5 hover:border-ink"
               >
                 <FiShoppingCart />
                 {cartCount > 0 && (
@@ -382,134 +382,9 @@ function Navbar() {
                 )}
               </Link>
             </div>
-
-            {/* <button
-              className="md:hidden rounded-full border border-surface-muted p-3 text-ink"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <FiX size={20} /> : <FiMenu size={20} />}
-            </button> */}
           </div>
         </div>
       </nav>
-
-      {/* Mobile Menu (UNCHANGED) */}
-      {/* {isOpen && (
-        <div className="md:hidden border-b border-white/60 bg-white/90 backdrop-blur">
-          <div className="container-custom py-6 space-y-6">
-            <Link
-              to="/"
-              className="block text-ink font-medium"
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </Link>
-
-            <div className="space-y-3 rounded-2xl border border-surface-muted p-4">
-              <div className="text-sm uppercase tracking-[0.3em] text-ink-muted">
-                Shop by category
-              </div>
-              {isLoading ? (
-                <div className="text-ink-muted">Loading categories...</div>
-              ) : categories?.length > 0 ? (
-                categories.map((category) => (
-                  <div key={category._id}>
-                    <div className="flex items-center justify-between rounded-xl px-3 py-2 text-ink">
-                      <Link
-                        to={category.path}
-                        className="flex-1 font-medium"
-                        onClick={(e) => {
-                          if (category.subcategories?.length > 0) {
-                            e.preventDefault();
-                            toggleMobileSubcategory(category._id);
-                          } else {
-                            setIsOpen(false);
-                          }
-                        }}
-                      >
-                        {category.name}
-                      </Link>
-                      {category.subcategories?.length > 0 && (
-                        <button
-                          className="p-1 text-ink-muted"
-                          onClick={() => toggleMobileSubcategory(category._id)}
-                        >
-                          <FiChevronDown
-                            className={`transition ${expandedMobileCategory === category._id
-                              ? "rotate-180"
-                              : ""
-                              }`}
-                          />
-                        </button>
-                      )}
-                    </div>
-                    {category.subcategories?.length > 0 &&
-                      expandedMobileCategory === category._id && (
-                        <div className="ml-4 border-l border-surface-muted pl-4">
-                          {category.subcategories.map((subcategory) => (
-                            <Link
-                              key={subcategory._id}
-                              to={subcategory.path}
-                              className="block py-2 text-sm text-ink-muted"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              {subcategory.name}
-                            </Link>
-                          ))}
-                          <Link
-                            to={category.path}
-                            className="block py-2 text-xs uppercase tracking-[0.3em] text-ink"
-                            onClick={() => setIsOpen(false)}
-                          >
-                            View collection
-                          </Link>
-                        </div>
-                      )}
-                  </div>
-                ))
-              ) : (
-                <div className="text-ink-muted">No categories available</div>
-              )}
-            </div>
-
-            <Link
-              to="/cart"
-              className="flex items-center justify-between rounded-2xl border border-surface-muted px-4 py-3 text-ink"
-              onClick={() => setIsOpen(false)}
-            >
-              <div className="flex items-center gap-3">
-                <FiShoppingCart />
-                <span>Cart</span>
-              </div>
-              {cartCount > 0 && (
-                <span className="rounded-full bg-ink px-2 py-0.5 text-xs text-white">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            <Link
-              to={isLoggedIn ? "/profile" : "/login"} // Mobile navigation fix
-              className="flex items-center justify-between rounded-2xl border border-surface-muted px-4 py-3 text-ink"
-              onClick={() => setIsOpen(false)}
-            >
-              {isLoggedIn && initial ? (
-                <span className="rounded-full bg-ink px-3 py-1 text-white">
-                  {initial}
-                </span>
-              ) : (
-                <>
-                  <span className="text-sm uppercase tracking-[0.3em]">
-                    Login / Register
-                  </span>
-                  <FiLogIn />
-                </>
-              )}
-            </Link>
-          </div>
-        </div>
-      )} */}
     </header>
   );
 }

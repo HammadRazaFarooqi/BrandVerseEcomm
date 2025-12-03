@@ -31,7 +31,7 @@ function FeatureSection() {
       <div className="container-custom">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
           <div>
-            <p className="eyebrow mb-4">Why shop with Brand Verse</p>
+            <p className="eyebrow mb-4">Why shop with Affi Mall</p>
             <h2 className="text-4xl font-semibold text-ink">
               Smart shopping,
               <span className="text-accent">&nbsp;made simple</span>

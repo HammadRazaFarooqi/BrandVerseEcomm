@@ -1,30 +1,48 @@
 import React, { useState } from "react";
-import { FiMail, FiPhone, FiChevronRight } from "react-icons/fi";
 
-const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL || "support@brandverse.com";
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "923001234567"; // no plus, country+number (e.g. 92300...)
+const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL || "affimall50@gmail.com";
 const SUPPORT_HOURS = import.meta.env.VITE_SUPPORT_HOURS || "Mon–Fri, 9:00 — 18:00 (PKT)";
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
 
 export default function CustomerSupport() {
     const [name, setName] = useState("");
     const [customerEmail, setCustomerEmail] = useState("");
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
+    const [result, setResult] = useState("");
 
-    const handleMailSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
-        // Build mailto URL so it opens user's default mail client with prefilled fields
-        const mailto = `mailto:${encodeURIComponent(SUPPORT_EMAIL)}?subject=${encodeURIComponent(
-            subject || "Support Request"
-        )}&body=${encodeURIComponent(`Name: ${name || "-"}\nEmail: ${customerEmail || "-"}\n\n${message || "-"}`)}`;
-        window.location.href = mailto;
-    };
+        setResult("Sending...");
 
-    const handleWhatsApp = () => {
-        // Prefill a message; WhatsApp expects URL encoded text
-        const text = `Support request from website:\nName: ${name || "-"}\nEmail: ${customerEmail || "-"}\nSubject: ${subject || "-"}\nMessage: ${message || "-"}`;
-        const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-        window.open(waLink, "_blank");
+        const formData = new FormData();
+        formData.append("access_key", WEB3FORMS_KEY);
+        formData.append("name", name);
+        formData.append("email", customerEmail);
+        formData.append("subject", subject || "Support Request");
+        formData.append("message", message);
+        formData.append("redirect", ""); // Optional: redirect after submit
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setResult("Form Submitted Successfully");
+                setName("");
+                setCustomerEmail("");
+                setSubject("");
+                setMessage("");
+            } else {
+                setResult("Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            setResult("Network error. Please try again.");
+        }
     };
 
     return (
@@ -42,29 +60,21 @@ export default function CustomerSupport() {
                             <div className="rounded-2xl bg-white/5 p-6">
                                 <h3 className="mb-4 text-lg text-white font-medium">Support Guidelines</h3>
                                 <ol className="list-decimal ml-5 space-y-3 text-white/85">
-                                    <li>
-                                        Provide your <strong>order ID</strong> (if applicable) and a short description of the issue.
-                                    </li>
-                                    <li>
-                                        Attach screenshots or order confirmation emails when possible — they speed up resolution.
-                                    </li>
-                                    <li>
-                                        For account/security issues, never share your password. We may ask for email verification.
-                                    </li>
-                                    <li>
-                                        Typical response time: <strong>{SUPPORT_HOURS}</strong>. Priority issues are handled faster.
-                                    </li>
-                                    <li>
-                                        If the issue is urgent (payment or delivery), click the WhatsApp button for live chat.
-                                    </li>
+                                    <li>Include your <strong>full name and a valid email</strong> so we can contact you efficiently.</li>
+                                    <li>Provide your <strong>order ID</strong> if applicable to help us locate your records quickly.</li>
+                                    <li>Clearly describe your issue in the message field, including steps to reproduce it if relevant.</li>
+                                    <li>Never share sensitive information such as passwords or full payment details.</li>
+                                    <li>Indicate urgency if the issue affects transactions or delivery times, but remain concise and polite.</li>
+                                    <li>Typical response time: <strong>{SUPPORT_HOURS}</strong>.</li>
+
                                 </ol>
                             </div>
                         </div>
 
-                        {/* Right: Contact form */}
+                        {/* Right: Web3Forms contact form */}
                         <div>
                             <h3 className="mb-4 text-white text-lg font-medium">Send us a message</h3>
-                            <form onSubmit={handleMailSubmit} className="space-y-4">
+                            <form onSubmit={handleFormSubmit} className="space-y-4">
                                 <div className="grid gap-4 sm:grid-cols-2">
                                     <label className="flex flex-col">
                                         <span className="mb-2 text-sm text-white/80">Name</span>
@@ -115,81 +125,16 @@ export default function CustomerSupport() {
                                     />
                                 </label>
 
-                                <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
-                                    <button
-                                        type="submit"
-                                        className="btn btn-primary inline-flex items-center gap-2 rounded-lg bg-white text-ink px-4 py-2 font-medium hover:text-white"
-                                    >
-                                        Send Email
-                                    </button>
-                                </div>
-                                <div className="text-sm text-white/70">
-                                    <p>
-                                        For business inquiries, partnerships, or press, email us at{" "}
-                                        <a href={`mailto:${SUPPORT_EMAIL}`} className="underline">
-                                            {SUPPORT_EMAIL}
-                                        </a>
-                                        .
-                                    </p>
-                                </div>
-                                <p className="text-xs text-white/60">By sending a message you consent to our support team contacting you to resolve your issue.</p>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary inline-flex items-center gap-2 rounded-lg bg-white text-ink px-4 py-2 font-medium hover:text-white"
+                                >
+                                    Send Message
+                                </button>
+
+                                <span className="text-sm text-white/70">{result}</span>
                             </form>
                         </div>
-                    </div>
-
-                                {/* FULL WIDTH CONTACT TILES */}
-                                <div className="mt-8 space-y-4">
-                                    <button
-                                        onClick={handleMailSubmit}
-                                        className="w-full flex items-center justify-between rounded-2xl bg-white/8 p-5 border border-white/10 hover:bg-white/12 transition-all"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="rounded-xl bg-white/15 p-3">
-                                                <FiMail size={20} className="text-white" />
-                                            </div>
-                                            <div className="text-left">
-                                                <p className="text-xs text-white/70 uppercase tracking-wide">
-                                                    Email Support
-                                                </p>
-                                                <p className="text-sm font-medium text-white">
-                                                    {SUPPORT_EMAIL}
-                                                </p>
-                                                <p className="text-xs text-white/60 mt-1">
-                                                    Typically replies in {SUPPORT_HOURS}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <FiChevronRight size={18} className="text-white/70" />
-                                    </button>
-
-                                    <button
-                                        onClick={handleWhatsApp}
-                                        className="w-full flex items-center justify-between rounded-2xl bg-[#25D366]/10 p-5 border border-white/10 hover:bg-[#25D366]/20 transition-all"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="rounded-xl bg-[#25D366]/25 p-3">
-                                                <FiPhone size={20} className="text-[#25D366]" />
-                                            </div>
-                                            <div className="text-left">
-                                                <p className="text-xs text-white/70 uppercase tracking-wide">
-                                                    WhatsApp Chat
-                                                </p>
-                                                <p className="text-sm font-medium text-[#25D366]">
-                                                    +{WHATSAPP_NUMBER}
-                                                </p>
-                                                <p className="text-xs text-white/60 mt-1">
-                                                    Usually available {SUPPORT_HOURS}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <FiChevronRight size={18} className="text-white/70" />
-                                    </button>
-                                </div>
-
-
-                    {/* Footer small note */}
-                    <div className="mt-6 text-center text-xs text-white/60">
-                        <p>Response time may vary depending on volume — urgent issues via WhatsApp recommended.</p>
                     </div>
                 </div>
             </div>

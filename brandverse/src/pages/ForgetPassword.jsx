@@ -1,19 +1,35 @@
 import { ArrowRight, Mail } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
   const [email, setEmail] = useState("");
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("Password reset link has been sent to your email.");
+  
+    const res = await fetch(`${BACKEND_URL}/auth/forgot-password`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ email })
+    });
+  
+    const data = await res.json();
+  
+    if (res.ok) {
+      navigate(`/verify-reset?email=${email}`);
+    } else {
+      setMessage(data.message);
+    }
+  
     setLoading(false);
   };
+  
 
   return (
     <section className="bg-surface py-16">
@@ -25,7 +41,7 @@ function Login() {
               Forgot your password?
             </h2>
             <p className="mt-2 text-ink-muted">
-              We&apos;ll send a secure reset link to your inbox.
+              We&apos;ll send a secure reset otp to your inbox.
             </p>
           </div>
 

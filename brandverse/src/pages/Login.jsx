@@ -134,7 +134,7 @@ function Login() {
               </label>
               <Link
                 to="/forget-password"
-                className="text-sm uppercase tracking-[0.3em] text-ink-muted hover:text-ink"
+                className="text-sm text-ink-muted hover:text-ink"
               >
                 Forgot password
               </Link>

@@ -1,4 +1,4 @@
-## BrandVerse Requirement Implementation Plan
+## Affi Mall Requirement Implementation Plan
 
 This document maps the 15 business requirements to concrete engineering tasks across frontend, backend, and infrastructure. Each task will be developed and delivered sequentially.
 

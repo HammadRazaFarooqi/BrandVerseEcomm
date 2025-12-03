@@ -44,7 +44,7 @@ function AdminLayout() {
           >
             {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          <h1 className="text-xl font-serif text-primary">Brand Verse</h1>
+          <h1 className="text-xl font-serif text-primary">Affi Mall</h1>
           <div className="w-10"></div>
         </div>
       </div>
@@ -58,7 +58,7 @@ function AdminLayout() {
         <div className="h-full flex flex-col">
           {/* Desktop Logo */}
           <div className="p-6 border-b hidden lg:block">
-            <h1 className="text-2xl font-serif text-primary">Brand Verse</h1>
+            <h1 className="text-2xl font-serif text-primary">Affi Mall</h1>
             <p className="text-sm text-gray-600">Admin Panel</p>
             <Link to="/">
               <button className="mt-5 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200 transition">

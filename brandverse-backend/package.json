@@ -1,7 +1,7 @@
 {
-  "name": "brandverse-backend",
+  "name": "affimall-backend",
   "version": "1.0.0",
-  "type": "module", 
+  "type": "module",
   "main": "/api/index.js",
   "scripts": {
     "start": "nodemon api/index.js",
@@ -14,6 +14,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
@@ -23,6 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.2",
     "multer": "^2.0.2",
+    "nodemailer": "^7.0.11",
     "slugify": "^1.6.6",
     "stripe": "^17.6.0",
     "swagger-autogen": "^2.23.7",

@@ -1,8 +1,9 @@
 import Order from "../models/Order.js";
 import cloudinary from "../src/config/cloudinary.js";
 import multer from "multer";
-
+import { orderStatusEmailTemplate } from "../src/utils/emailTemplates.js";
 import { connectDB } from "../lib/db.js";
+import { sendMail } from "../src/utils/mailer.js";
 
 // MEMORY STORAGE (Required for Vercel / Serverless)
 const storage = multer.memoryStorage();
@@ -21,13 +22,15 @@ export const upload = multer({
 });
 
 // ---------------- CREATE ORDER -------------------
+import { orderConfirmationTemplate } from "../src/utils/emailTemplates.js";
+
 export const createOrder = async (req, res) => {
   try {
     await connectDB();
-
+    
     // Parse incoming JSON string from FormData
     const orderData = JSON.parse(req.body.orderData);
-
+    
     if (!orderData.customer || !orderData.items?.length) {
       return res.status(400).json({
         success: false,
@@ -36,7 +39,7 @@ export const createOrder = async (req, res) => {
     }
 
     let paymentProofUrl = null;
-
+    
     // Only handle payment proof if payment method is bank
     if (orderData.paymentMethod === "bank" && req.file) {
       // Upload directly to Cloudinary
@@ -50,7 +53,6 @@ export const createOrder = async (req, res) => {
         );
         stream.end(req.file.buffer);
       });
-
       paymentProofUrl = uploadResult.secure_url;
     }
 
@@ -62,12 +64,33 @@ export const createOrder = async (req, res) => {
       createdAt: new Date(),
     });
 
+    // ✅ Send order confirmation email
+    try {
+      await sendMail({
+        to: orderData.customer.email,
+        subject: "Order Confirmation - Affi Mall",
+        html: orderConfirmationTemplate(
+          orderData.customer.firstName,
+          newOrder._id,
+          newOrder.orderNumber,
+          orderData.items,
+          orderData.totalAmount,
+          orderData.paymentMethod
+        ),
+      });
+      console.log("Order confirmation email sent to:", orderData.customer.email);
+    } catch (emailError) {
+      console.error("Failed to send order confirmation email:", emailError);
+      // Don't fail the order if email fails - just log it
+    }
+
     res.status(201).json({
       success: true,
       message: "Order placed successfully",
       orderId: newOrder._id,
       orderNumber: newOrder.orderNumber,
     });
+    
   } catch (error) {
     console.error("Order creation failed:", error);
     res.status(500).json({
@@ -130,7 +153,6 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-// Update order status (for admin)
 export const updateOrderStatus = async (req, res) => {
   try {
     await connectDB();
@@ -145,13 +167,34 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
 
-    const order = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
+    const order = await Order.findByIdAndUpdate(
+      orderId, 
+      { status }, 
+      { new: true }
+    );
 
     if (!order) {
       return res.status(404).json({
         success: false,
         message: 'Order not found'
       });
+    }
+
+    // ✅ Send status update email to customer
+    try {
+      await sendMail({
+        to: order.customer.email,
+        subject: `Order Status Update - ${order.orderNumber}`,
+        html: orderStatusEmailTemplate(
+          order.customer.firstName,
+          order.orderNumber,
+          status.charAt(0).toUpperCase() + status.slice(1) // Capitalize first letter
+        ),
+      });
+      console.log(`Status update email sent to: ${order.customer.email} for order: ${order.orderNumber}`);
+    } catch (emailError) {
+      console.error("Failed to send status update email:", emailError);
+      // Don't fail the status update if email fails - just log it
     }
 
     res.status(200).json({
@@ -169,7 +212,6 @@ export const updateOrderStatus = async (req, res) => {
     });
   }
 };
-
 // Delete order (for admin)
 export const deleteOrder = async (req, res) => {
   try {

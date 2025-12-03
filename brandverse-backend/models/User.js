@@ -4,63 +4,65 @@ import bcrypt from "bcryptjs";
 const { Schema } = mongoose;
 
 const addressSchema = new Schema({
-  street: { type: String, trim: true },
-  city: { type: String, trim: true },
-  state: { type: String, trim: true },
-  zipCode: { type: String, trim: true },
-  country: { type: String, trim: true, default: "US" },
+  street: String,
+  city: String,
+  state: String,
+  zipCode: String,
+  country: { type: String, default: "US" },
   isDefault: { type: Boolean, default: false },
 });
 
 const userSchema = new Schema({
-  username: { type: String, required: true, unique: true, trim: true },
-  firstName: { type: String, trim: true },
-  lastName: { type: String, trim: true },
-  email: { type: String, required: true, unique: true, trim: true, lowercase: true },
-  password: { type: String, required: true, minLength: 6 },
-  phone: { type: String, trim: true },
+  username: { type: String, trim: true },
+  firstName: String,
+  lastName: String,
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true, minlength: 6 },
+  phone: String,
   addresses: [addressSchema],
   role: { type: String, enum: ["user", "admin"], default: "user" },
-  cart: [
-    { 
-      productId: { type: Schema.Types.ObjectId, ref: "Product" },
-      quantity: { type: Number, default: 1, min: 1 }
-    }
-  ],
+  cart: [{ productId: { type: Schema.Types.ObjectId, ref: "Product" }, quantity: { type: Number, default: 1 } }],
   orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
   wishlist: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+  otp: {
+    code: String,
+    expiresAt: Date,
+  },
   isEmailVerified: { type: Boolean, default: false },
-  lastLogin: { type: Date },
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
+  lastLogin: Date,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  passwordReset: {
+    token: { type: String },
+    expiresAt: { type: Date }
+  },
+  resetOtp: { type: String },
+  resetOtpExpires: { type: Date }
 });
 
-// Update updatedAt timestamp before saving
+// Update timestamps
 userSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-// Hash password before saving
+// Hash password
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// Compare password method
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+// Compare password
+userSchema.methods.comparePassword = function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Virtual for full name
+// Full name virtual
 userSchema.virtual("fullName").get(function () {
   return this.firstName && this.lastName ? `${this.firstName} ${this.lastName}` : this.username;
 });
 
-// Ensure virtuals are included in JSON output
 userSchema.set("toJSON", { virtuals: true });
 userSchema.set("toObject", { virtuals: true });
 

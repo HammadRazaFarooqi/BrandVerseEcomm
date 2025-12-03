@@ -46,14 +46,12 @@ function ProfileSettings() {
   };
 
   useEffect(() => {
-    return () => {
-      const user = JSON.parse(localStorage.getItem("isLogin"));
-      if (user) {
-        const storedProfile = JSON.parse(localStorage.getItem("isLogin")).user;
-        setUserEmail(storedProfile.email);
-      }
-    };
+    const user = JSON.parse(localStorage.getItem("isLogin"));
+    if (user && user.user) {
+      setUserEmail(user.user.email);
+    }
   }, []);
+
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
       <div className="px-8 py-6 border-b bg-gray-50">
@@ -104,7 +102,7 @@ function ProfileSettings() {
             </div>
             <button
               type="submit"
-              className="px-8 py-3 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               disabled={loading}
             >
               {loading ? "Updating..." : "Update Password"}

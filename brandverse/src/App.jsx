@@ -31,6 +31,8 @@ import CheckoutSuccess from "./pages/checkoutSuccess";
 import ForgetPassword from "./pages/ForgetPassword";
 import PromotionsManager from "./admin/pages/PromotionManagement";
 import CustomerSupport from "./pages/CustomerSupport";
+import OtpVerification from "./pages/OtpVerification";
+import ResetPassword from "./pages/ResetPassword";
 
 function ClientLayout() {
   return (
@@ -94,6 +96,8 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forget-password" element={<ForgetPassword />} />
+        <Route path="otp" element={<OtpVerification/>}/>
+        <Route path="verify-reset" element={<ResetPassword/>}/>
       </Routes>
     </Router>
   );
