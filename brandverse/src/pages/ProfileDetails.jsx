@@ -11,11 +11,13 @@ function ProfileDetails() {
     phone: "",
     address: "",
   });
+  const [errors, setErrors] = useState({});
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+    setErrors({});
   };
 
   const handleChange = (e) => {
@@ -24,10 +26,52 @@ function ProfileDetails() {
       ...prev,
       [name]: value,
     }));
+
+    // Real-time validation
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateField(name, value),
+    }));
+  };
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case "firstName":
+      case "lastName":
+        if (!value) return "This field is required";
+        if (!/^[A-Za-z\s]+$/.test(value)) return "Only letters allowed";
+        return "";
+      case "phone":
+        if (!value) return "Phone number is required";
+        if (!/^\d+$/.test(value)) return "Only numbers allowed";
+        if (value.length < 10) return "Phone number must be at least 10 digits";
+        return "";
+      case "address":
+        if (!value) return "Address cannot be empty";
+        return "";
+      default:
+        return "";
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate all fields before sending
+    const newErrors = {};
+    Object.keys(profile).forEach((key) => {
+      if (key !== "email") {
+        const error = validateField(key, profile[key]);
+        if (error) newErrors[key] = error;
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
 
     try {
@@ -55,18 +99,12 @@ function ProfileDetails() {
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
-        console.log("Success:", data);
-        
-        // Update localStorage with new data
         const userDetail = JSON.parse(localStorage.getItem("isLogin"));
         userDetail.user = data.customer || data.user;
         localStorage.setItem("isLogin", JSON.stringify(userDetail));
-        
-        // Trigger storage event to update navbar
         window.dispatchEvent(new Event("storage"));
-        
         setIsEditing(false);
       } else {
         console.error("Update failed:", data);
@@ -80,22 +118,14 @@ function ProfileDetails() {
 
   useEffect(() => {
     const isLogin = localStorage.getItem("isLogin");
-    if (!isLogin) return; // Or redirect user
+    if (!isLogin) return;
 
     try {
       const storedProfile = JSON.parse(isLogin).user;
-      
-      // Build address string from addresses array or use address field
       let addressString = "";
       if (storedProfile?.addresses && Array.isArray(storedProfile.addresses) && storedProfile.addresses.length > 0) {
         const addr = storedProfile.addresses[0];
-        const parts = [
-          addr.street,
-          addr.city,
-          addr.state,
-          addr.zipCode,
-          addr.country
-        ].filter(Boolean);
+        const parts = [addr.street, addr.city, addr.state, addr.zipCode, addr.country].filter(Boolean);
         addressString = parts.join(", ");
       } else if (storedProfile?.address) {
         addressString = storedProfile.address;
@@ -130,74 +160,67 @@ function ProfileDetails() {
         <form className="space-y-8" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                First Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
               <input
                 type="text"
                 name="firstName"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.firstName ? "border-red-500" : "border-gray-300"}`}
                 value={profile.firstName}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
+              {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
               <input
                 type="text"
                 name="lastName"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.lastName ? "border-red-500" : "border-gray-300"}`}
                 value={profile.lastName}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
+              {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
               <input
                 type="email"
                 name="email"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
                 value={profile.email}
-                onChange={handleChange}
                 disabled
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
               <input
                 type="tel"
                 name="phone"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.phone ? "border-red-500" : "border-gray-300"}`}
                 value={profile.phone}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Address
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
             <textarea
               name="address"
               rows="3"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.address ? "border-red-500" : "border-gray-300"}`}
               value={profile.address}
               onChange={handleChange}
               disabled={!isEditing}
             />
+            {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
           </div>
 
           {isEditing && (

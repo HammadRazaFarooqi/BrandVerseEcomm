@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,27 +10,45 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
-  const [message, setMessage] = useState("");
+
+  const [errors, setErrors] = useState({});
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear field-specific error while typing
+    setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoader(true);
 
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("Passwords do not match.");
-      setLoader(false);
+    const newErrors = {};
+
+    if (!/^[A-Za-z\s]+$/.test(formData.firstName))
+      newErrors.firstName = "Only letters allowed in First Name";
+
+    if (!/^[A-Za-z\s]+$/.test(formData.lastName))
+      newErrors.lastName = "Only letters allowed in Last Name";
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || !formData.email.includes(".com"))
+      newErrors.email = "Email must contain @ and .com";
+
+    if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+
+    if (formData.confirmPassword !== formData.password)
+      newErrors.confirmPassword = "Passwords do not match";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    setLoader(true);
+    setErrors({});
 
     const BACKEND_URL = import.meta.env.VITE_API_URL;
 
@@ -49,15 +66,21 @@ function Register() {
 
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.error || "Failed to send OTP");
+      if (!response.ok) {
+        // Show "Email already exists" inline
+        if (data.error && data.error.toLowerCase().includes("email already exists")) {
+          setErrors({ email: data.error });
+        } else {
+          toast.error(data.error || "Failed to send OTP");
+        }
+        return;
+      }
 
       toast.success("OTP sent to your email!");
-      setLoader(false);
-
-      // Redirect to OTP page with email as state
       navigate("/otp", { state: { email: formData.email } });
     } catch (error) {
-      setMessage(error.message);
+      toast.error(error.message);
+    } finally {
       setLoader(false);
     }
   };
@@ -72,84 +95,77 @@ function Register() {
             <p className="mt-2 text-ink-muted">Unlock private previews and appointment-only events.</p>
           </div>
 
-          {message && (
-            <p className="rounded-full bg-red-50 py-3 text-center text-sm text-red-600">{message}</p>
-          )}
-
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-ink-muted">First Name</label>
+                <label className="block text-sm font-medium text-ink-muted">First Name</label>
                 <input
-                  id="firstName"
                   name="firstName"
-                  type="text"
-                  required
                   value={formData.firstName}
                   onChange={handleChange}
                   className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
+                  required
                 />
+                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-ink-muted">Last Name</label>
+                <label className="block text-sm font-medium text-ink-muted">Last Name</label>
                 <input
-                  id="lastName"
                   name="lastName"
-                  type="text"
-                  required
                   value={formData.lastName}
                   onChange={handleChange}
                   className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
+                  required
                 />
+                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-ink-muted">Email address</label>
+              <label className="block text-sm font-medium text-ink-muted">Email</label>
               <input
-                id="email"
                 name="email"
                 type="email"
-                required
                 value={formData.email}
                 onChange={handleChange}
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
+                required
               />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-ink-muted">Password</label>
+              <label className="block text-sm font-medium text-ink-muted">Password</label>
               <input
-                id="password"
                 name="password"
                 type="password"
-                required
                 value={formData.password}
                 onChange={handleChange}
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
+                required
               />
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-ink-muted">Confirm Password</label>
+              <label className="block text-sm font-medium text-ink-muted">Confirm Password</label>
               <input
-                id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                required
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
+                required
               />
+              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
             </div>
 
-            <button type="submit" className="btn btn-primary w-full">
+            <button type="submit" className="btn btn-primary w-full" disabled={loader}>
               {loader ? "Sending OTP..." : "Create Account"}
             </button>
 
             <p className="text-center text-sm text-ink-muted">
-              Already have an account?{" "}
-              <Link to="/login" className="text-ink font-semibold">Sign in</Link>
+              Already have an account? <Link to="/login" className="text-ink font-semibold">Sign in</Link>
             </p>
           </form>
         </div>

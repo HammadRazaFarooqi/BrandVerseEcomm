@@ -19,9 +19,16 @@ function Checkout() {
   const [subtotal, setSubtotal] = useState(0);
   const [activeAccordion, setActiveAccordion] = useState("cod");
   const [paymentProof, setPaymentProof] = useState(null);
+  const [errors, setErrors] = useState({});
+
   const shippingCost = 0;
-  
+
   const BACKEND_URL = import.meta.env.VITE_API_URL;
+
+  const isAlpha = (value) => /^[A-Za-z\s]+$/.test(value);  // only letters
+  const isNumeric = (value) => /^[0-9]+$/.test(value);      // only digits
+  const isValidEmail = (value) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.includes(".com");
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -39,7 +46,8 @@ function Checkout() {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleImageUpload = (e) => {
@@ -76,8 +84,8 @@ function Checkout() {
       price: item.discountRate > 0 ? item.discountedPrice : item.price,
       images: Array.isArray(item.images)
         ? item.images.map(img => typeof img === "string" ? img : img.primary)
-        : item.images?.primary 
-          ? [item.images.primary] 
+        : item.images?.primary
+          ? [item.images.primary]
           : [],
       selectedSize: item.selectedSize || null,
       quantity: item.quantity || 1,
@@ -86,14 +94,30 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = {};
   
-    if (formData.paymentMethod === "bank" && !paymentProof) {
-      alert("Please upload payment proof for bank transfer");
+    if (!/^[A-Za-z\s]+$/.test(formData.firstName))
+      newErrors.firstName = "Only letters allowed in First Name";
+  
+    if (!/^[A-Za-z\s]+$/.test(formData.lastName))
+      newErrors.lastName = "Only letters allowed in Last Name";
+  
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || !formData.email.includes(".com"))
+      newErrors.email = "Email must contain @ and .com";
+  
+    if (!/^\d+$/.test(formData.phone))
+      newErrors.phone = "Only numbers allowed in phone";
+  
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
   
+    setErrors({});
+
     setLoader(true);
-  
+
     const orderData = {
       customer: {
         firstName: formData.firstName,
@@ -111,26 +135,26 @@ function Checkout() {
       items: cartItemsForCheckout(),
       totalAmount: subtotal + shippingCost,
     };
-  
+
     const formDataToSend = new FormData();
     formDataToSend.append("orderData", JSON.stringify(orderData));
-  
+
     if (paymentProof) {
       formDataToSend.append("paymentProof", paymentProof);
     }
-  
+
     try {
       const response = await fetch(`${BACKEND_URL}/checkout`, {
         method: "POST",
         body: formDataToSend,
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Failed to place order");
       }
-  
+
       localStorage.removeItem("cart");
       window.location.href = "/checkout-success";
     } catch (err) {
@@ -140,7 +164,7 @@ function Checkout() {
       setLoader(false);
     }
   };
-  
+
   return (
     <section className="bg-white py-16">
       <div className="container-custom">
@@ -195,12 +219,6 @@ function Checkout() {
                       <h3 className="text-lg font-semibold text-ink">
                         Contact Information
                       </h3>
-                      <Link
-                        to="/login"
-                        className="text-xs uppercase tracking-[0.3em] text-ink-muted hover:text-ink"
-                      >
-                        Login
-                      </Link>
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
                       <input
@@ -212,6 +230,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.firstName && (
+                        <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>
+                      )}
+
                       <input
                         type="text"
                         name="lastName"
@@ -221,6 +243,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.lastName && (
+                        <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>
+                      )}
+
                       <input
                         type="email"
                         name="email"
@@ -230,6 +256,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.email && (
+                        <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                      )}
+
                       <input
                         type="tel"
                         name="phone"
@@ -239,6 +269,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.phone && (
+                        <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+                      )}
+
                     </div>
                   </div>
 
@@ -381,12 +415,6 @@ function Checkout() {
                       <h3 className="text-lg font-semibold text-ink">
                         Contact Information
                       </h3>
-                      <Link
-                        to="/login"
-                        className="text-xs uppercase tracking-[0.3em] text-ink-muted hover:text-ink"
-                      >
-                        Login
-                      </Link>
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
                       <input
@@ -398,6 +426,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.firstName && (
+                        <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>
+                      )}
+
                       <input
                         type="text"
                         name="lastName"
@@ -407,6 +439,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.lastName && (
+                        <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>
+                      )}
+
                       <input
                         type="email"
                         name="email"
@@ -416,6 +452,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.email && (
+                        <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                      )}
+
                       <input
                         type="tel"
                         name="phone"
@@ -425,6 +465,10 @@ function Checkout() {
                         className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
                         required
                       />
+                      {errors.phone && (
+                        <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+                      )}
+
                     </div>
                   </div>
 

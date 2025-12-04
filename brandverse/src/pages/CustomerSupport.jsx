@@ -5,38 +5,77 @@ const SUPPORT_HOURS = import.meta.env.VITE_SUPPORT_HOURS || "Mon–Fri, 9:00 —
 const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
 
 export default function CustomerSupport() {
-    const [name, setName] = useState("");
-    const [customerEmail, setCustomerEmail] = useState("");
-    const [subject, setSubject] = useState("");
-    const [message, setMessage] = useState("");
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+    });
+
+    const [errors, setErrors] = useState({});
+
+
     const [result, setResult] = useState("");
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         setResult("Sending...");
 
-        const formData = new FormData();
-        formData.append("access_key", WEB3FORMS_KEY);
-        formData.append("name", name);
-        formData.append("email", customerEmail);
-        formData.append("subject", subject || "Support Request");
-        formData.append("message", message);
-        formData.append("redirect", ""); // Optional: redirect after submit
+        const newErrors = {};
+
+        if (!formData.name.trim()) {
+            newErrors.name = "Name is required";
+        } else if (!/^[A-Za-z\s]+$/.test(formData.name)) {
+            newErrors.name = "Only letters and spaces allowed";
+        }
+
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || !formData.email.includes(".com")) {
+            newErrors.email = "Invalid email (must include @ and .com)";
+        }
+
+        if (!formData.subject.trim()) {
+            newErrors.subject = "Subject is required";
+        }
+
+        if (!formData.message.trim()) {
+            newErrors.message = "Message is required";
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            setResult("");
+            return;
+        }
+
+        setErrors({}); // clear previous errors
+
+        // Prepare data to send
+        const formDataToSend = new FormData();
+        formDataToSend.append("access_key", WEB3FORMS_KEY);
+        formDataToSend.append("name", formData.name);
+        formDataToSend.append("email", formData.email);
+        formDataToSend.append("subject", formData.subject || "Support Request");
+        formDataToSend.append("message", formData.message);
+        formDataToSend.append("redirect", "");
 
         try {
             const response = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
-                body: formData,
+                body: formDataToSend,
             });
 
             const data = await response.json();
 
             if (data.success) {
                 setResult("Form Submitted Successfully");
-                setName("");
-                setCustomerEmail("");
-                setSubject("");
-                setMessage("");
+                setFormData({ name: "", email: "", subject: "", message: "" });
             } else {
                 setResult("Something went wrong. Please try again.");
             }
@@ -66,7 +105,6 @@ export default function CustomerSupport() {
                                     <li>Never share sensitive information such as passwords or full payment details.</li>
                                     <li>Indicate urgency if the issue affects transactions or delivery times, but remain concise and polite.</li>
                                     <li>Typical response time: <strong>{SUPPORT_HOURS}</strong>.</li>
-
                                 </ol>
                             </div>
                         </div>
@@ -80,24 +118,28 @@ export default function CustomerSupport() {
                                         <span className="mb-2 text-sm text-white/80">Name</span>
                                         <input
                                             type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
                                             placeholder="Your name"
                                             className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                             required
                                         />
+                                        {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
                                     </label>
 
                                     <label className="flex flex-col">
                                         <span className="mb-2 text-sm text-white/80">Your email</span>
                                         <input
                                             type="email"
-                                            value={customerEmail}
-                                            onChange={(e) => setCustomerEmail(e.target.value)}
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
                                             placeholder="you@example.com"
                                             className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                             required
                                         />
+                                        {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
                                     </label>
                                 </div>
 
@@ -105,24 +147,28 @@ export default function CustomerSupport() {
                                     <span className="mb-2 text-sm text-white/80">Subject</span>
                                     <input
                                         type="text"
-                                        value={subject}
-                                        onChange={(e) => setSubject(e.target.value)}
+                                        name="subject"
+                                        value={formData.subject}
+                                        onChange={handleChange}
                                         placeholder="What is this about?"
                                         className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                         required
                                     />
+                                    {errors.subject && <p className="text-red-400 text-sm mt-1">{errors.subject}</p>}
                                 </label>
 
                                 <label className="flex flex-col">
                                     <span className="mb-2 text-sm text-white/80">Message</span>
                                     <textarea
-                                        value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleChange}
                                         rows={6}
                                         placeholder="Describe your issue or question..."
                                         className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                         required
                                     />
+                                    {errors.message && <p className="text-red-400 text-sm mt-1">{errors.message}</p>}
                                 </label>
 
                                 <button

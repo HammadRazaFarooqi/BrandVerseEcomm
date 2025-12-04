@@ -482,23 +482,6 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                 ></textarea>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="isFeatured"
-                  name="isFeatured"
-                  checked={productData.isFeatured}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-red-500 focus:ring-red-400 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="isFeatured"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Mark as Featured Product
-                </label>
-              </div>
-
               <div className="flex justify-end space-x-4 pt-6">
                 <button
                   type="button"

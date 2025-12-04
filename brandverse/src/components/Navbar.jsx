@@ -257,7 +257,7 @@ function Navbar() {
               </div>
               <div>
                 <span className="font-serif text-2xl font-semibold text-ink block leading-tight">
-                Affi Mall
+                  Affi Mall
                 </span>
               </div>
             </Link>
@@ -306,11 +306,18 @@ function Navbar() {
 
               <button
                 className="btn btn-primary bg-ink text-white px-4 py-2 rounded-full"
-                onClick={() =>
-                  searchQuery &&
-                  filteredCategories?.length > 0 &&
-                  handleSelectCategory(filteredCategories[focusedIndex].slug)
-                }
+                onClick={() => {
+                  if (!searchQuery) return;
+
+                  if (filteredCategories?.length > 0) {
+                    // Navigate to the selected existing category
+                    handleSelectCategory(filteredCategories[focusedIndex].slug);
+                  } else {
+                    // Random / non-existent category: navigate using slugified search query
+                    const slug = searchQuery.trim().toLowerCase().replace(/\s+/g, "-");
+                    handleSelectCategory(slug);
+                  }
+                }}
               >
                 Search
               </button>

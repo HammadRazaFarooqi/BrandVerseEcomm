@@ -115,7 +115,8 @@ function CategoryManagement() {
           Category Management
         </h1>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base">
+          <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base"
+          onClick={() => setShowAddModal(true)}>
             <Plus className="w-5 h-5" />
             Add New Category
           </button>

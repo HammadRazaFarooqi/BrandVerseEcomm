@@ -16,11 +16,14 @@ export const updateCustomer = async (req, res) => {
     if (lastName !== undefined) user.lastName = lastName;
     if (phone !== undefined) user.phone = phone;
 
-    // Update address
     if (address) {
       user.addresses = [
         {
           street: address,
+          city: "",        // empty
+          state: "",       // empty
+          zipCode: "",     // empty
+          country: "",     // empty
           isDefault: true,
         },
       ];

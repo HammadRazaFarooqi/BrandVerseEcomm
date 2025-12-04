@@ -20,30 +20,40 @@ export const registerOTP = async (req, res) => {
         const { firstName, lastName, email, password } = req.body;
 
         let user = await User.findOne({ email });
-        if (user) return res.status(400).json({ error: "Email already exists" });
+
+        if (user && user.isEmailVerified) {
+            return res.status(400).json({ error: "Email already exists" });
+        }
 
         const otpCode = generateOTP();
-        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
-        // Generate unique username
-        const username = generateUsername(firstName, lastName);
-
-        // Create user with OTP
-        user = new User({
-            username,
-            firstName,
-            lastName,
-            email,
-            password,
-            otp: { code: otpCode, expiresAt: otpExpires }
-        });
-        await user.save();
+        // If user exists but not verified, update OTP & password
+        if (user && !user.isEmailVerified) {
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.password = password;
+            user.otp = { code: otpCode, expiresAt: otpExpires };
+            await user.save();
+        } else {
+            const username = generateUsername(firstName, lastName);
+            user = new User({
+                username,
+                firstName,
+                lastName,
+                email,
+                password,
+                isEmailVerified: false,
+                otp: { code: otpCode, expiresAt: otpExpires }
+            });
+            await user.save();
+        }
 
         // Send OTP email
         await sendMail({
             to: email,
             subject: "Your Affi Mall OTP Code",
-            html: otpTemplate(user.firstName, otpCode)
+            html: otpTemplate(firstName, otpCode)
         });
 
         res.status(201).json({ message: "OTP sent to email", email });
@@ -51,7 +61,6 @@ export const registerOTP = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-
 
 // --- Step 2: Verify OTP ---
 export const verifyOTP = async (req, res) => {
