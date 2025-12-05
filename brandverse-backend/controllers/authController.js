@@ -14,37 +14,59 @@ const generateUsername = (firstName, lastName) => {
     return `${firstName}${lastName}${Date.now()}`;
 };
 
-// --- Step 1: Register and send OTP ---
+// --- Step 1: Register and send OTP (FIXED) ---
 export const registerOTP = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
 
-        let user = await User.findOne({ email });
+        // ✅ Find user by email
+        const existingUser = await User.findOne({ email });
 
-        if (user && user.isEmailVerified) {
-            return res.status(400).json({ error: "Email already exists" });
+        // ✅ CRITICAL FIX: Block registration if user exists AND is verified
+        if (existingUser && existingUser.isEmailVerified === true) {
+            console.log("❌ Registration blocked - Email already registered:", email);
+            return res.status(400).json({ 
+                error: "Email already exists" 
+            });
         }
+
+        // If we reach here, either:
+        // 1. User doesn't exist (new registration)
+        // 2. User exists but is NOT verified (allow re-registration)
 
         const otpCode = generateOTP();
         const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
-        // If user exists but not verified, update OTP & password
-        if (user && !user.isEmailVerified) {
-            user.firstName = firstName;
-            user.lastName = lastName;
-            user.password = password;
-            user.otp = { code: otpCode, expiresAt: otpExpires };
-            await user.save();
+        let user;
+
+        if (existingUser && !existingUser.isEmailVerified) {
+            // User exists but not verified - update their data
+            console.log("⚠️ User exists but not verified, updating and resending OTP:", email);
+            
+            existingUser.firstName = firstName;
+            existingUser.lastName = lastName;
+            existingUser.password = password; // Will be hashed by pre-save hook
+            existingUser.otp = { 
+                code: otpCode, 
+                expiresAt: otpExpires 
+            };
+            user = await existingUser.save();
         } else {
+            // Create completely new user
+            console.log("✅ Creating new user:", email);
+            
             const username = generateUsername(firstName, lastName);
             user = new User({
                 username,
                 firstName,
                 lastName,
                 email,
-                password,
+                password, // Will be hashed by pre-save hook
                 isEmailVerified: false,
-                otp: { code: otpCode, expiresAt: otpExpires }
+                otp: { 
+                    code: otpCode, 
+                    expiresAt: otpExpires 
+                }
             });
             await user.save();
         }
@@ -56,12 +78,28 @@ export const registerOTP = async (req, res) => {
             html: otpTemplate(firstName, otpCode)
         });
 
-        res.status(201).json({ message: "OTP sent to email", email });
+        console.log("✅ OTP sent successfully to:", email);
+
+        return res.status(201).json({ 
+            message: "OTP sent to email", 
+            email 
+        });
+
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error("❌ Register OTP Error:", error);
+        
+        // Handle duplicate key error specifically
+        if (error.code === 11000) {
+            return res.status(400).json({ 
+                error: "Email already exists"
+            });
+        }
+        
+        return res.status(400).json({ 
+            error: error.message || "Registration failed"
+        });
     }
 };
-
 // --- Step 2: Verify OTP ---
 export const verifyOTP = async (req, res) => {
     try {

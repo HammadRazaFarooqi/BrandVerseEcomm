@@ -279,10 +279,10 @@ function Categories() {
                             <>
                               <div className="mt-3 flex items-center gap-2">
                                 <span className="text-ink-muted line-through mr-2">
-                                  PKR {item.price}
+                                  PKR {item.price.toLocaleString('en-PK')}
                                 </span>
                                 <span className="text-xl font-semibold text-ink">
-                                  PKR {item.discountedPrice}
+                                  PKR {item.discountedPrice.toLocaleString('en-PK')}
                                 </span>
                               </div>
                               <span className="inline-block rounded-lg bg-black mt-4 px-3 mr-20 text-xs font-bold text-white uppercase tracking-wide">

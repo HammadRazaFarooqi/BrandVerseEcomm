@@ -20,13 +20,13 @@ function Checkout() {
   const [activeAccordion, setActiveAccordion] = useState("cod");
   const [paymentProof, setPaymentProof] = useState(null);
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState(""); // Top error message
 
   const shippingCost = 0;
-
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
-  const isAlpha = (value) => /^[A-Za-z\s]+$/.test(value);  // only letters
-  const isNumeric = (value) => /^[0-9]+$/.test(value);      // only digits
+  const isAlpha = (value) => /^[A-Za-z\s]+$/.test(value);
+  const isNumeric = (value) => /^[0-9]+$/.test(value);
   const isValidEmail = (value) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.includes(".com");
 
@@ -53,21 +53,17 @@ function Checkout() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
         alert("File size should not exceed 5MB");
         e.target.value = null;
         return;
       }
-
-      // Validate file type
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
         alert("Please upload only image files (JPEG, PNG, GIF, WEBP)");
         e.target.value = null;
         return;
       }
-
       setPaymentProof(file);
     }
   };
@@ -96,26 +92,33 @@ function Checkout() {
     e.preventDefault();
 
     const newErrors = {};
-  
-    if (!/^[A-Za-z\s]+$/.test(formData.firstName))
+
+    if (!isAlpha(formData.firstName))
       newErrors.firstName = "Only letters allowed in First Name";
-  
-    if (!/^[A-Za-z\s]+$/.test(formData.lastName))
+    if (!isAlpha(formData.lastName))
       newErrors.lastName = "Only letters allowed in Last Name";
-  
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || !formData.email.includes(".com"))
+    if (!isValidEmail(formData.email))
       newErrors.email = "Email must contain @ and .com";
-  
-    if (!/^\d+$/.test(formData.phone))
-      newErrors.phone = "Only numbers allowed in phone";
-  
+    if (!isNumeric(formData.phone))
+      newErrors.phone = "Only numbers allowed in Phone";
+    if (!isAlpha(formData.city))
+      newErrors.city = "Only letters allowed in City";
+    if (!isAlpha(formData.state))
+      newErrors.state = "Only letters allowed in Country";
+    if (!isNumeric(formData.zipCode))
+      newErrors.zipCode = "Only numbers allowed in Postal Code";
+
+    if (activeAccordion === "bank" && !paymentProof)
+      newErrors.paymentProof = "Payment proof is required for bank transfer";
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      setErrorMessage("Please fix the errors below before submitting.");
       return;
     }
-  
-    setErrors({});
 
+    setErrors({});
+    setErrorMessage("");
     setLoader(true);
 
     const orderData = {
@@ -159,11 +162,95 @@ function Checkout() {
       window.location.href = "/checkout-success";
     } catch (err) {
       console.error("Order Error:", err);
-      alert(err.message);
+      setErrorMessage(err.message || "Failed to place order");
     } finally {
       setLoader(false);
     }
   };
+
+  const renderFormFields = () => (
+    <>
+      <div className="grid gap-4 md:grid-cols-2">
+        <input
+          type="text"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          placeholder="First Name"
+          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+          required
+        />
+        <input
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          placeholder="Last Name"
+          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Email"
+          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+          required
+        />
+        <input
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder="Phone"
+          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+          required
+        />
+      </div>
+
+      <div className="space-y-4 mt-4">
+        <input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          placeholder="Street Address"
+          className="w-full rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+          required
+        />
+        <div className="grid gap-4 md:grid-cols-3">
+          <input
+            type="text"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            placeholder="City"
+            className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+            required
+          />
+          <input
+            type="text"
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            placeholder="Country"
+            className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+            required
+          />
+          <input
+            type="text"
+            name="zipCode"
+            value={formData.zipCode}
+            onChange={handleChange}
+            placeholder="Postal Code"
+            className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
+            required
+          />
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <section className="bg-white py-16">
@@ -177,6 +264,19 @@ function Checkout() {
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-10">
+
+            {/* Top error modal */}
+            {Object.keys(errors).length > 0 && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg text-center mb-6">
+                <ul className="list-disc list-inside text-left">
+                  {Object.entries(errors).map(([field, message]) => (
+                    <li key={field}>{message}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+
             {/* COD Accordion */}
             <div className="glass-card rounded-[2rem] overflow-hidden">
               <button
@@ -215,114 +315,17 @@ function Checkout() {
               {activeAccordion === "cod" && (
                 <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-6">
                   <div>
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-semibold text-ink">
-                        Contact Information
-                      </h3>
-                    </div>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        placeholder="First Name"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.firstName && (
-                        <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>
-                      )}
-
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        placeholder="Last Name"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.lastName && (
-                        <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>
-                      )}
-
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Email"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.email && (
-                        <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-                      )}
-
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="Phone"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.phone && (
-                        <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
-                      )}
-
-                    </div>
-                  </div>
-
-                  <div>
                     <h3 className="text-lg font-semibold text-ink mb-6">
-                      Shipping Address
+                      Contact & Shipping Info
                     </h3>
-                    <div className="space-y-4">
-                      <input
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        placeholder="Street Address"
-                        className="w-full rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      <div className="grid gap-4 md:grid-cols-3">
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          placeholder="City"
-                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                          required
-                        />
-                        <input
-                          type="text"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleChange}
-                          placeholder="Country"
-                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                          required
-                        />
-                        <input
-                          type="text"
-                          name="zipCode"
-                          value={formData.zipCode}
-                          onChange={handleChange}
-                          placeholder="Postal Code"
-                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                          required
-                        />
-                      </div>
-                    </div>
+                    {renderFormFields()}
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-full" disabled={loader}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-full"
+                    disabled={loader}
+                  >
                     {loader ? "Placing Order..." : "Place Order"}
                   </button>
                 </form>
@@ -411,114 +414,17 @@ function Checkout() {
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-semibold text-ink">
-                        Contact Information
-                      </h3>
-                    </div>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        placeholder="First Name"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.firstName && (
-                        <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>
-                      )}
-
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        placeholder="Last Name"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.lastName && (
-                        <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>
-                      )}
-
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Email"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.email && (
-                        <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-                      )}
-
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="Phone"
-                        className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      {errors.phone && (
-                        <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
-                      )}
-
-                    </div>
-                  </div>
-
-                  <div>
                     <h3 className="text-lg font-semibold text-ink mb-6">
-                      Shipping Address
+                      Contact & Shipping Info
                     </h3>
-                    <div className="space-y-4">
-                      <input
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        placeholder="Street Address"
-                        className="w-full rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                        required
-                      />
-                      <div className="grid gap-4 md:grid-cols-3">
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          placeholder="City"
-                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                          required
-                        />
-                        <input
-                          type="text"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleChange}
-                          placeholder="Country"
-                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                          required
-                        />
-                        <input
-                          type="text"
-                          name="zipCode"
-                          value={formData.zipCode}
-                          onChange={handleChange}
-                          placeholder="Postal Code"
-                          className="rounded-full border border-surface-muted px-5 py-3 focus:outline-none focus:border-ink"
-                          required
-                        />
-                      </div>
-                    </div>
+                    {renderFormFields()}
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-full" disabled={loader}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-full"
+                    disabled={loader}
+                  >
                     {loader ? "Placing Order..." : "Place Order"}
                   </button>
                 </form>

@@ -66,21 +66,27 @@ function Register() {
 
       const data = await response.json();
 
+      // ✅ Handle error responses
       if (!response.ok) {
-        // Show "Email already exists" inline
-        if (data.error && data.error.toLowerCase().includes("email already exists")) {
-          setErrors({ email: data.error });
+        const errorMessage = data.error || "Failed to send OTP";
+        
+        // Check if it's an "email already exists" error
+        if (errorMessage.toLowerCase().includes("already exists")) {
+          setErrors({ email: errorMessage });
+          toast.error(errorMessage);
         } else {
-          toast.error(data.error || "Failed to send OTP");
+          toast.error(errorMessage);
         }
-        return;
+        
+        setLoader(false);
+        return; // ✅ Stop execution
       }
 
-      toast.success("OTP sent to your email!");
       navigate("/otp", { state: { email: formData.email } });
+      
     } catch (error) {
-      toast.error(error.message);
-    } finally {
+      console.error("Registration error:", error);
+      toast.error("Network error. Please try again.");
       setLoader(false);
     }
   };

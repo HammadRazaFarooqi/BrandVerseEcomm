@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import Category from "../models/Category.js";
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000"; // Fallback URL
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
 import { connectDB } from "../lib/db.js";
 // Create a new category

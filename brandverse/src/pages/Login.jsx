@@ -48,7 +48,6 @@ function Login() {
         toast.error(data.error || "Invalid credentials");
       } else {
         localStorage.setItem("isLogin", JSON.stringify(data));
-        toast.success("Login successful!");
         navigate(data.user.role === "user" ? "/" : "/admin");
       }
     } catch (err) {

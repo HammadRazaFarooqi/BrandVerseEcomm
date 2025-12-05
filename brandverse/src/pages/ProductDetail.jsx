@@ -15,6 +15,7 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [imgList, setImgList] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
@@ -47,7 +48,14 @@ function ProductDetail() {
     if (selectedProduct?.images?.primary) {
       setSelectedImage(selectedProduct.images.primary);
     }
+    const primary = selectedProduct?.images?.primary || null;
+    const gallery = selectedProduct?.images?.gallery || [];
+    const images = primary ? [primary, ...gallery] : gallery;
+    setImgList(images);
+
   }, [selectedProduct]);
+
+
 
   const handleMouseMove = (e) => {
     if (imageRef.current) {
@@ -104,7 +112,7 @@ function ProductDetail() {
 
   return (
     <section className="bg-white py-12">
-       <button
+      <button
         onClick={() => {
           if (categorySlug) {
             navigate(`/category/${categorySlug}`);
@@ -149,7 +157,7 @@ function ProductDetail() {
                 )}
               </div>
               <div className="grid grid-cols-4 gap-4">
-                {selectedProduct?.images?.gallery?.map((img, index) => (
+                {imgList ? imgList.map((img, index) => (
                   <img
                     key={index}
                     src={img}
@@ -158,7 +166,7 @@ function ProductDetail() {
                       }`}
                     onClick={() => handleImageClick(img)}
                   />
-                ))}
+                )) : ''}
               </div>
             </div>
 
@@ -173,10 +181,10 @@ function ProductDetail() {
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                       <div className="flex items-center gap-3">
                         <span className="text-ink-muted line-through text-xl">
-                          PKR {selectedProduct.price}
+                          PKR {selectedProduct.price.toLocaleString('en-PK')}
                         </span>
                         <span className="text-2xl font-semibold text-ink">
-                          PKR {selectedProduct.discountedPrice}
+                          PKR {selectedProduct.discountedPrice.toLocaleString('en-PK')}
                         </span>
                       </div>
                       <span className="inline-block rounded-lg bg-black px-3 py-1 ml-6 text-xs font-bold text-white uppercase tracking-wide">
@@ -185,7 +193,7 @@ function ProductDetail() {
                     </div>
                   ) : (
                     <span className="mt-3 text-2xl font-semibold text-ink">
-                      PKR {selectedProduct.price}
+                      PKR {selectedProduct.price.toLocaleString('en-PK')}
                     </span>
                   )}
                 </p>

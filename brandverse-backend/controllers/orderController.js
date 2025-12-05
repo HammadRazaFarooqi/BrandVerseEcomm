@@ -1,7 +1,7 @@
 import Order from "../models/Order.js";
 import cloudinary from "../src/config/cloudinary.js";
 import multer from "multer";
-import { orderStatusEmailTemplate } from "../src/utils/emailTemplates.js";
+import { orderStatusEmailTemplate, adminOrderNotificationTemplate } from "../src/utils/emailTemplates.js";
 import { connectDB } from "../lib/db.js";
 import { sendMail } from "../src/utils/mailer.js";
 
@@ -22,8 +22,6 @@ export const upload = multer({
 });
 
 // ---------------- CREATE ORDER -------------------
-import { orderConfirmationTemplate } from "../src/utils/emailTemplates.js";
-
 export const createOrder = async (req, res) => {
   try {
     await connectDB();
@@ -64,35 +62,79 @@ export const createOrder = async (req, res) => {
       createdAt: new Date(),
     });
 
-    // ✅ Send order confirmation email
-    try {
-      await sendMail({
-        to: orderData.customer.email,
-        subject: "Order Confirmation - Affi Mall",
-        html: orderConfirmationTemplate(
-          orderData.customer.firstName,
-          newOrder._id,
-          newOrder.orderNumber,
-          orderData.items,
-          orderData.totalAmount,
-          orderData.paymentMethod
-        ),
+    console.log("✅ Order created successfully:", newOrder.orderNumber);
+
+    // Email sending promises
+    const emailPromises = [];
+
+    // ✅ Send order confirmation email to CUSTOMER
+    const customerEmailPromise = sendMail({
+      to: orderData.customer.email,
+      subject: "Order Confirmation - Affi Mall",
+      html: adminOrderNotificationTemplate(
+        orderData.customer.firstName,
+        newOrder._id,
+        newOrder.orderNumber,
+        orderData.items,
+        orderData.totalAmount,
+        orderData.paymentMethod
+      ),
+    })
+      .then(() => {
+        console.log("✅ Customer email sent successfully to:", orderData.customer.email);
+        return { type: 'customer', success: true };
+      })
+      .catch((error) => {
+        console.error("❌ Customer email failed:", error.message);
+        return { type: 'customer', success: false, error: error.message };
       });
-      console.log("Order confirmation email sent to:", orderData.customer.email);
-    } catch (emailError) {
-      console.error("Failed to send order confirmation email:", emailError);
-      // Don't fail the order if email fails - just log it
-    }
+
+    emailPromises.push(customerEmailPromise);
+
+    // ✅ Send order notification email to ADMIN
+    const adminEmailPromise = sendMail({
+      to: "affimall50@gmail.com",
+      subject: `New Order Received - #${newOrder.orderNumber}`,
+      html: adminOrderNotificationTemplate(
+        newOrder._id,
+        newOrder.orderNumber,
+        orderData.customer,
+        orderData.items,
+        orderData.totalAmount,
+        orderData.paymentMethod,
+        paymentProofUrl
+      ),
+    })
+      .then(() => {
+        console.log("✅ Admin email sent successfully to: affimall50@gmail.com");
+        return { type: 'admin', success: true };
+      })
+      .catch((error) => {
+        console.error("❌ Admin email failed:", error.message);
+        console.error("Full admin email error:", error);
+        return { type: 'admin', success: false, error: error.message };
+      });
+
+    emailPromises.push(adminEmailPromise);
+
+    // Wait for all emails to complete (but don't fail the order if emails fail)
+    const emailResults = await Promise.allSettled(emailPromises);
+    
+    console.log("📧 Email results:", emailResults);
 
     res.status(201).json({
       success: true,
       message: "Order placed successfully",
       orderId: newOrder._id,
       orderNumber: newOrder.orderNumber,
+      emailStatus: {
+        customer: emailResults[0]?.value?.success || false,
+        admin: emailResults[1]?.value?.success || false,
+      }
     });
     
   } catch (error) {
-    console.error("Order creation failed:", error);
+    console.error("❌ Order creation failed:", error);
     res.status(500).json({
       success: false,
       message: "Failed to create order",

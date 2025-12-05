@@ -253,7 +253,20 @@ function Navbar() {
           <div className="flex items-center justify-between gap-4 py-4 flex-wrap">
             <Link to="/" className="flex items-center space-x-3">
               <div>
-                <img src="logo.png" className="w-11 h-11 object-contain" alt="Affi Mall" />
+                <img
+                  src="/logo.png"
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    // Prevent infinite loop if fallback also fails
+                    e.currentTarget.onerror = null;
+                    // Simple SVG fallback as a data URL (percent-encoded)
+                    e.currentTarget.src =
+                      'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'44\' height=\'44\' viewBox=\'0 0 44 44\'><rect width=\'100%\' height=\'100%\' fill=\'%23ffffff\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'Arial, sans-serif\' font-size=\'10\' fill=\'%23000000\'>Affi Mall</text></svg>';
+                  }}
+                  className="w-11 h-11 object-contain"
+                  alt="Affi Mall"
+                />
               </div>
               <div>
                 <span className="font-serif text-2xl font-semibold text-ink block leading-tight">

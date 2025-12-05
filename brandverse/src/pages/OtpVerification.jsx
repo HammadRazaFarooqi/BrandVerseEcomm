@@ -30,7 +30,6 @@ function OtpVerification() {
             if (!res.ok) throw new Error(data.error || "OTP verification failed");
 
             setMessage(""); // clear previous messages
-            toast.success("OTP verified! Registration complete.");
             navigate("/login");
         } catch (error) {
             setMessage(error.message);

@@ -371,3 +371,200 @@ export const orderConfirmationTemplate = (firstName, orderId, orderNumber, items
     `;
     return emailWrapper(content);
 };
+
+// Admin Order Notification Email Template
+export const adminOrderNotificationTemplate = (orderId, orderNumber, customer, items, totalAmount, paymentMethod, paymentProofUrl) => {
+    const content = `
+    <!-- Alert Badge -->
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:20px;">
+        <tr>
+            <td align="center">
+                <p style="display:inline-block; background-color:#10b981; color:white; font-size:14px; padding:8px 16px; border-radius:50px; margin:0; font-weight:bold;">
+                    🔔 NEW ORDER ALERT
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <h2 style="color:${COLORS.TEXT_DARK}; font-size:22px; margin-top:0; text-align:center;">New Order Received</h2>
+    
+    <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px; text-align:center; margin-bottom:30px;">
+        A new order has been placed on Affi Mall.
+    </p>
+
+    <!-- Order Summary Box -->
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin:20px 0; border-radius:12px; background-color:${COLORS.BG_HEADER_ACCENT}; border: 2px solid ${COLORS.HIGHLIGHT}; padding:25px;">
+        <tr>
+            <td>
+                <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px; font-weight:bold; margin:0 0 15px 0;">📋 Order Summary</p>
+                
+                <table width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="padding:8px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Order Number:</strong> #${orderNumber}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Order ID:</strong> ${orderId}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Payment Method:</strong> ${paymentMethod === 'cod' ? '💵 Cash on Delivery' : '🏦 Bank Transfer'}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Total Amount:</strong> 
+                                <span style="color:${COLORS.HIGHLIGHT}; font-size:18px; font-weight:bold;">PKR ${totalAmount.toFixed(2)}</span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Order Date:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi', dateStyle: 'medium', timeStyle: 'short' })}
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Customer Information -->
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin:25px 0; border-radius:8px; background-color:#f0f4f8; padding:20px;">
+        <tr>
+            <td>
+                <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px; font-weight:bold; margin:0 0 15px 0;">👤 Customer Information</p>
+                
+                <table width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="padding:5px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Name:</strong> ${customer.firstName} ${customer.lastName}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Email:</strong> 
+                                <a href="mailto:${customer.email}" style="color:#3b82f6; text-decoration:none;">${customer.email}</a>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px 0;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
+                                <strong style="color:${COLORS.TEXT_PRIMARY};">Phone:</strong> 
+                                <a href="tel:${customer.phone}" style="color:#3b82f6; text-decoration:none;">${customer.phone}</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Order Items -->
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin:25px 0;">
+        <tr>
+            <td>
+                <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px; font-weight:bold; margin:0 0 15px 0;">🛍️ Order Items (${items.length} item${items.length > 1 ? 's' : ''})</p>
+            </td>
+        </tr>
+        ${items.map((item, index) => `
+        <tr>
+            <td style="padding:15px 0; ${index < items.length - 1 ? 'border-bottom:1px solid #e5e7eb;' : ''}">
+                <table width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="width:60%; vertical-align:top;">
+                            <p style="color:${COLORS.TEXT_PRIMARY}; font-size:14px; margin:0 0 5px 0; font-weight:bold;">${item.title}</p>
+                            ${item.selectedSize ? `<p style="color:${COLORS.TEXT_SECONDARY}; font-size:12px; margin:0;">Size: ${item.selectedSize}</p>` : ''}
+                        </td>
+                        <td style="width:20%; text-align:center; vertical-align:top;">
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">Qty: ${item.quantity}</p>
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:12px; margin:5px 0 0 0;">@ PKR ${item.price.toFixed(2)}</p>
+                        </td>
+                        <td style="width:20%; text-align:right; vertical-align:top;">
+                            <p style="color:${COLORS.TEXT_PRIMARY}; font-size:15px; margin:0; font-weight:bold;">PKR ${(item.price * item.quantity).toFixed(2)}</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        `).join('')}
+        
+        <!-- Total Row -->
+        <tr>
+            <td style="padding:20px 0 0 0;">
+                <table width="100%" cellspacing="0" cellpadding="0" style="border-top:2px solid ${COLORS.HIGHLIGHT}; padding-top:15px;">
+                    <tr>
+                        <td style="width:80%; text-align:right;">
+                            <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px; margin:0; font-weight:bold;">Grand Total:</p>
+                        </td>
+                        <td style="width:20%; text-align:right;">
+                            <p style="color:${COLORS.HIGHLIGHT}; font-size:20px; margin:0; font-weight:bold;">PKR ${totalAmount.toFixed(2)}</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    ${paymentProofUrl ? `
+    <!-- Payment Proof Section -->
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin:25px 0; border-radius:8px; background-color:#fef3c7; border: 2px solid ${COLORS.HIGHLIGHT}; padding:20px;">
+        <tr>
+            <td>
+                <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px; font-weight:bold; margin:0 0 15px 0;">💳 Payment Proof Submitted</p>
+                <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0 0 15px 0;">
+                    The customer has uploaded a payment proof for bank transfer. Please verify the payment.
+                </p>
+                <table width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td align="center" style="padding:15px 0;">
+                            <a href="${paymentProofUrl}" target="_blank" 
+                                style="display:inline-block; padding:12px 30px; border-radius:50px; 
+                                    background-color:${COLORS.HIGHLIGHT}; color:${COLORS.TEXT_DARK}; 
+                                    font-weight:bold; text-decoration:none; font-size:14px; 
+                                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                📎 View Payment Proof
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    ` : ''}
+
+    <!-- Action Required Notice -->
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin:30px 0;">
+        <tr>
+            <td align="center" style="padding:20px; background-color:#f0f4f8; border-radius:8px;">
+                <p style="color:${COLORS.TEXT_PRIMARY}; font-size:14px; margin:0; font-weight:bold;">
+                    ⚡ Action Required
+                </p>
+                <p style="color:${COLORS.TEXT_SECONDARY}; font-size:13px; margin:10px 0 0 0;">
+                    Please process this order and update the status in your admin dashboard.
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <p style="color:${COLORS.TEXT_SECONDARY}; font-size:12px; text-align:center; margin-top:25px;">
+        This is an automated notification from Affi Mall order management system.
+    </p>
+    `;
+    return emailWrapper(content);
+};

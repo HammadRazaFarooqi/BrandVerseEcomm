@@ -43,6 +43,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Color variant form state
   const [colorInput, setColorInput] = useState("");
@@ -71,7 +72,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
 
         if (!isNaN(price) && !isNaN(discountRate) && discountRate > 0) {
           const discount = price * (discountRate / 100);
-          updatedData.discountedPrice = (price - discount).toFixed(2);
+          updatedData.discountedPrice = (price - discount).toFixed(0);
         } else {
           updatedData.discountedPrice = "";
         }
@@ -196,6 +197,13 @@ const AddProductForm = ({ onAddProduct, productID }) => {
     setIsSubmitting(true);
 
     try {
+      // VALIDATION: Primary image is required only when adding a NEW product
+      if (!productID && !productData.images.primary) {
+        setErrorMessage("Primary image is required for new products.");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Upload primary image if it's a file
       const primaryImageUrl =
         productData.images.primary instanceof File
@@ -224,7 +232,6 @@ const AddProductForm = ({ onAddProduct, productID }) => {
         })
       );
 
-      // Format data for API
       const formattedData = {
         ...productData,
         price: parseFloat(productData.price),
@@ -242,7 +249,6 @@ const AddProductForm = ({ onAddProduct, productID }) => {
         colorVariants: processedColorVariants.filter((v) => v.image !== null),
       };
 
-      // Determine if this is an update or create operation
       const isUpdateOperation = !!productID;
       const url = isUpdateOperation
         ? `${BACKEND_URL}/products/${productID}`
@@ -250,7 +256,6 @@ const AddProductForm = ({ onAddProduct, productID }) => {
 
       const method = isUpdateOperation ? "PUT" : "POST";
 
-      // Send data to API
       const response = await fetch(url, {
         method: method,
         headers: {
@@ -268,21 +273,24 @@ const AddProductForm = ({ onAddProduct, productID }) => {
         }
 
         const data = await response.json();
-        onAddProduct(data); // Notify parent component
-        alert(`Product ${isUpdateOperation ? "updated" : "added"} successfully!`);
+        onAddProduct(data);
+        alert(
+          `Product ${isUpdateOperation ? "updated" : "added"} successfully!`
+        );
       }
     } catch (error) {
       console.error(
         `Error ${productID ? "updating" : "adding"} product:`,
         error
       );
-      alert(
+      setErrorMessage(
         `Failed to ${productID ? "update" : "add"} product. Please try again.`
       );
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   useEffect(() => {
     getCategory();
@@ -428,7 +436,11 @@ const AddProductForm = ({ onAddProduct, productID }) => {
             </button>
           </div>
         </div>
-
+        {errorMessage && (
+          <div className="bg-red-100 text-red-700 border border-red-300 rounded-md p-3 mb-4 text-center">
+            {errorMessage}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           {/* Tab 1: Basic Info */}
           {activeTab === 0 && (
