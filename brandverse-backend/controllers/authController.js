@@ -168,7 +168,7 @@ export const loginUser = async (req, res) => {
         await sendMail({
             to: email,
             subject: "Login Alert",
-            html: loginTemplate(user.firstName, user.lastLogin.toLocaleString())
+            html: loginTemplate(user.firstName)
         });
 
         res.json({ token, user });

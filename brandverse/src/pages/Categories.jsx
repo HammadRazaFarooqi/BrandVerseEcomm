@@ -106,8 +106,13 @@ function Categories() {
 
     // Filter by category
     if (selectedCategory !== "all") {
-      filtered = filtered.filter((item) =>
-        item?.category?.name?.includes(selectedCategory)
+      filtered = filtered.filter((item) => {
+      console.log(item?.category?.name);
+      console.log(selectedCategory);
+      console.log(item?.category?.slug?.includes(selectedCategory));
+              
+        return item?.category?.slug?.includes(selectedCategory)
+      }
       );
     }
 
@@ -290,7 +295,7 @@ function Categories() {
                               </span></>
                           ) : (
                             <p className="mt-3 text-xl font-semibold text-ink">
-                              PKR {item.price}
+                              PKR {item.price.toLocaleString('en-PK')}
                             </p>
                           )}
 

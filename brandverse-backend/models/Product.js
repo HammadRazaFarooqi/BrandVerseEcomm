@@ -68,27 +68,43 @@ productSchema.pre("save", async function (next) {
   next();
 });
 
-productSchema.pre("findOneAndUpdate", function (next) {
+productSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate() || {};
   const set = update.$set || {};
 
+  // Handle slug regeneration and uniqueness
   const incomingTitle = set.title ?? update.title;
   if (incomingTitle && !set.slug && !update.slug) {
-    set.slug = slugify(incomingTitle, { lower: true, strict: true });
+    let baseSlug = slugify(incomingTitle, { lower: true, strict: true });
+    let slug = baseSlug;
+    let counter = 0;
+
+    while (await mongoose.models.Product.exists({ slug, _id: { $ne: this.getQuery()._id } })) {
+      counter++;
+      slug = `${baseSlug}-${counter}`;
+    }
+
+    set.slug = slug;
   }
 
+  // Price & finalPrice calculations
   const priceSource =
     set.discountedPrice ?? update.discountedPrice ?? set.price ?? update.price;
 
   if (priceSource !== undefined) {
     set.finalPrice =
-      set.discountedPrice ?? update.discountedPrice ?? set.price ?? update.price ?? priceSource;
+      set.discountedPrice ??
+      update.discountedPrice ??
+      set.price ??
+      update.price ??
+      priceSource;
   }
 
   update.$set = set;
   this.setUpdate(update);
   next();
 });
+
 
 // Indexes
 productSchema.index(

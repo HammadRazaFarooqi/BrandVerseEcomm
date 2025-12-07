@@ -1,7 +1,7 @@
 import Order from "../models/Order.js";
 import cloudinary from "../src/config/cloudinary.js";
 import multer from "multer";
-import { orderStatusEmailTemplate, adminOrderNotificationTemplate } from "../src/utils/emailTemplates.js";
+import { orderStatusEmailTemplate, adminOrderNotificationTemplate, orderConfirmationTemplate } from "../src/utils/emailTemplates.js";
 import { connectDB } from "../lib/db.js";
 import { sendMail } from "../src/utils/mailer.js";
 
@@ -71,7 +71,7 @@ export const createOrder = async (req, res) => {
     const customerEmailPromise = sendMail({
       to: orderData.customer.email,
       subject: "Order Confirmation - Affi Mall",
-      html: adminOrderNotificationTemplate(
+      html: orderConfirmationTemplate(
         orderData.customer.firstName,
         newOrder._id,
         newOrder.orderNumber,

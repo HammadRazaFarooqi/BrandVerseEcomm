@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 function Checkout() {
@@ -20,7 +20,8 @@ function Checkout() {
   const [activeAccordion, setActiveAccordion] = useState("cod");
   const [paymentProof, setPaymentProof] = useState(null);
   const [errors, setErrors] = useState({});
-  const [errorMessage, setErrorMessage] = useState(""); // Top error message
+  const [errorMessage, setErrorMessage] = useState("");
+  const errorRef = useRef(null);
 
   const shippingCost = 0;
   const BACKEND_URL = import.meta.env.VITE_API_URL;
@@ -44,6 +45,16 @@ function Checkout() {
     );
     setSubtotal(total);
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [errors]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -262,12 +273,12 @@ function Checkout() {
           </Link>
         </div>
 
+
         <div className="mt-10 grid gap-10 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-10">
-
             {/* Top error modal */}
             {Object.keys(errors).length > 0 && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg text-center mb-6">
+              <div ref={errorRef} className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg text-center mb-6">
                 <ul className="list-disc list-inside text-left">
                   {Object.entries(errors).map(([field, message]) => (
                     <li key={field}>{message}</li>
@@ -437,16 +448,16 @@ function Checkout() {
             <div className="mt-6 space-y-4">
               <div className="flex justify-between text-ink">
                 <span>Subtotal</span>
-                <span>PKR {subtotal.toFixed(2)}</span>
+                <span>PKR {subtotal.toLocaleString('en-PK')}</span>
               </div>
               <div className="flex justify-between text-ink">
                 <span>Shipping</span>
-                <span>{shippingCost === 0 ? "Free" : `PKR ${shippingCost.toFixed(2)}`}</span>
+                <span>{shippingCost === 0 ? "Free" : `PKR ${shippingCost.toLocaleString('en-PK')}`}</span>
               </div>
               <div className="border-t border-surface-muted pt-4">
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span>PKR {(subtotal + shippingCost).toFixed(2)}</span>
+                  <span>PKR {(subtotal + shippingCost).toLocaleString('en-PK')}</span>
                 </div>
                 <p className="text-xs uppercase tracking-[0.3em] text-ink-muted mt-1">
                   Taxes included

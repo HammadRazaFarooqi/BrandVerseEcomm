@@ -174,7 +174,7 @@ function OrderManagement() {
               <span className="font-medium">
                 PKR {filteredOrders
                   .reduce((s, o) => s + (o.price * o.quantity || 0), 0)
-                  .toFixed(2)}
+                  .toLocaleString('en-PK')}
               </span>
             </div>
           </div>

@@ -108,12 +108,6 @@ function Cart() {
                         <h3 className="text-xl font-semibold text-ink">
                           {item.title}
                         </h3>
-                        <p className="mt-1 text-sm uppercase tracking-[0.3em] text-ink-muted">
-                          {item.selectedSize?.size !== "FREESIZE" &&
-                            `Size ${item.selectedSize?.size}`}
-                          {item.selectedSize?.color !== "NOCOLOR" &&
-                            ` · ${item.selectedSize?.color}`}
-                        </p>
                       </div>
                       <button
                         className="text-ink-muted hover:text-ink"
@@ -130,10 +124,10 @@ function Cart() {
                       <div className="text-right">
                         <p className="text-sm text-ink-muted">Item total</p>
                         <p className="text-xl font-semibold text-ink">
-                          PKR 
+                          PKR  
                           {item.discountRate > 0
-                            ? (item.discountedPrice * item.quantity).toFixed(2)
-                            : (item.price * item.quantity).toFixed(2)}
+                            ? (item.discountedPrice * item.quantity).toLocaleString('en-PK')
+                            : (item.price * item.quantity).toLocaleString('en-PK')}
                         </p>
                       </div>
                     </div>
@@ -152,12 +146,12 @@ function Cart() {
                   {cartItems.reduce((acc, item) => acc + item.quantity, 0)}{" "}
                   items)
                 </span>
-                <span>PKR {subtotal.toFixed(2)}</span>
+                <span>PKR {subtotal.toLocaleString('en-PK')}</span>
               </div>
               <div className="border-t border-surface-muted pt-4">
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span>PKR {total.toFixed(2)}</span>
+                  <span>PKR {total.toLocaleString('en-PK')}</span>
                 </div>
                 <p className="text-xs uppercase tracking-[0.3em] text-ink-muted">
                   Taxes included

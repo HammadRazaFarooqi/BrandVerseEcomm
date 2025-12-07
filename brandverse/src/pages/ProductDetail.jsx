@@ -197,10 +197,7 @@ function ProductDetail() {
                     </span>
                   )}
                 </p>
-
-
               </div>
-
               <div>
                 <h3 className="text-lg font-semibold text-ink">Description</h3>
                 <p className="mt-3 text-ink-muted">{selectedProduct?.description}</p>

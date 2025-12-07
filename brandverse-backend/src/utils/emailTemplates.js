@@ -146,7 +146,7 @@ export const registrationSuccessTemplate = (firstName) => {
 };
 
 // Login Notification Email (REDESIGNED to use light mode)
-export const loginTemplate = (firstName, lastLoginTime) => {
+export const loginTemplate = (firstName) => {
     const content = `
     <h2 style="color:${COLORS.TEXT_DARK}; font-size:22px; margin-top:0; text-align:center;">Successful Login Notification</h2>
     <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px;">Hello ${firstName},</p>
@@ -160,7 +160,6 @@ export const loginTemplate = (firstName, lastLoginTime) => {
         <tr>
             <td>
                 <p style="color:${COLORS.TEXT_PRIMARY}; font-size:14px; margin:0 0 5px 0; font-weight:bold;">Activity Details</p>
-                <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">Time: ${lastLoginTime}</p>
             </td>
         </tr>
     </table>
@@ -330,7 +329,7 @@ export const orderConfirmationTemplate = (firstName, orderId, orderNumber, items
                     <strong>Payment Method:</strong> ${paymentMethod === 'cod' ? 'Cash on Delivery' : 'Bank Transfer'}
                 </p>
                 <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:5px 0;">
-                    <strong>Total Amount:</strong> PKR ${totalAmount.toFixed(2)}
+                    <strong>Total Amount:</strong> PKR ${totalAmount.toLocaleString('en-PK')}
                 </p>
             </td>
         </tr>
@@ -356,7 +355,7 @@ export const orderConfirmationTemplate = (firstName, orderId, orderNumber, items
                             <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">x${item.quantity}</p>
                         </td>
                         <td style="width:15%; text-align:right;">
-                            <p style="color:${COLORS.TEXT_PRIMARY}; font-size:14px; margin:0; font-weight:bold;">PKR ${(item.price * item.quantity).toFixed(2)}</p>
+                            <p style="color:${COLORS.TEXT_PRIMARY}; font-size:14px; margin:0; font-weight:bold;">PKR ${(item.price * item.quantity).toLocaleString('en-PK')}</p>
                         </td>
                     </tr>
                 </table>
@@ -424,7 +423,7 @@ export const adminOrderNotificationTemplate = (orderId, orderNumber, customer, i
                         <td style="padding:8px 0;">
                             <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">
                                 <strong style="color:${COLORS.TEXT_PRIMARY};">Total Amount:</strong> 
-                                <span style="color:${COLORS.HIGHLIGHT}; font-size:18px; font-weight:bold;">PKR ${totalAmount.toFixed(2)}</span>
+                                <span style="color:${COLORS.HIGHLIGHT}; font-size:18px; font-weight:bold;">PKR ${totalAmount.toLocaleString('en-PK')}</span>
                             </p>
                         </td>
                     </tr>
@@ -493,10 +492,10 @@ export const adminOrderNotificationTemplate = (orderId, orderNumber, customer, i
                         </td>
                         <td style="width:20%; text-align:center; vertical-align:top;">
                             <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; margin:0;">Qty: ${item.quantity}</p>
-                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:12px; margin:5px 0 0 0;">@ PKR ${item.price.toFixed(2)}</p>
+                            <p style="color:${COLORS.TEXT_SECONDARY}; font-size:12px; margin:5px 0 0 0;"> PKR ${item.price.toLocaleString('en-PK')}</p>
                         </td>
                         <td style="width:20%; text-align:right; vertical-align:top;">
-                            <p style="color:${COLORS.TEXT_PRIMARY}; font-size:15px; margin:0; font-weight:bold;">PKR ${(item.price * item.quantity).toFixed(2)}</p>
+                            <p style="color:${COLORS.TEXT_PRIMARY}; font-size:15px; margin:0; font-weight:bold;">PKR ${(item.price * item.quantity).toLocaleString('en-PK')}</p>
                         </td>
                     </tr>
                 </table>
@@ -513,7 +512,7 @@ export const adminOrderNotificationTemplate = (orderId, orderNumber, customer, i
                             <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px; margin:0; font-weight:bold;">Grand Total:</p>
                         </td>
                         <td style="width:20%; text-align:right;">
-                            <p style="color:${COLORS.HIGHLIGHT}; font-size:20px; margin:0; font-weight:bold;">PKR ${totalAmount.toFixed(2)}</p>
+                            <p style="color:${COLORS.HIGHLIGHT}; font-size:20px; margin:0; font-weight:bold;">PKR ${totalAmount.toLocaleString('en-PK')}</p>
                         </td>
                     </tr>
                 </table>

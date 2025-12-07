@@ -1,15 +1,12 @@
-import { Edit2 } from "lucide-react";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import {
   FiArrowLeft,
   FiArrowRight,
-  FiPlus,
   FiUpload,
-  FiX,
+  FiX
 } from "react-icons/fi";
 import { uploadSigned } from "../../utils/cloudinaryClient.js";
-
 
 const uploadImage = async (file) => {
   const res = await uploadSigned(file);
@@ -196,13 +193,23 @@ const AddProductForm = ({ onAddProduct, productID }) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      // VALIDATION: Primary image is required only when adding a NEW product
-      if (!productID && !productData.images.primary) {
-        setErrorMessage("Primary image is required for new products.");
+    try {// VALIDATION
+      const errors = [];
+      
+      if (!productData.title.trim()) errors.push("Product title is required.");
+      if (!productData.description.trim()) errors.push("Description is required.");
+      if (!productData.category) errors.push("Category is required.");
+      if (!productData.price || Number(productData.price) <= 0)
+        errors.push("Price is required.");
+      if (!productID && !productData.images.primary)
+        errors.push("Primary image is required for new products.");
+      
+      if (errors.length > 0) {
+        setErrorMessage(errors.join(" "));
         setIsSubmitting(false);
         return;
       }
+      
 
       // Upload primary image if it's a file
       const primaryImageUrl =
@@ -274,9 +281,6 @@ const AddProductForm = ({ onAddProduct, productID }) => {
 
         const data = await response.json();
         onAddProduct(data);
-        alert(
-          `Product ${isUpdateOperation ? "updated" : "added"} successfully!`
-        );
       }
     } catch (error) {
       console.error(
@@ -455,7 +459,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                     name="title"
                     value={productData.title}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-200 focus:border-red-500"
+                    className="w-full px-4 py-2 border rounded-lg"
                     required
                   />
                 </div>
@@ -468,6 +472,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                     name="category"
                     value={productData.category}
                     onChange={handleChange}
+                    className="px-4 py-2 border rounded-lg"
                     required
                   >
                     {categoryList.map((category) => (
@@ -489,7 +494,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                   value={productData.description}
                   onChange={handleChange}
                   rows="6"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-200 focus:border-red-500"
+                  className="w-full px-4 py-2 border rounded-lg"
                   required
                 ></textarea>
               </div>
@@ -522,7 +527,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                     onChange={handleChange}
                     step="0.01"
                     min="0"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-200 focus:border-red-500"
+                    className="w-full px-4 py-2 border rounded-lg"
                     required
                   />
                 </div>
@@ -539,7 +544,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                     step="0.01"
                     min="0"
                     max="100"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-200 focus:border-red-500"
+                    className="w-full px-4 py-2 border rounded-lg"
                   />
                 </div>
 
@@ -555,39 +560,6 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                     className="w-full px-4 py-2 border rounded-lg bg-gray-50"
                   />
                 </div>
-              </div>
-
-              {/* Quantity Section */}
-              <div className="p-4 bg-gray-50 rounded-lg mt-6">
-                <div className="flex flex-col md:flex-row gap-4 items-end">
-                  <div className="w-32">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Quantity
-                    </label>
-                    <input
-                      type="number"
-                      value={sizeQuantityInput}
-                      onChange={(e) => setSizeQuantityInput(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-200 focus:border-red-500"
-                      min="1"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleSetQuantity}
-                    className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center gap-2"
-                  >
-                    <FiPlus size={16} /> Set
-                  </button>
-                </div>
-
-                {productData.defaultQuantity > 0 && (
-                  <div className="mt-4">
-                    <span className="text-gray-900 font-medium">
-                      {productData.title} - ({productData.defaultQuantity})
-                    </span>
-                  </div>
-                )}
               </div>
 
               {/* Navigation Buttons */}

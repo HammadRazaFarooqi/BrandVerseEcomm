@@ -39,10 +39,15 @@ function ProductManagement() {
           categoryParts.length > 0 ? categoryParts[0].trim() : "Uncategorized";
 
         return {
-          id: product._id, // Corrected from __id
+          id: product._id,
           name: product.title,
           category: mainCategory,
-          price: product.price,
+
+          price: product.price,                         // Original price
+          discountRate: product.discountRate || 0,      // %
+          discountedPrice: product.discountedPrice || null,
+          finalPrice: product.finalPrice,               // What customer pays
+
           stock: product.stock || 0,
           images: {
             primary:
@@ -53,6 +58,7 @@ function ProductManagement() {
           sizes: product.availableSizes || [],
           description: product.description,
         };
+
       });
 
       setProducts(formattedProducts);
@@ -106,13 +112,7 @@ function ProductManagement() {
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    // const matchesCategory =
-    //   !categoryFilter || product.category === categoryFilter;
-    // const matchesStatus =
-    //   !statusFilter ||
-    //   product.status.toLowerCase().includes(statusFilter.toLowerCase());
     return matchesSearch;
-    // return matchesSearch && matchesCategory && matchesStatus;
   });
 
   return (
@@ -123,7 +123,7 @@ function ProductManagement() {
         </h1>
         <div className="flex gap-3">
           <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base"
-           onClick={() => setShowAddModal(true)}>
+            onClick={() => setShowAddModal(true)}>
             <Plus className="w-5 h-5" />
             Add New Product
           </button>
@@ -140,23 +140,6 @@ function ProductManagement() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="px-4 py-2 border rounded-md"
           />
-          {/* <select
-            className="px-4 py-2 border rounded-md"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-          >
-            <option value="">All Categories</option>
-          </select>
-          <select
-            className="px-4 py-2 border rounded-md"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="">All Status</option>
-            <option value="in-stock">In Stock</option>
-            <option value="low-stock">Low Stock</option>
-            <option value="out-of-stock">Out of Stock</option>
-          </select> */}
         </div>
       </div>
 
@@ -218,11 +201,12 @@ function ProductManagement() {
                     Price
                   </th>
                   <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Stock
+                    Discount %
                   </th>
                   <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    Discounted Price
                   </th>
+
                   <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
@@ -272,24 +256,22 @@ function ProductManagement() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          PKR {product.price.toFixed(2)}
+                          PKR {product.price.toFixed(0)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {product?.stock}
+                          {product.discountedPrice
+                            ? `${(((product.price - product.discountedPrice) / product.price) * 100).toFixed(0)}%`
+                            : "0%"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.stock > 0
-                            ? "bg-green-100 text-green-800"
-                            : "bg-black text-white"
-                            }`}
-                        >
-                          {product.stock > 0 ? "In Stock" : "Out of Stock"}
-                        </span>
+                        <div className="text-sm text-gray-900">
+                          PKR {product.finalPrice.toFixed(0)}
+                        </div>
                       </td>
+
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
