@@ -159,16 +159,6 @@ const parseUserAgent = (userAgent) => {
     return { device, browser };
 };
 
-// Helper function to get IP address
-const getClientIp = (req) => {
-    return req.headers['x-forwarded-for']?.split(',')[0].trim() ||
-           req.headers['x-real-ip'] ||
-           req.connection.remoteAddress ||
-           req.socket.remoteAddress ||
-           req.ip ||
-           'Unknown';
-};
-
 // --- Login ---
 export const loginUser = async (req, res) => {
     try {

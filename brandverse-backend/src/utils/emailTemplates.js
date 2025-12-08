@@ -179,16 +179,7 @@ export const loginTemplate = (firstName, loginDetails) => {
                             <span style="color:${COLORS.TEXT_SECONDARY}; font-size:14px;">${loginTime}</span>
                         </td>
                     </tr>
-                    
-                    <tr>
-                        <td style="padding:8px 0; border-top:1px solid #e0e0e0;">
-                            <span style="color:${COLORS.TEXT_DARK}; font-size:14px; font-weight:600;">IP Address:</span>
-                        </td>
-                        <td style="padding:8px 0; text-align:right; border-top:1px solid #e0e0e0;">
-                            <span style="color:${COLORS.TEXT_SECONDARY}; font-size:14px;">${ipAddress || 'Unknown'}</span>
-                        </td>
-                    </tr>
-                    
+
                     <tr>
                         <td style="padding:8px 0; border-top:1px solid #e0e0e0;">
                             <span style="color:${COLORS.TEXT_DARK}; font-size:14px; font-weight:600;">Device:</span>
