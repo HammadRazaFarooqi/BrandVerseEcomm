@@ -116,8 +116,6 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
 
       const data = await response.json();
       onAddCategory(data);
-      toast.success(`Category ${isUpdate ? "updated" : "added"} successfully!`);
-      console.log('hello')
     } catch (error) {
       console.error("Error saving category:", error);
       setFormError("Something went wrong. Please try again.");

@@ -22,7 +22,7 @@ function FeaturedCategories() {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      if(response){
+      if (response) {
         const data = await response?.json();
         setCategories(data?.category);
       }
@@ -78,14 +78,15 @@ function FeaturedCategories() {
                     to={`category/${category.slug}`}
                     className="group relative overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-card"
                   >
-                    <div className="relative aspect-[3/4] overflow-hidden">
+                    <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem]">
                       <img
                         src={category.image}
                         alt={category.name}
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-110 rounded-[2rem]"
                       />
+
                       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
-                      <div className="absolute inset-4 rounded-[1.5rem] border border-white/10" />
+
                       <div className="absolute bottom-0 left-0 right-0 p-6">
                         <h3 className="text-2xl font-semibold text-white">
                           {category.name}
@@ -97,6 +98,7 @@ function FeaturedCategories() {
                       </div>
                     </div>
                   </Link>
+
                 </SwiperSlide>
               ))}
 
