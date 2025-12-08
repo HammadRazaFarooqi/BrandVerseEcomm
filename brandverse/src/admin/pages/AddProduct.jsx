@@ -282,7 +282,6 @@ const AddProductForm = ({ onAddProduct, productID }) => {
 
         const data = await response.json();
         onAddProduct(data);
-        toast.success(`Product ${productID ? "updated" : "added"} successfully!`);
       }
     } catch (error) {
       console.error(
