@@ -18,7 +18,7 @@ function OrderManagement() {
 
   const [selectedOrder, setSelectedOrder] = useState(null); // for details modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // Status change confirmation modal states
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [pendingStatusChange, setPendingStatusChange] = useState(null);
@@ -121,7 +121,7 @@ function OrderManagement() {
   const cancelStatusChange = () => {
     setShowStatusModal(false);
     setPendingStatusChange(null);
-    
+
     // Reset the select dropdowns to current status to revert visual change
     const currentStatus = orders.find(o => o.orderId === pendingStatusChange?.orderId)?.status;
     if (currentStatus && selectedOrder && selectedOrder.orderId === pendingStatusChange?.orderId) {
@@ -197,7 +197,8 @@ function OrderManagement() {
               Total:{" "}
               <span className="font-medium">
                 PKR {filteredOrders
-                  .reduce((s, o) => s + (o.price * o.quantity || 0), 0)
+                  .filter(o => o.status.toLowerCase() !== 'cancelled')
+                  .reduce((sum, o) => sum + (o.price * o.quantity || 0), 0)
                   .toLocaleString('en-PK')}
               </span>
             </div>
