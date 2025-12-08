@@ -24,8 +24,8 @@ export const registerOTP = async (req, res) => {
 
         // ✅ CRITICAL FIX: Block registration if user exists AND is verified
         if (existingUser && existingUser.isEmailVerified === true) {
-            return res.status(400).json({ 
-                error: "Email already exists" 
+            return res.status(400).json({
+                error: "Email already exists"
             });
         }
 
@@ -42,9 +42,9 @@ export const registerOTP = async (req, res) => {
             existingUser.firstName = firstName;
             existingUser.lastName = lastName;
             existingUser.password = password; // Will be hashed by pre-save hook
-            existingUser.otp = { 
-                code: otpCode, 
-                expiresAt: otpExpires 
+            existingUser.otp = {
+                code: otpCode,
+                expiresAt: otpExpires
             };
             user = await existingUser.save();
         } else {
@@ -56,9 +56,9 @@ export const registerOTP = async (req, res) => {
                 email,
                 password, // Will be hashed by pre-save hook
                 isEmailVerified: false,
-                otp: { 
-                    code: otpCode, 
-                    expiresAt: otpExpires 
+                otp: {
+                    code: otpCode,
+                    expiresAt: otpExpires
                 }
             });
             await user.save();
@@ -70,22 +70,22 @@ export const registerOTP = async (req, res) => {
             subject: "Your Affi Mall OTP Code",
             html: otpTemplate(firstName, otpCode)
         });
-        return res.status(201).json({ 
-            message: "OTP sent to email", 
-            email 
+        return res.status(201).json({
+            message: "OTP sent to email",
+            email
         });
 
     } catch (error) {
         console.error("❌ Register OTP Error:", error);
-        
+
         // Handle duplicate key error specifically
         if (error.code === 11000) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: "Email already exists"
             });
         }
-        
-        return res.status(400).json({ 
+
+        return res.status(400).json({
             error: error.message || "Registration failed"
         });
     }
@@ -142,12 +142,12 @@ export const resendOTP = async (req, res) => {
 // Helper function to parse user agent
 const parseUserAgent = (userAgent) => {
     if (!userAgent) return { device: 'Unknown Device', browser: 'Unknown Browser' };
-    
+
     // Detect device
     let device = 'Desktop';
     if (/mobile/i.test(userAgent)) device = 'Mobile';
     else if (/tablet|ipad/i.test(userAgent)) device = 'Tablet';
-    
+
     // Detect browser
     let browser = 'Unknown Browser';
     if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) browser = 'Chrome';
@@ -155,7 +155,7 @@ const parseUserAgent = (userAgent) => {
     else if (userAgent.includes('Firefox')) browser = 'Firefox';
     else if (userAgent.includes('Edg')) browser = 'Edge';
     else if (userAgent.includes('Opera') || userAgent.includes('OPR')) browser = 'Opera';
-    
+
     return { device, browser };
 };
 
@@ -177,9 +177,9 @@ export const loginUser = async (req, res) => {
         // Extract login details
         const userAgent = req.headers['user-agent'] || '';
         const { device, browser } = parseUserAgent(userAgent);
-        
+
         // Format login time
-        const loginTime = new Date().toLocaleString('en-US', {
+        const loginTime = new Date().toLocaleString('en-PK', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
