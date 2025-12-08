@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiXSquare } from "react-icons/fi";
 import AddCategoryForm from "./AddCategory";
 import { Plus } from "lucide-react";
+import { toast } from "react-toastify";
 // import AddCategoryForm from "./AddCategory";
 
 function CategoryManagement() {
@@ -9,7 +10,8 @@ function CategoryManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
@@ -58,42 +60,36 @@ function CategoryManagement() {
   };
 
 
-  const handleDeleteCategory = async (categoryId) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      try {
-        const response = await fetch(
-          `${BACKEND_URL}/category/${categoryId}`,
-          {
-            method: "DELETE",
-          }
-        );
+  const handleDeleteCategory = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/category/${categoryToDelete}`, {
+        method: "DELETE",
+      });
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to delete category. Status: ${response.status}`
-          );
-        }
-
-        fetchCategory();
-        setSuccess("Category deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting category:", error);
-        setError("Failed to delete the category. Please try again.");
+      if (!response.ok) {
+        throw new Error("Failed to delete category");
       }
+
+      toast.success("Category deleted successfully");
+      fetchCategory(); // refresh list
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete category");
+    } finally {
+      setShowDeleteModal(false);
+      setCategoryToDelete(null);
     }
   };
 
+
   const handleEditCategory = (e) => {
-    console.log(e);
     setSelectedCategoryId(e.id)
     setShowAddModal(true);
   };
 
   const handleAddCategory = (e) => {
-    console.log(e);
     setShowAddModal(false);
     setSelectedCategoryId('');
-    // After successful addition, fetch category again
     fetchCategory();
   };
 
@@ -116,7 +112,7 @@ function CategoryManagement() {
         </h1>
         <div className="flex gap-3">
           <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base"
-          onClick={() => setShowAddModal(true)}>
+            onClick={() => setShowAddModal(true)}>
             <Plus className="w-5 h-5" />
             Add New Category
           </button>
@@ -258,7 +254,10 @@ function CategoryManagement() {
                           </button>
                           <button
                             className="text-red-600 hover:text-red-900"
-                            onClick={() => handleDeleteCategory(category.id)}
+                            onClick={() => {
+                              setCategoryToDelete(category.id);
+                              setShowDeleteModal(true);
+                            }}
                           >
                             <FiTrash2 />
                           </button>
@@ -278,6 +277,33 @@ function CategoryManagement() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+
+            <h2 className="text-xl font-semibold mb-4">Are you sure?</h2>
+            <p className="text-gray-600 mb-6">
+              This action will permanently delete this category.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-5 py-2 bg-gray-200 text-gray-800 rounded-md"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDeleteCategory}
+                className="px-5 py-2 bg-red-600 text-white rounded-md"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

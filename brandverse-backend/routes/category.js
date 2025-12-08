@@ -7,7 +7,6 @@ const router = express.Router();
 
 // Create category
 router.post("/", async (req, res) => {
-  console.log(req.body);
   try {
     await connectDB();
     const category = new Category(req.body);

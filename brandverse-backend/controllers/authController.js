@@ -24,7 +24,6 @@ export const registerOTP = async (req, res) => {
 
         // ✅ CRITICAL FIX: Block registration if user exists AND is verified
         if (existingUser && existingUser.isEmailVerified === true) {
-            console.log("❌ Registration blocked - Email already registered:", email);
             return res.status(400).json({ 
                 error: "Email already exists" 
             });
@@ -40,9 +39,6 @@ export const registerOTP = async (req, res) => {
         let user;
 
         if (existingUser && !existingUser.isEmailVerified) {
-            // User exists but not verified - update their data
-            console.log("⚠️ User exists but not verified, updating and resending OTP:", email);
-            
             existingUser.firstName = firstName;
             existingUser.lastName = lastName;
             existingUser.password = password; // Will be hashed by pre-save hook
@@ -52,9 +48,6 @@ export const registerOTP = async (req, res) => {
             };
             user = await existingUser.save();
         } else {
-            // Create completely new user
-            console.log("✅ Creating new user:", email);
-            
             const username = generateUsername(firstName, lastName);
             user = new User({
                 username,
@@ -77,9 +70,6 @@ export const registerOTP = async (req, res) => {
             subject: "Your Affi Mall OTP Code",
             html: otpTemplate(firstName, otpCode)
         });
-
-        console.log("✅ OTP sent successfully to:", email);
-
         return res.status(201).json({ 
             message: "OTP sent to email", 
             email 
@@ -194,13 +184,6 @@ export const forgotPassword = async (req, res) => {
         };
 
         await user.save();
-
-        console.log("OTP generated for forgot password:", {
-            email,
-            otp,
-            expiresAt: user.passwordReset.expiresAt
-        });
-
         await sendMail({
             to: email,
             subject: "Password Reset Code",
@@ -231,13 +214,6 @@ export const verifyResetOtp = async (req, res) => {
         }
 
         const otpString = String(otp).trim();
-
-        console.log("Verification attempt:", {
-            email,
-            receivedOtp: otpString,
-            timestamp: new Date()
-        });
-
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -246,13 +222,6 @@ export const verifyResetOtp = async (req, res) => {
                 message: "User not found"
             });
         }
-
-        console.log("Stored data:", {
-            storedOtp: user.passwordReset?.token,
-            expiresAt: user.passwordReset?.expiresAt,
-            isExpired: user.passwordReset?.expiresAt < Date.now()
-        });
-
         // ✅ Check passwordReset fields
         if (!user.passwordReset?.token || !user.passwordReset?.expiresAt) {
             return res.status(400).json({
@@ -271,7 +240,6 @@ export const verifyResetOtp = async (req, res) => {
         const storedOtp = String(user.passwordReset.token).trim();
 
         if (storedOtp !== otpString) {
-            console.log("OTP mismatch:", { storedOtp, receivedOtp: otpString });
             return res.status(400).json({
                 success: false,
                 message: "Invalid OTP. Please check and try again."
@@ -351,9 +319,6 @@ export const resetPassword = async (req, res) => {
             subject: "Password Reset Successful",
             html: passwordResetSuccessTemplate(user.firstName ?? "User")
         });
-
-        console.log("Password reset successful for:", email);
-
         return res.json({
             success: true,
             message: "Password reset successfully"

@@ -34,7 +34,6 @@ const swaggerFilePath = path.join(process.cwd(), "swagger-output.json");
 let swaggerDocument = {};
 try {
   swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, "utf-8"));
-  console.log("Swagger file loaded successfully");
 } catch (err) {
   console.error("Swagger file not found or invalid:", err);
 }
@@ -66,7 +65,6 @@ connectDB()
   .then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    console.log("Auth Routes Loaded");
 
   })
   .catch((err) => {

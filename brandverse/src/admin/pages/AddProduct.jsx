@@ -7,6 +7,7 @@ import {
   FiX
 } from "react-icons/fi";
 import { uploadSigned } from "../../utils/cloudinaryClient.js";
+import { toast } from "react-toastify";
 
 const uploadImage = async (file) => {
   const res = await uploadSigned(file);
@@ -281,15 +282,14 @@ const AddProductForm = ({ onAddProduct, productID }) => {
 
         const data = await response.json();
         onAddProduct(data);
+        toast.success(`Product ${productID ? "updated" : "added"} successfully!`);
       }
     } catch (error) {
       console.error(
         `Error ${productID ? "updating" : "adding"} product:`,
         error
       );
-      setErrorMessage(
-        `Failed to ${productID ? "update" : "add"} product. Please try again.`
-      );
+      toast.error(`Failed to ${productID ? "update" : "add"} product. Please try again.`);
     } finally {
       setIsSubmitting(false);
     }

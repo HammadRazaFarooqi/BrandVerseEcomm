@@ -61,9 +61,6 @@ export const createOrder = async (req, res) => {
       status: "processing",
       createdAt: new Date(),
     });
-
-    console.log("✅ Order created successfully:", newOrder.orderNumber);
-
     // Email sending promises
     const emailPromises = [];
 
@@ -81,7 +78,6 @@ export const createOrder = async (req, res) => {
       ),
     })
       .then(() => {
-        console.log("✅ Customer email sent successfully to:", orderData.customer.email);
         return { type: 'customer', success: true };
       })
       .catch((error) => {
@@ -106,7 +102,6 @@ export const createOrder = async (req, res) => {
       ),
     })
       .then(() => {
-        console.log("✅ Admin email sent successfully to: affimall50@gmail.com");
         return { type: 'admin', success: true };
       })
       .catch((error) => {
@@ -119,9 +114,6 @@ export const createOrder = async (req, res) => {
 
     // Wait for all emails to complete (but don't fail the order if emails fail)
     const emailResults = await Promise.allSettled(emailPromises);
-    
-    console.log("📧 Email results:", emailResults);
-
     res.status(201).json({
       success: true,
       message: "Order placed successfully",
@@ -233,7 +225,6 @@ export const updateOrderStatus = async (req, res) => {
           status.charAt(0).toUpperCase() + status.slice(1) // Capitalize first letter
         ),
       });
-      console.log(`Status update email sent to: ${order.customer.email} for order: ${order.orderNumber}`);
     } catch (emailError) {
       console.error("Failed to send status update email:", emailError);
       // Don't fail the status update if email fails - just log it

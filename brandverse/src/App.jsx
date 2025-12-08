@@ -33,6 +33,7 @@ import PromotionsManager from "./admin/pages/PromotionManagement";
 import CustomerSupport from "./pages/CustomerSupport";
 import OtpVerification from "./pages/OtpVerification";
 import ResetPassword from "./pages/ResetPassword";
+import { ToastContainer } from "react-toastify";
 
 function ClientLayout() {
   return (
@@ -99,6 +100,7 @@ function App() {
         <Route path="otp" element={<OtpVerification/>}/>
         <Route path="verify-reset" element={<ResetPassword/>}/>
       </Routes>
+      <ToastContainer position="top-right" autoClose={1800} />
     </Router>
   );
 }

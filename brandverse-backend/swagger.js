@@ -6,7 +6,7 @@ const doc = {
     title: "Affi Mall API",
     description: "API documentation for Affi Mall Backend",
   },
-  host: "urban-tuxedo-backend.vercel.app",
+  host: "affi-mall-backend.vercel.app",
   basePath: "/",
   schemes: ["https", "http"],
   consumes: ["application/json"],
@@ -40,7 +40,6 @@ const routes = ["./api/index.js"];
 
 swaggerAutogen(outputFile, routes, doc)
   .then(() => {
-    console.log("Swagger documentation generated");
   })
   .catch((err) => {
     console.error("Error generating swagger documentation:", err);

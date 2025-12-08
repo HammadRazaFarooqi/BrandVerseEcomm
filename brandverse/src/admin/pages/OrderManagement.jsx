@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { FiExternalLink, FiCheckCircle, FiXCircle, FiImage } from "react-icons/fi";
+import { FiExternalLink, FiImage } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 /**
- * Redesigned OrderManagement (Option A - clean & compact)
- * - Keeps your previous logic & endpoints intact
- * - Adds: product image in table, customer email, short address
- * - Adds: Details modal with full order payload visualization
- *
- * Replace your current OrderManagement component with this file.
+ * Redesigned OrderManagement with status change confirmation modal and toast notifications
  */
 
 function OrderManagement() {
@@ -22,10 +18,14 @@ function OrderManagement() {
 
   const [selectedOrder, setSelectedOrder] = useState(null); // for details modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Status change confirmation modal states
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState(null);
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch Orders (keeps same endpoint and flattening behaviour)
+  // Fetch Orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -35,11 +35,10 @@ function OrderManagement() {
 
         if (!data.success) throw new Error("Failed to fetch orders.");
 
-        // Flatten items as before and include the original order payload (for modal)
         const formattedOrders = data.data.flatMap((order) =>
           order.items.map((item) => ({
             orderId: order._id,
-            rawOrder: order, // keep original order object for modal
+            rawOrder: order,
             orderNumber: order.orderNumber,
             customer:
               order.customer?.firstName && order.customer?.lastName
@@ -64,6 +63,7 @@ function OrderManagement() {
       } catch (err) {
         console.error("Error fetching orders:", err);
         setError("Failed to load orders. Please try again later.");
+        toast.error("Failed to load orders");
       } finally {
         setLoading(false);
       }
@@ -72,12 +72,21 @@ function OrderManagement() {
     fetchOrders();
   }, [BACKEND_URL]);
 
-  // Update Order Status (same endpoint)
-  const updateOrderStatus = async (newStatus, orderId) => {
-    if (!window.confirm(`Change order status to ${newStatus}?`)) return;
+  // Open status change confirmation modal
+  const handleStatusChangeRequest = (newStatus, orderId) => {
+    setPendingStatusChange({ newStatus, orderId });
+    setShowStatusModal(true);
+  };
+
+  // Confirm and update status
+  const confirmStatusChange = async () => {
+    if (!pendingStatusChange) return;
+
+    const { newStatus, orderId } = pendingStatusChange;
 
     try {
       setUpdating(true);
+      setShowStatusModal(false);
 
       const res = await fetch(`${BACKEND_URL}/admin/orders/${orderId}/status`, {
         method: "PUT",
@@ -97,11 +106,27 @@ function OrderManagement() {
       if (selectedOrder && selectedOrder.orderId === orderId) {
         setSelectedOrder((prev) => ({ ...prev, status: newStatus }));
       }
+
+      toast.success(`Order status updated to ${newStatus}`);
     } catch (err) {
       console.error(err);
-      alert("Failed to update status. Try again.");
+      toast.error("Failed to update status. Please try again.");
     } finally {
       setUpdating(false);
+      setPendingStatusChange(null);
+    }
+  };
+
+  // Cancel status change
+  const cancelStatusChange = () => {
+    setShowStatusModal(false);
+    setPendingStatusChange(null);
+    
+    // Reset the select dropdowns to current status to revert visual change
+    const currentStatus = orders.find(o => o.orderId === pendingStatusChange?.orderId)?.status;
+    if (currentStatus && selectedOrder && selectedOrder.orderId === pendingStatusChange?.orderId) {
+      // Force re-render of select by updating selectedOrder
+      setSelectedOrder(prev => ({ ...prev, status: currentStatus }));
     }
   };
 
@@ -131,7 +156,6 @@ function OrderManagement() {
 
   const shortAddress = (address) => {
     if (!address) return "—";
-    // prefer city,state or street fallback
     const city = address.city || "";
     const state = address.state || "";
     const street = address.street || "";
@@ -222,7 +246,7 @@ function OrderManagement() {
                       <div className="text-xs text-gray-500">{format(order.date, "MMM dd, yyyy")}</div>
                     </td>
 
-                    {/* Item column (single-first item focus) */}
+                    {/* Item column */}
                     <td className="px-4 py-3 align-top">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
@@ -257,7 +281,7 @@ function OrderManagement() {
                       </div>
                     </td>
 
-                    {/* Address (short) */}
+                    {/* Address */}
                     <td className="px-4 py-3 align-top">
                       <div className="text-sm">{shortAddress(order.address)}</div>
                     </td>
@@ -281,7 +305,7 @@ function OrderManagement() {
                       <select
                         value={order.status}
                         disabled={updating || order.status === "delivered" || order.status === "cancelled"}
-                        onChange={(e) => updateOrderStatus(e.target.value, order.orderId)}
+                        onChange={(e) => handleStatusChangeRequest(e.target.value, order.orderId)}
                         className="border rounded px-2 py-1 text-sm"
                       >
                         <option value="processing">Processing</option>
@@ -315,6 +339,32 @@ function OrderManagement() {
         </div>
       )}
 
+      {/* Status Change Confirmation Modal */}
+      {showStatusModal && pendingStatusChange && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Confirm Status Change</h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to change the order status to <strong>{pendingStatusChange.newStatus}</strong>?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={cancelStatusChange}
+                className="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmStatusChange}
+                className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Details Modal */}
       {isModalOpen && selectedOrder && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-auto p-6">
@@ -330,7 +380,7 @@ function OrderManagement() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => closeDetailsModal()}
+                  onClick={closeDetailsModal}
                   className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
                 >
                   Close
@@ -383,10 +433,8 @@ function OrderManagement() {
                 <h3 className="text-sm font-medium">Items</h3>
 
                 <div className="mt-3 space-y-3">
-                  {/* Show all items from rawOrder.items when possible */}
                   {selectedOrder.rawOrder?.items?.length > 0 ? (
                     selectedOrder.rawOrder.items.map((it, i) => {
-                      // handle item image
                       const img = (it.images && it.images.length && it.images[0]) || (it._id?.images?.primary) || null;
                       return (
                         <div key={i} className="flex items-center gap-4 p-3 border rounded">
@@ -416,7 +464,6 @@ function OrderManagement() {
                     <div>Subtotal</div>
                     <div>PKR {selectedOrder.total}</div>
                   </div>
-                  {/* Extend here with shipping, tax etc if available */}
                   <div className="flex justify-between text-sm font-medium mt-3">
                     <div>Total</div>
                     <div>PKR {selectedOrder.total}</div>
@@ -433,7 +480,7 @@ function OrderManagement() {
                     <select
                       value={selectedOrder.status}
                       disabled={updating || selectedOrder.status === "delivered" || selectedOrder.status === "cancelled"}
-                      onChange={(e) => updateOrderStatus(e.target.value, selectedOrder.orderId)}
+                      onChange={(e) => handleStatusChangeRequest(e.target.value, selectedOrder.orderId)}
                       className="mt-2 border rounded px-2 py-1"
                     >
                       <option value="processing">Processing</option>

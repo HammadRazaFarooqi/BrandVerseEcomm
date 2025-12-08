@@ -5,7 +5,7 @@
     "title": "Affi Mall API",
     "description": "API documentation for Affi Mall Backend"
   },
-  "host": "urban-tuxedo-backend.vercel.app",
+  "host": "affi-mall-backend.vercel.app",
   "basePath": "/",
   "tags": [
     {

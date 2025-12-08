@@ -107,10 +107,6 @@ function Categories() {
     // Filter by category
     if (selectedCategory !== "all") {
       filtered = filtered.filter((item) => {
-      console.log(item?.category?.name);
-      console.log(selectedCategory);
-      console.log(item?.category?.slug?.includes(selectedCategory));
-              
         return item?.category?.slug?.includes(selectedCategory)
       }
       );

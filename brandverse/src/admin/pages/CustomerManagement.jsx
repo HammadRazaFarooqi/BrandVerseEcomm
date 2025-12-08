@@ -28,7 +28,6 @@ function CustomerManagement() {
           throw new Error("Failed to fetch customers");
         }
       } catch (error) {
-        console.log(error);
         setError("Failed to load customers. Please try again later.");
       } finally {
         setLoading(false);

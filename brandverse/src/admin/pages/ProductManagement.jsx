@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { FiEdit2, FiPlus, FiTrash2, FiXSquare } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiXSquare } from "react-icons/fi";
 import AddProductForm from "./AddProduct";
 import { Plus } from "lucide-react";
+import { toast } from "react-toastify";
 
 function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [categoryFilter, setCategoryFilter] = useState("");
-  // const [statusFilter, setStatusFilter] = useState("");
   const [selectedProductID, setSelectedProductId] = useState("");
+  const [productToDelete, setProductToDelete] = useState(null);
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
   // Fetch products from API
@@ -42,12 +42,10 @@ function ProductManagement() {
           id: product._id,
           name: product.title,
           category: mainCategory,
-
-          price: product.price,                         // Original price
-          discountRate: product.discountRate || 0,      // %
+          price: product.price,
+          discountRate: product.discountRate || 0,
           discountedPrice: product.discountedPrice || null,
-          finalPrice: product.finalPrice,               // What customer pays
-
+          finalPrice: product.finalPrice,
           stock: product.stock || 0,
           images: {
             primary:
@@ -58,53 +56,57 @@ function ProductManagement() {
           sizes: product.availableSizes || [],
           description: product.description,
         };
-
       });
 
       setProducts(formattedProducts);
     } catch (err) {
       console.error("Error fetching products:", err);
-      setError("Failed to load products. Please try again later.");
+      toast.error("Failed to load products. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteProduct = async (productId) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        const response = await fetch(
-          `${BACKEND_URL}/products/${productId}`,
-          {
-            method: "DELETE",
-          }
-        );
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to delete product. Status: ${response.status}`
-          );
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/products/${productToDelete}`,
+        {
+          method: "DELETE",
         }
+      );
 
-        fetchProducts();
-        setSuccess("Product deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        setError("Failed to delete the product. Please try again.");
+      if (!response.ok) {
+        throw new Error(
+          `Failed to delete product. Status: ${response.status}`
+        );
       }
+
+      fetchProducts();
+      toast.success("Product deleted successfully!");
+      setShowDeleteModal(false);
+      setProductToDelete(null);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete the product. Please try again.");
     }
+  };
+
+  const openDeleteModal = (productId) => {
+    setProductToDelete(productId);
+    setShowDeleteModal(true);
   };
 
   const handleAddProduct = () => {
     setShowAddModal(false);
     setSelectedProductId("");
-    // After successful addition, fetch products again
     fetchProducts();
   };
 
-  const handleEditProduct = (e) => {
-    console.log(e);
-    setSelectedProductId(e.id);
+  const handleEditProduct = (product) => {
+    setSelectedProductId(product.id);
     setShowAddModal(true);
   };
 
@@ -122,8 +124,10 @@ function ProductManagement() {
           Product Management
         </h1>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base"
-            onClick={() => setShowAddModal(true)}>
+          <button
+            className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base"
+            onClick={() => setShowAddModal(true)}
+          >
             <Plus className="w-5 h-5" />
             Add New Product
           </button>
@@ -169,7 +173,7 @@ function ProductManagement() {
         </div>
       )}
       {success && (
-        <div className="bg-success-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
           <span className="flex justify-between">
             <span className="block sm:inline">
               <strong className="font-bold">Ok! </strong> {success}
@@ -206,7 +210,6 @@ function ProductManagement() {
                   <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Discounted Price
                   </th>
-
                   <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
@@ -233,19 +236,6 @@ function ProductManagement() {
                             <div className="text-sm font-medium text-gray-900">
                               {product.name}
                             </div>
-                            {/* {Array.isArray(product.sizes) && product.sizes.length > 0 && (
-                              <div className="text-xs text-gray-500">
-                                Sizes: {product.sizes.length}
-                                {product.sizes.map(size => (
-                                  <span
-                                    key={size}
-                                    className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full mx-1"
-                                  >
-                                    {size}
-                                  </span>
-                                ))}
-                              </div>
-                            )} */}
                           </div>
                         </div>
                       </td>
@@ -262,7 +252,11 @@ function ProductManagement() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
                           {product.discountedPrice
-                            ? `${(((product.price - product.discountedPrice) / product.price) * 100).toFixed(0)}%`
+                            ? `${(
+                                ((product.price - product.discountedPrice) /
+                                  product.price) *
+                                100
+                              ).toFixed(0)}%`
                             : "0%"}
                         </div>
                       </td>
@@ -271,7 +265,6 @@ function ProductManagement() {
                           PKR {product.finalPrice.toFixed(0)}
                         </div>
                       </td>
-
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
@@ -282,7 +275,7 @@ function ProductManagement() {
                           </button>
                           <button
                             className="text-red-600 hover:text-red-900"
-                            onClick={() => handleDeleteProduct(product.id)}
+                            onClick={() => openDeleteModal(product.id)}
                           >
                             <FiTrash2 />
                           </button>
@@ -306,11 +299,40 @@ function ProductManagement() {
         </div>
       )}
 
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Are you sure?</h2>
+            <p className="text-gray-600 mb-6">
+              This action will permanently delete this product.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setProductToDelete(null);
+                }}
+                className="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProduct}
+                className="px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add Product Modal */}
       {showAddModal && (
         <AddProductForm
           productID={selectedProductID}
-          onAddProduct={() => handleAddProduct(event)}
+          onAddProduct={handleAddProduct}
         />
       )}
     </div>

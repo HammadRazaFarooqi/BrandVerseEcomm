@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { FiUpload, FiX } from "react-icons/fi";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { uploadSigned } from "../../utils/cloudinaryClient";
 
 const uploadImage = async (file) => {
@@ -115,7 +116,8 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
 
       const data = await response.json();
       onAddCategory(data);
-      alert(`Category ${isUpdate ? "updated" : "added"} successfully!`);
+      toast.success(`Category ${isUpdate ? "updated" : "added"} successfully!`);
+      console.log('hello')
     } catch (error) {
       console.error("Error saving category:", error);
       setFormError("Something went wrong. Please try again.");
@@ -172,7 +174,7 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
 
       setImagePreview(data.category.image || null);
     } catch (error) {
-      alert("Failed to fetch category details.");
+      toast.error("Failed to fetch category details.");
     }
   };
 
