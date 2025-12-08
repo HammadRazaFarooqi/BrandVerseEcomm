@@ -177,7 +177,6 @@ export const loginUser = async (req, res) => {
         // Extract login details
         const userAgent = req.headers['user-agent'] || '';
         const { device, browser } = parseUserAgent(userAgent);
-        const ipAddress = getClientIp(req);
         
         // Format login time
         const loginTime = new Date().toLocaleString('en-US', {
@@ -193,7 +192,6 @@ export const loginUser = async (req, res) => {
         // Prepare login details object
         const loginDetails = {
             loginTime,
-            ipAddress,
             userAgent,
             device,
             browser,
