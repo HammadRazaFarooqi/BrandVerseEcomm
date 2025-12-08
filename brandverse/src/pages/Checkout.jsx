@@ -30,6 +30,10 @@ function Checkout() {
   const isNumeric = (value) => /^[0-9]+$/.test(value);
   const isValidEmail = (value) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.includes(".com");
+  const isValidPhone = (value) => {
+    const cleaned = value.replace(/[\s\-().]/g, '');
+    return /^\+?[0-9]{10,15}$/.test(cleaned);
+  };
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -110,8 +114,8 @@ function Checkout() {
       newErrors.lastName = "Only letters allowed in Last Name";
     if (!isValidEmail(formData.email))
       newErrors.email = "Email must contain @ and .com";
-    if (!isNumeric(formData.phone))
-      newErrors.phone = "Only numbers allowed in Phone";
+    if (!isValidPhone(formData.phone))
+      newErrors.phone = "Please enter a valid phone number (10-15 digits)";
     if (!isAlpha(formData.city))
       newErrors.city = "Only letters allowed in City";
     if (!isAlpha(formData.state))

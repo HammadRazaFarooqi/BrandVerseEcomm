@@ -146,12 +146,21 @@ export const registrationSuccessTemplate = (firstName) => {
 };
 
 // Login Notification Email (REDESIGNED to use light mode)
-export const loginTemplate = (firstName) => {
+export const loginTemplate = (firstName, loginDetails) => {
+    const { 
+        loginTime, 
+        ipAddress, 
+        userAgent, 
+        device, 
+        browser, 
+        location 
+    } = loginDetails;
+
     const content = `
     <h2 style="color:${COLORS.TEXT_DARK}; font-size:22px; margin-top:0; text-align:center;">Successful Login Notification</h2>
     <p style="color:${COLORS.TEXT_PRIMARY}; font-size:16px;">Hello ${firstName},</p>
     <p style="color:${COLORS.TEXT_SECONDARY}; font-size:16px;">
-        We confirm a **successful login** to your Affi Mall account.
+        We confirm a successful login to your Affi Mall account.
         This notification is for your security and awareness.
     </p>
 
@@ -159,7 +168,56 @@ export const loginTemplate = (firstName) => {
     <table width="100%" cellspacing="0" cellpadding="0" style="margin:20px 0; border-radius:8px; background-color:#f0f4f8; padding:20px;">
         <tr>
             <td>
-                <p style="color:${COLORS.TEXT_PRIMARY}; font-size:14px; margin:0 0 5px 0; font-weight:bold;">Activity Details</p>
+                <p style="color:${COLORS.TEXT_PRIMARY}; font-size:14px; margin:0 0 15px 0; font-weight:bold;">Activity Details</p>
+                
+                <table width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="padding:8px 0;">
+                            <span style="color:${COLORS.TEXT_DARK}; font-size:14px; font-weight:600;">Login Time:</span>
+                        </td>
+                        <td style="padding:8px 0; text-align:right;">
+                            <span style="color:${COLORS.TEXT_SECONDARY}; font-size:14px;">${loginTime}</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:8px 0; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_DARK}; font-size:14px; font-weight:600;">IP Address:</span>
+                        </td>
+                        <td style="padding:8px 0; text-align:right; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_SECONDARY}; font-size:14px;">${ipAddress || 'Unknown'}</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:8px 0; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_DARK}; font-size:14px; font-weight:600;">Device:</span>
+                        </td>
+                        <td style="padding:8px 0; text-align:right; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_SECONDARY}; font-size:14px;">${device || 'Unknown Device'}</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:8px 0; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_DARK}; font-size:14px; font-weight:600;">Browser:</span>
+                        </td>
+                        <td style="padding:8px 0; text-align:right; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_SECONDARY}; font-size:14px;">${browser || 'Unknown Browser'}</span>
+                        </td>
+                    </tr>
+                    
+                    ${location ? `
+                    <tr>
+                        <td style="padding:8px 0; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_DARK}; font-size:14px; font-weight:600;">Location:</span>
+                        </td>
+                        <td style="padding:8px 0; text-align:right; border-top:1px solid #e0e0e0;">
+                            <span style="color:${COLORS.TEXT_SECONDARY}; font-size:14px;">${location}</span>
+                        </td>
+                    </tr>
+                    ` : ''}
+                </table>
             </td>
         </tr>
     </table>
@@ -168,7 +226,7 @@ export const loginTemplate = (firstName) => {
         Security Awareness:
     </p>
     <p style="color:${COLORS.TEXT_SECONDARY}; font-size:14px; text-align:center;">
-        If you **did not** perform this login, please contact us and immediately secure your account by reset your password.
+        If you did not perform this login, please contact us immediately and secure your account by resetting your password.
     </p>
 `;
     return emailWrapper(content);

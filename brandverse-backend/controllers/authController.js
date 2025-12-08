@@ -139,6 +139,36 @@ export const resendOTP = async (req, res) => {
     }
 };
 
+// Helper function to parse user agent
+const parseUserAgent = (userAgent) => {
+    if (!userAgent) return { device: 'Unknown Device', browser: 'Unknown Browser' };
+    
+    // Detect device
+    let device = 'Desktop';
+    if (/mobile/i.test(userAgent)) device = 'Mobile';
+    else if (/tablet|ipad/i.test(userAgent)) device = 'Tablet';
+    
+    // Detect browser
+    let browser = 'Unknown Browser';
+    if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) browser = 'Chrome';
+    else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) browser = 'Safari';
+    else if (userAgent.includes('Firefox')) browser = 'Firefox';
+    else if (userAgent.includes('Edg')) browser = 'Edge';
+    else if (userAgent.includes('Opera') || userAgent.includes('OPR')) browser = 'Opera';
+    
+    return { device, browser };
+};
+
+// Helper function to get IP address
+const getClientIp = (req) => {
+    return req.headers['x-forwarded-for']?.split(',')[0].trim() ||
+           req.headers['x-real-ip'] ||
+           req.connection.remoteAddress ||
+           req.socket.remoteAddress ||
+           req.ip ||
+           'Unknown';
+};
+
 // --- Login ---
 export const loginUser = async (req, res) => {
     try {
@@ -154,11 +184,37 @@ export const loginUser = async (req, res) => {
         user.lastLogin = new Date();
         await user.save();
 
-        // ✅ Fixed: Pass both firstName and lastLoginTime
+        // Extract login details
+        const userAgent = req.headers['user-agent'] || '';
+        const { device, browser } = parseUserAgent(userAgent);
+        const ipAddress = getClientIp(req);
+        
+        // Format login time
+        const loginTime = new Date().toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
+        });
+
+        // Prepare login details object
+        const loginDetails = {
+            loginTime,
+            ipAddress,
+            userAgent,
+            device,
+            browser,
+            // location: 'Lahore, Pakistan' // Optional: Add if you have IP geolocation service
+        };
+
+        // Send email with login details
         await sendMail({
             to: email,
-            subject: "Login Alert",
-            html: loginTemplate(user.firstName)
+            subject: "Login Alert - Affi Mall",
+            html: loginTemplate(user.firstName, loginDetails)
         });
 
         res.json({ token, user });
