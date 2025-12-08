@@ -90,6 +90,7 @@ function ProductManagement() {
       setProductToDelete(null);
     } catch (error) {
       console.error("Error deleting product:", error);
+      toast.error("Failed to delete the product. Please try again.");
     }
   };
 

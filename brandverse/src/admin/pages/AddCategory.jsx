@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { FiUpload, FiX } from "react-icons/fi";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { uploadSigned } from "../../utils/cloudinaryClient";
 
@@ -116,6 +116,7 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
 
       const data = await response.json();
       onAddCategory(data);
+      toast.success(`Category ${isUpdate ? "updated" : "added"} successfully!`);
     } catch (error) {
       console.error("Error saving category:", error);
       setFormError("Something went wrong. Please try again.");

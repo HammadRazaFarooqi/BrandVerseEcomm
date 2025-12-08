@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function ProductDetail() {
@@ -231,7 +231,6 @@ function ProductDetail() {
                 <button className="btn btn-secondary w-full" onClick={handleBuyNow}>
                   Buy Now
                 </button>
-                <ToastContainer />
               </div>
             </div>
           </div>
