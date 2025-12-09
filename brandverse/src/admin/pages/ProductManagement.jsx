@@ -246,7 +246,7 @@ function ProductManagement() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          PKR {product.price.toFixed(0)}
+                          PKR {product.price.toLocaleString('en-PK')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -256,13 +256,13 @@ function ProductManagement() {
                                 ((product.price - product.discountedPrice) /
                                   product.price) *
                                 100
-                              ).toFixed(0)}%`
+                              ).toLocaleString('en-PK')}%`
                             : "0%"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          PKR {product.finalPrice.toFixed(0)}
+                          PKR {product.finalPrice.toLocaleString('en-PK')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

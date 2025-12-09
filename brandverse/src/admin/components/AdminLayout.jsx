@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { BiCategory } from "react-icons/bi";
 import {
+  FiArrowLeft,
   FiBox,
+  FiHome,
   FiLogOut,
   FiMenu,
   FiShoppingBag,
@@ -16,7 +18,8 @@ function AdminLayout() {
   const location = useLocation();
 
   const menuItems = [
-    { path: '/admin', icon: BiCategory, label: 'Category' },
+    { path: '/admin', icon: FiHome, label: 'Dashboard' },
+    { path: '/admin/category', icon: BiCategory, label: 'Category' },
     { path: '/admin/products', icon: FiBox, label: 'Products' },
     { path: '/admin/orders', icon: FiShoppingBag, label: 'Orders' },
   ];
@@ -51,20 +54,14 @@ function AdminLayout() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 bg-white shadow-md`}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 bg-white shadow-md`}
       >
         <div className="h-full flex flex-col">
           {/* Desktop Logo */}
           <div className="p-6 border-b hidden lg:block">
             <h1 className="text-2xl font-serif text-primary">Affi Mall</h1>
             <p className="text-sm text-gray-600">Admin Panel</p>
-            <Link to="/">
-              <button className="mt-5 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200 transition">
-                Back to Site
-              </button>
-            </Link>
           </div>
 
           {/* Mobile Logo Section */}
@@ -86,11 +83,10 @@ function AdminLayout() {
                   key={item.path}
                   to={item.path}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
-                    location.pathname === item.path
+                  className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${location.pathname === item.path
                       ? 'bg-black text-white'
                       : 'hover:bg-gray-100'
-                  }`}
+                    }`}
                 >
                   <Icon size={20} />
                   {item.label}
@@ -101,14 +97,24 @@ function AdminLayout() {
 
           {/* Logout */}
           <div className="p-4 border-t">
+            <Link to="/" className="w-full">
+              <button
+                className="flex items-center gap-3 px-4 py-3 w-full rounded-md hover:bg-gray-100 text-black-600"
+              >
+                <FiArrowLeft />
+                Back to Site
+              </button>
+            </Link>
+
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 w-full rounded-md hover:bg-gray-100 text-black-600"
+              className="flex items-center gap-3 px-4 py-3 w-full rounded-md hover:bg-gray-100 text-black-600 mt-2"
             >
               <FiLogOut size={20} />
               Logout
             </button>
           </div>
+
         </div>
       </aside>
 

@@ -39,17 +39,6 @@ function Profile() {
         ? u.fullName.split(" ").map(n => n[0].toUpperCase()).join("")
         : u.username?.[0]?.toUpperCase() || ""
       );
-  
-      // For ProfileDetails
-      setProfile({
-        firstName: u.fullName?.split(" ")[0] || "",
-        lastName: u.fullName?.split(" ")[1] || "",
-        email: u.email || "",
-        phone: u.phone || "",
-        address: u.addresses?.length
-          ? `${u.addresses[0].street}, ${u.addresses[0].state}, ${u.addresses[0].country}`
-          : "",
-      });
     } catch (e) {
       console.error("Invalid user JSON:", e);
     }

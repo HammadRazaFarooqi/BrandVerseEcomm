@@ -68,14 +68,15 @@ function ProfileOrder() {
       case "shipped":
         return "bg-blue-100 text-blue-800";
       case "delivered":
-      case "confirmed": // Assuming confirmed is also a positive state
         return "bg-green-100 text-green-800";
+      case "confirmed":
+        return "bg-indigo-100 text-indigo-800"; // Updated color
       case "cancelled":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
+  };  
 
   // --- Loading/Error/No Login State ---
   if (loading) return <p className="text-center">Loading orders...</p>;
@@ -132,10 +133,10 @@ function ProfileOrder() {
                         {/* RIGHT SIDE: Price breakdown */}
                         <div className="text-right">
                           <p className="text-gray-600">
-                            PKR {item.price?.toFixed(2)} × {item.quantity}
+                            PKR {item.price?.toLocaleString('en-PK')} × {item.quantity}
                           </p>
                           <p className="text-red-500 font-semibold text-lg">
-                            PKR {(item.price * item.quantity).toFixed(2)}
+                            PKR {(item.price * item.quantity).toLocaleString('en-PK')}
                           </p>
                         </div>
 

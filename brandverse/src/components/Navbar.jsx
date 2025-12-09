@@ -16,18 +16,19 @@ function Navbar() {
   const [expandedMobileCategory, setExpandedMobileCategory] = useState(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [userRole, setUserRole] = useState("");
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const searchRef = useRef(null);
+  const profileMenuRef = useRef(null);
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
-  // Helper function to get initials - UNCHANGED
+  // Helper function to get initials
   const getInitials = (user) => {
     if (!user) {
       return "";
     }
 
-    // Try different field combinations
     const fields = [
       user.fullName,
       user.full_name,
@@ -40,17 +41,14 @@ function Navbar() {
       user.email
     ];
 
-    // Find first non-empty field
     for (const field of fields) {
       if (field && typeof field === 'string' && field.trim()) {
         const trimmed = field.trim();
         const words = trimmed.split(/\s+/);
 
         if (words.length >= 2) {
-          // Multiple words: first letter of first word + first letter of last word
           return (words[0][0] + words[words.length - 1][0]).toUpperCase();
         } else if (words.length === 1) {
-          // Single word: just first letter
           return words[0][0].toUpperCase();
         }
       }
@@ -72,7 +70,6 @@ function Navbar() {
 
       const userData = JSON.parse(storedData);
 
-      // Extract user
       let user = null;
       if (userData.user) {
         user = userData.user;
@@ -84,14 +81,12 @@ function Navbar() {
         user = userData;
       }
 
-      // Set role AFTER user is defined
       if (user && user.role) {
         setUserRole(user.role);
       } else {
         setUserRole("");
       }
 
-      // Set login and initials
       if (user && (user.email || user.username || user.name || user.fullName)) {
         setIsLoggedIn(true);
         setInitial(getInitials(user));
@@ -108,7 +103,6 @@ function Navbar() {
     }
   };
 
-
   // Update cart count
   const updateCartCount = () => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -116,7 +110,7 @@ function Navbar() {
     setCartCount(total);
   };
 
-  // Fetch categories (UNCHANGED)
+  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -166,7 +160,7 @@ function Navbar() {
     fetchCategories();
   }, [BACKEND_URL]);
 
-  // Filter categories for search suggestions (UNCHANGED)
+  // Filter categories for search suggestions
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredCategories([]);
@@ -188,12 +182,14 @@ function Navbar() {
     setFocusedIndex(0);
   }, [searchQuery, categories]);
 
-
-  // Close menus when clicking outside (UNCHANGED)
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setShowSuggestions(false);
+      }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
+        setShowProfileMenu(false);
       }
     };
 
@@ -201,34 +197,32 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Initialize user data and cart on mount (UNCHANGED)
+  // Initialize user data and cart on mount
   useEffect(() => {
     loadUserData();
     updateCartCount();
   }, []);
 
-  // Update cart periodically (UNCHANGED)
+  // Update cart periodically
   useEffect(() => {
     const interval = setInterval(updateCartCount, 2000);
     return () => clearInterval(interval);
   }, []);
 
-  // Listen for storage changes (SOLUTION IMPLEMENTED HERE)
+  // Listen for storage changes
   useEffect(() => {
-    // 1. Storage Event (for other tabs)
     const handleStorageChange = (e) => {
-      if (e.key === "isLogin") { // Only update if "isLogin" changes
+      if (e.key === "isLogin") {
         loadUserData();
       }
     };
 
-    // 2. Custom Event (for current tab, triggered after login/register)
     const handleCustomStorage = () => {
       loadUserData();
     };
 
     window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("userDataUpdated", handleCustomStorage); // THIS IS THE KEY FIX
+    window.addEventListener("userDataUpdated", handleCustomStorage);
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
@@ -246,36 +240,214 @@ function Navbar() {
     navigate(`/category/${slug}`);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("isLogin");
+    window.dispatchEvent(new Event("userDataUpdated"));
+    setShowProfileMenu(false);
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-40">
       <nav className="bg-white/80 backdrop-blur-lg border-b border-white/60 shadow-card">
         <div className="container-custom">
-          <div className="flex items-center justify-between gap-4 py-4 flex-wrap">
-            <Link to="/" className="flex items-center space-x-3">
-              <div>
+          {/* Mobile Layout */}
+          <div className="lg:hidden">
+            {/* Top Row: Logo, Cart, Profile */}
+            <div className="flex items-center justify-between py-4">
+              <Link to="/" className="flex items-center space-x-2">
                 <img
                   src="/logo.png"
                   loading="lazy"
                   decoding="async"
                   onError={(e) => {
-                    // Prevent infinite loop if fallback also fails
                     e.currentTarget.onerror = null;
-                    // Simple SVG fallback as a data URL (percent-encoded)
                     e.currentTarget.src =
                       'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'44\' height=\'44\' viewBox=\'0 0 44 44\'><rect width=\'100%\' height=\'100%\' fill=\'%23ffffff\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'Arial, sans-serif\' font-size=\'10\' fill=\'%23000000\'>Affi Mall</text></svg>';
                   }}
-                  className="w-11 h-11 object-contain"
+                  className="w-9 h-9 object-contain"
                   alt="Affi Mall"
                 />
-              </div>
-              <div>
-                <span className="font-serif text-2xl font-semibold text-ink block leading-tight">
+                <span className="font-serif text-xl font-semibold text-ink">
                   Affi Mall
                 </span>
+              </Link>
+
+              <div className="flex items-center gap-2">
+                {/* Cart Icon */}
+                <Link
+                  to="/cart"
+                  className="relative flex items-center justify-center h-10 w-10 rounded-full border border-surface-muted bg-white"
+                >
+                  <FiShoppingCart size={18} />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-[11px] font-semibold text-white shadow-card">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Profile Icon with Dropdown */}
+                <div className="relative" ref={profileMenuRef}>
+                  <button
+                    onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    className="flex items-center justify-center h-10 w-10 rounded-full border border-surface-muted bg-white"
+                  >
+                    {isLoggedIn && initial ? (
+                      <span className="font-bold uppercase text-sm text-ink">
+                        {initial}
+                      </span>
+                    ) : (
+                      <FiLogIn size={18} />
+                    )}
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {showProfileMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-xl border rounded-lg py-2 z-50">
+                      <button
+                        onClick={() => {
+                          navigate(isLoggedIn ? "/profile" : "/login");
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                      >
+                        {isLoggedIn ? "Profile" : "Login"}
+                      </button>
+
+                      {isLoggedIn && userRole === "admin" && (
+                        <button
+                          onClick={() => {
+                            navigate("/admin");
+                            setShowProfileMenu(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                        >
+                          Admin Dashboard
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          navigate("/support");
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                      >
+                        Customer Support
+                      </button>
+
+                      {isLoggedIn && (
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 text-sm border-t mt-1"
+                        >
+                          Logout
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
+            </div>
+
+            {/* Search Bar Row */}
+            <div className="pb-4">
+              <div className="flex gap-2 relative" ref={searchRef}>
+                <input
+                  type="text"
+                  placeholder="Search Categories..."
+                  className="flex-1 rounded-full border border-surface-muted px-4 py-2 focus:outline-none text-sm"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => searchQuery && setShowSuggestions(true)}
+                  onKeyDown={(e) => {
+                    if (!filteredCategories || filteredCategories.length === 0) return;
+
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setFocusedIndex((prev) =>
+                        prev + 1 < filteredCategories.length ? prev + 1 : 0
+                      );
+                    }
+
+                    if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setFocusedIndex((prev) =>
+                        prev - 1 >= 0 ? prev - 1 : filteredCategories.length - 1
+                      );
+                    }
+
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const item = filteredCategories[focusedIndex];
+                      if (item) {
+                        handleSelectCategory(item.slug);
+                      }
+                    }
+                  }}
+                />
+
+                <button
+                  className="btn btn-primary bg-ink text-white px-4 py-2 rounded-full text-sm"
+                  onClick={() => {
+                    if (!searchQuery) return;
+
+                    if (filteredCategories?.length > 0) {
+                      handleSelectCategory(filteredCategories[focusedIndex].slug);
+                    } else {
+                      const slug = searchQuery.trim().toLowerCase().replace(/\s+/g, "-");
+                      handleSelectCategory(slug);
+                    }
+                  }}
+                >
+                  Search
+                </button>
+
+                {showSuggestions && filteredCategories?.length > 0 && (
+                  <ul className="absolute top-full mt-1 w-full bg-white border border-gray-200 shadow-lg rounded-lg z-50 max-h-60 overflow-y-auto">
+                    {filteredCategories.map((cat, index) => (
+                      <li
+                        key={index}
+                        className={`px-4 py-2 cursor-pointer text-sm ${
+                          index === focusedIndex ? "bg-gray-100" : "hover:bg-gray-100"
+                        }`}
+                        onMouseEnter={() => setFocusedIndex(index)}
+                        onClick={() => handleSelectCategory(cat.slug)}
+                      >
+                        {cat.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex items-center justify-between gap-4 py-4">
+            <Link to="/" className="flex items-center space-x-3">
+              <img
+                src="/logo.png"
+                loading="lazy"
+                decoding="async"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'44\' height=\'44\' viewBox=\'0 0 44 44\'><rect width=\'100%\' height=\'100%\' fill=\'%23ffffff\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'Arial, sans-serif\' font-size=\'10\' fill=\'%23000000\'>Affi Mall</text></svg>';
+                }}
+                className="w-11 h-11 object-contain"
+                alt="Affi Mall"
+              />
+              <span className="font-serif text-2xl font-semibold text-ink">
+                Affi Mall
+              </span>
             </Link>
 
-            <div className="flex flex-1 max-w-2xl gap-2 sm:gap-3 mx-4 relative" ref={searchRef}>
+            <div className="flex flex-1 max-w-2xl gap-3 mx-4 relative" ref={searchRef}>
               <input
                 type="text"
                 placeholder="Search Categories..."
@@ -287,10 +459,8 @@ function Navbar() {
                 }}
                 onFocus={() => searchQuery && setShowSuggestions(true)}
                 onKeyDown={(e) => {
-                  // No suggestions — do nothing
                   if (!filteredCategories || filteredCategories.length === 0) return;
 
-                  // DOWN ARROW
                   if (e.key === "ArrowDown") {
                     e.preventDefault();
                     setFocusedIndex((prev) =>
@@ -298,7 +468,6 @@ function Navbar() {
                     );
                   }
 
-                  // UP ARROW
                   if (e.key === "ArrowUp") {
                     e.preventDefault();
                     setFocusedIndex((prev) =>
@@ -306,7 +475,6 @@ function Navbar() {
                     );
                   }
 
-                  // ENTER
                   if (e.key === "Enter") {
                     e.preventDefault();
                     const item = filteredCategories[focusedIndex];
@@ -323,10 +491,8 @@ function Navbar() {
                   if (!searchQuery) return;
 
                   if (filteredCategories?.length > 0) {
-                    // Navigate to the selected existing category
                     handleSelectCategory(filteredCategories[focusedIndex].slug);
                   } else {
-                    // Random / non-existent category: navigate using slugified search query
                     const slug = searchQuery.trim().toLowerCase().replace(/\s+/g, "-");
                     handleSelectCategory(slug);
                   }
@@ -340,8 +506,9 @@ function Navbar() {
                   {filteredCategories.map((cat, index) => (
                     <li
                       key={index}
-                      className={`px-4 py-2 cursor-pointer ${index === focusedIndex ? "bg-gray-100" : "hover:bg-gray-100"
-                        }`}
+                      className={`px-4 py-2 cursor-pointer ${
+                        index === focusedIndex ? "bg-gray-100" : "hover:bg-gray-100"
+                      }`}
                       onMouseEnter={() => setFocusedIndex(index)}
                       onClick={() => handleSelectCategory(cat.slug)}
                     >
@@ -358,15 +525,14 @@ function Navbar() {
                   <RiCustomerService2Line size={20} />
                 </button>
               </Link>
-              {isLoggedIn && userRole === "admin" ? (
+
+              {isLoggedIn && userRole === "admin" && (
                 <button
                   onClick={() => navigate("/admin")}
                   className="flex items-center gap-1 border border-surface-muted px-3 py-2 rounded-full hover:bg-gray-100 transition"
                 >
                   Admin Dashboard
                 </button>
-              ) : (
-                <></>
               )}
 
               <Link
@@ -382,10 +548,10 @@ function Navbar() {
               </Link>
 
               <Link
-                to={isLoggedIn ? "/profile" : "/login"} // Ensure it navigates to login if not logged in
+                to={isLoggedIn ? "/profile" : "/login"}
                 className="flex items-center gap-2 text-ink transition hover:-translate-y-0.5"
               >
-                {isLoggedIn && initial ? ( // Check if initial is also available
+                {isLoggedIn && initial ? (
                   <div className="flex items-center gap-5 rounded-full border border-black/10 bg-black text-white">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-sm font-bold uppercase">
                       {initial}

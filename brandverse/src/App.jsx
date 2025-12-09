@@ -17,23 +17,24 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 
 // Admin Routes
+import { ToastContainer } from "react-toastify";
 import AdminLayout from "./admin/components/AdminLayout";
 import AdminLogin from "./admin/pages/AdminLogin";
 import CategoryManagement from "./admin/pages/CategoryManagement";
 import CustomerManagement from "./admin/pages/CustomerManagement";
+import Dashboard from "./admin/pages/Dashboard"; // ADD THIS
 import OrderDetail from "./admin/pages/OrderDetails";
 import OrderManagement from "./admin/pages/OrderManagement";
 import ProductManagement from "./admin/pages/ProductManagement";
 import Reports from "./admin/pages/Reports";
 import Settings from "./admin/pages/Settings";
 import ProtectedRoute from "./core/protected-route";
+import ScrollToTop from "./core/ScrollToTop";
 import CheckoutSuccess from "./pages/checkoutSuccess";
-import ForgetPassword from "./pages/ForgetPassword";
-import PromotionsManager from "./admin/pages/PromotionManagement";
 import CustomerSupport from "./pages/CustomerSupport";
+import ForgetPassword from "./pages/ForgetPassword";
 import OtpVerification from "./pages/OtpVerification";
 import ResetPassword from "./pages/ResetPassword";
-import { ToastContainer } from "react-toastify";
 
 function ClientLayout() {
   return (
@@ -50,6 +51,7 @@ function ClientLayout() {
 function App() {
   return (
     <Router>
+      <ScrollToTop/>
       <Routes>
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -61,13 +63,12 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<CategoryManagement />} />
+          <Route index element={<Dashboard />} />
           <Route path="category" element={<CategoryManagement />} />
           <Route path="products" element={<ProductManagement />} />
           <Route path="orders" element={<OrderManagement />} />
           <Route path="order/:orderId" element={<OrderDetail />} />
           <Route path="customers" element={<CustomerManagement />} />
-          <Route path="promotions" element={<PromotionsManager />} />
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<Settings />} />
         </Route>
@@ -104,6 +105,5 @@ function App() {
     </Router>
   );
 }
-
 
 export default App;

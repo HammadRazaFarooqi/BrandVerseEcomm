@@ -176,7 +176,7 @@ function ProductDetail() {
                 <h1 className="mb-10 text-4xl font-semibold text-ink">
                   {selectedProduct?.title}
                 </h1>
-                <p className="text-3xl font-semibold text-ink mt-2">
+                <div className="text-3xl font-semibold text-ink mt-2">
                   {selectedProduct?.discountedPrice && selectedProduct.discountedPrice < selectedProduct.price ? (
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                       <div className="flex items-center gap-3">
@@ -196,7 +196,7 @@ function ProductDetail() {
                       PKR {selectedProduct.price.toLocaleString('en-PK')}
                     </span>
                   )}
-                </p>
+                </div>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-ink">Description</h3>
