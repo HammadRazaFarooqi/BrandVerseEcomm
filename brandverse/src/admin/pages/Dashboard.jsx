@@ -350,48 +350,6 @@ function Dashboard() {
           value={stats.pendingOrders}
           color="#f59e0b"   // Yellow
         />
-
-      </div>
-
-      {/* Additional Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-green-100 rounded-full">
-              <FiTrendingUp className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Categories</p>
-              <p className="text-xl font-serif font-bold">{stats.totalCategories}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <FiUsers className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Average Order Value</p>
-              <p className="text-xl font-serif font-bold">
-                PKR {stats.totalOrders > 0 ? Math.round(stats.totalRevenue / stats.totalOrders).toLocaleString() : 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-purple-100 rounded-full">
-              <FiPackage className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Products in Stock</p>
-              <p className="text-xl font-serif font-bold">{stats.totalProducts}</p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Charts Row */}
@@ -410,11 +368,11 @@ function Dashboard() {
                 <div className="text-right">
                   <div className="text-sm font-medium">PKR {order.amount.toLocaleString()}</div>
                   <div className={`text-xs px-2 py-1 rounded-full inline-block ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                      order.status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
-                        order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                          order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                            order.status === 'confirmed' ? 'bg-indigo-100 text-indigo-800' :
-                              'bg-gray-100 text-gray-800'
+                    order.status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                      order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                        order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                          order.status === 'confirmed' ? 'bg-indigo-100 text-indigo-800' :
+                            'bg-gray-100 text-gray-800'
                     }`}>
                     {order.status}
                   </div>

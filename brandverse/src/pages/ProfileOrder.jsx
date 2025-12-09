@@ -79,88 +79,88 @@ function ProfileOrder() {
   };  
 
   // --- Loading/Error/No Login State ---
-  if (loading) return <p className="text-center">Loading orders...</p>;
-  if (error) return <p className="text-center text-red-500 font-medium">{error}</p>;
+  if (loading) return <p className="text-center p-4">Loading orders...</p>;
+  if (error) return <p className="text-center text-red-500 font-medium p-4">{error}</p>;
 
   // --- Component JSX (UNCHANGED for rendering) ---
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-      <div className="px-8 py-6 border-b bg-gray-50">
-        <h2 className="text-2xl font-bold">Order History</h2>
+      <div className="px-4 md:px-8 py-4 md:py-6 border-b bg-gray-50">
+        <h2 className="text-xl md:text-2xl font-bold">Order History</h2>
       </div>
-      <div className="p-8 space-y-8">
+      <div className="p-4 md:p-8 space-y-6 md:space-y-8">
         {orders.length > 0 ? (
           orders.map((order) => (
             <div
               key={order._id}
               className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1"
             >
-              <div className="bg-gray-50 px-8 py-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-lg">Order #{order.orderNumber || order._id.substring(0, 8)}</p> {/* Order Number use karein agar available hai */}
+              <div className="bg-gray-50 px-4 md:px-8 py-4 md:py-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                <div className="w-full">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-medium text-base md:text-lg">Order #{order.orderNumber || order._id.substring(0, 8)}</p> {/* Order Number use karein agar available hai */}
 
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                      className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-semibold ${getStatusColor(
                         order.status
                       )}`}
                     >
                       {order.status}
                     </span>
                   </div>
-                  <p className="text-gray-600 mt-1">
+                  <p className="text-gray-600 mt-1 text-sm md:text-base">
                     Placed on {new Date(order.createdAt).toDateString()}
                   </p>
                 </div>
               </div>
-              <div className="p-8 border-t border-gray-200">
-                <div className="p-8 border-t border-gray-200">
-                  <div className="space-y-6">
-                    {order.items.map((item, index) => (
-                      <div key={index} className="flex items-start justify-between">
+              <div className="p-4 md:p-8 border-t border-gray-200">
+                <div className="space-y-4 md:space-y-6">
+                  {order.items.map((item, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row items-start justify-between gap-4">
 
-                        {/* LEFT SIDE: Image + Title */}
-                        <div className="flex gap-4 items-start">
-                          <img
-                            src={item.images[0] || "https://via.placeholder.com/100"}
-                            alt={item.title}
-                            className="w-20 h-20 object-cover rounded"
-                          />
+                      {/* LEFT SIDE: Image + Title */}
+                      <div className="flex gap-3 md:gap-4 items-start w-full sm:w-auto">
+                        <img
+                          src={item.images[0] || "https://via.placeholder.com/100"}
+                          alt={item.title}
+                          className="w-16 h-16 md:w-20 md:h-20 object-cover rounded flex-shrink-0"
+                        />
 
-                          <h3 className="text-xl font-medium">{item.title}</h3>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base md:text-xl font-medium break-words">{item.title}</h3>
                         </div>
-
-                        {/* RIGHT SIDE: Price breakdown */}
-                        <div className="text-right">
-                          <p className="text-gray-600">
-                            PKR {item.price?.toLocaleString('en-PK')} × {item.quantity}
-                          </p>
-                          <p className="text-red-500 font-semibold text-lg">
-                            PKR {(item.price * item.quantity).toLocaleString('en-PK')}
-                          </p>
-                        </div>
-
                       </div>
-                    ))}
-                  </div>
+
+                      {/* RIGHT SIDE: Price breakdown */}
+                      <div className="text-left sm:text-right w-full sm:w-auto sm:ml-4">
+                        <p className="text-gray-600 text-sm md:text-base">
+                          PKR {item.price?.toLocaleString('en-PK')} × {item.quantity}
+                        </p>
+                        <p className="text-red-500 font-semibold text-base md:text-lg">
+                          PKR {(item.price * item.quantity).toLocaleString('en-PK')}
+                        </p>
+                      </div>
+
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           ))
         ) : (
           // No orders found state
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingBag className="h-10 w-10 text-gray-400" />
+          <div className="text-center py-12 md:py-16 px-4">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+              <ShoppingBag className="h-8 w-8 md:h-10 md:w-10 text-gray-400" />
             </div>
-            <h3 className="text-xl font-medium mb-3">No orders yet</h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            <h3 className="text-lg md:text-xl font-medium mb-2 md:mb-3">No orders yet</h3>
+            <p className="text-gray-600 text-sm md:text-base mb-6 md:mb-8 max-w-md mx-auto px-4">
               You haven&apos;t placed any orders yet. Start exploring our
               collections to find your perfect style.
             </p>
             <Link
               to="/category"
-              className="px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="inline-block px-6 md:px-8 py-2.5 md:py-3 bg-black text-white text-sm md:text-base font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               Start Shopping
             </Link>
