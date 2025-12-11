@@ -112,7 +112,7 @@ function Register() {
                   className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
                   required
                 />
-                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                {errors.firstName && <p className="text-brand-700 text-sm mt-1">{errors.firstName}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-ink-muted">Last Name</label>
@@ -123,7 +123,7 @@ function Register() {
                   className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
                   required
                 />
-                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                {errors.lastName && <p className="text-brand-700 text-sm mt-1">{errors.lastName}</p>}
               </div>
             </div>
 
@@ -137,7 +137,7 @@ function Register() {
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
                 required
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-brand-700 text-sm mt-1">{errors.email}</p>}
             </div>
 
             <div>
@@ -150,7 +150,7 @@ function Register() {
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
                 required
               />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-brand-700 text-sm mt-1">{errors.password}</p>}
             </div>
 
             <div>
@@ -163,7 +163,7 @@ function Register() {
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
                 required
               />
-              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="text-brand-700 text-sm mt-1">{errors.confirmPassword}</p>}
             </div>
 
             <button type="submit" className="btn btn-primary w-full" disabled={loader}>

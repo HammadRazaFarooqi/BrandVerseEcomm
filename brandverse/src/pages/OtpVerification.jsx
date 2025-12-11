@@ -67,7 +67,7 @@ function OtpVerification() {
                 </div>
 
                 {message && (
-                    <p className="rounded-full bg-red-50 py-3 text-center text-sm text-red-600">{message}</p>
+                    <p className="rounded-full bg-accent-soft py-3 text-center text-sm text-brand-800">{message}</p>
                 )}
 
                 <div className="space-y-6">

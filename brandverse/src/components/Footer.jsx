@@ -31,7 +31,7 @@ function Footer() {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-white/80 transition hover:text-white"
+                    className="text-white/80 transition hover:text-accent-soft"
                   >
                     {link.label}
                   </a>

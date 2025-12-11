@@ -14,11 +14,11 @@ function DashboardCard({ title, value, change, icon: Icon, trend = 'up' }) {
       </div>
       <div className="mt-4 flex items-center">
         {trend === 'up' ? (
-          <FiTrendingUp className="w-4 h-4 text-green-500 mr-1" />
+          <FiTrendingUp className="w-4 h-4 text-brand-600 mr-1" />
         ) : (
-          <FiTrendingDown className="w-4 h-4 text-red-500 mr-1" />
+          <FiTrendingDown className="w-4 h-4 text-brand-700 mr-1" />
         )}
-        <span className={`text-sm ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+        <span className={`text-sm ${trend === 'up' ? 'text-brand-600' : 'text-brand-700'}`}>
           {change}
         </span>
       </div>

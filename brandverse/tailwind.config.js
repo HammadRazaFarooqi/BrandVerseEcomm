@@ -8,43 +8,35 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#1a1a1a",
-          light: "#2a2a2a",
-        },
-        gold: {
-          DEFAULT: "#D4AF37",
-          light: "#E5C158",
-        },
-        navy: {
-          DEFAULT: "#000080",
-          light: "#0000A0",
+          DEFAULT: "#2E8B57",
+          light: "#3CB371",
         },
         brand: {
-          50: "#f5f6fb",
-          100: "#e8e9f5",
-          200: "#cfd3e8",
-          300: "#b1b9d9",
-          400: "#8d98c7",
-          500: "#6b77b3",
-          600: "#525d94",
-          700: "#3c456f",
-          800: "#262d48",
-          900: "#101428",
-          DEFAULT: "#101428",
+          50: "#E7F8EF",
+          100: "#D4F0E0",
+          200: "#B8E4CB",
+          300: "#94D5B3",
+          400: "#68C594",
+          500: "#2E8B57",
+          600: "#257047",
+          700: "#1D5837",
+          800: "#15412A",
+          900: "#0C1B33",
+          DEFAULT: "#2E8B57",
         },
         accent: {
-          DEFAULT: "#ecb22e",
-          soft: "#f3c75e",
-          muted: "#f9e7b0",
+          DEFAULT: "#3CB371",
+          soft: "#E0F4EA",
+          muted: "#D8F1E4",
         },
         ink: {
-          DEFAULT: "#0b1220",
-          muted: "#4b5164",
+          DEFAULT: "#0C1B33",
+          muted: "#4A5568",
         },
         surface: {
-          DEFAULT: "#f8f7f3",
+          DEFAULT: "#E7F8EF",
           contrast: "#ffffff",
-          muted: "#e4e2da",
+          muted: "#F5F5F5",
         },
       },
       fontFamily: {
@@ -57,9 +49,9 @@ export default {
       },
       backgroundImage: {
         "hero-gradient":
-          "linear-gradient(120deg, rgba(11,18,32,0.95), rgba(16,20,33,0.8))",
+          "linear-gradient(120deg, #2E8B57 0%, #3CB371 55%, #0C1B33 100%)",
         "section-radial":
-          "radial-gradient(circle at top, rgba(236,178,46,0.12), transparent 55%)",
+          "radial-gradient(circle at 20% 20%, rgba(44,139,87,0.18), transparent 45%), radial-gradient(circle at 80% 0%, rgba(12,27,51,0.2), transparent 55%)",
       },
       borderRadius: {
         xl: "1.25rem",

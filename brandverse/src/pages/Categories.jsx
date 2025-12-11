@@ -15,6 +15,7 @@ function Categories() {
   const [categoryList, setCategoryList] = useState([]);
   const [currentCategoryData, setCurrentCategoryData] = useState(null);
   const [categoryTree, setCategoryTree] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
@@ -107,8 +108,13 @@ function Categories() {
     // Filter by category
     if (selectedCategory !== "all") {
       filtered = filtered.filter((item) => {
-        return item?.category?.slug?.includes(selectedCategory)
-      }
+        return item?.category?.slug?.includes(selectedCategory);
+      });
+    }
+
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((item) =>
+        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -127,7 +133,7 @@ function Categories() {
     }
 
     setFilteredProducts(filtered);
-  }, [products, selectedCategory, sortBy, categoryList]);
+  }, [products, selectedCategory, sortBy, categoryList, searchTerm]);
 
   useEffect(() => {
     if (category) {
@@ -155,72 +161,32 @@ function Categories() {
       <div className="container-custom">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="eyebrow">The collection</p>
-            <h1 className="text-4xl font-semibold text-ink">Curated pieces</h1>
+            <p className="eyebrow">The marketplace</p>
+            <h1 className="text-4xl font-semibold text-ink">All products</h1>
           </div>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="btn btn-secondary md:hidden"
-          >
-            {showFilters ? <FiX /> : <FiFilter />}
-            Filters
-          </button>
         </div>
 
-        <div className="mt-10 flex flex-col gap-8 md:flex-row">
-          <div
-            className={`${showFilters ? "block" : "hidden"
-              } md:block w-full md:w-72`}
-          >
-            <div className="glass-card rounded-3xl p-6">
-              <p className="text-sm uppercase tracking-[0.3em] text-ink-muted">
-                Categories
-              </p>
-              <div className="mt-6 space-y-4">
-                {categoryTree.map((category) => (
-                  <div key={category.id}>
-                    <label className="flex items-center gap-3 text-ink">
-                      <input
-                        type="radio"
-                        name="category"
-                        value={category.slug}
-                        checked={selectedCategory === category.slug}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="accent-ink"
-                      />
-                      {category.name}
-                    </label>
-                    {category?.children && category.children?.length > 0 && (
-                      <div className="ml-6 mt-2 space-y-2 text-sm text-ink-muted">
-                        {category.children.map((child) => (
-                          <label
-                            key={child.id}
-                            className="flex items-center gap-3"
-                          >
-                            <input
-                              type="radio"
-                              name="category"
-                              value={child.slug}
-                              checked={selectedCategory === child.slug}
-                              onChange={(e) =>
-                                setSelectedCategory(e.target.value)
-                              }
-                              className="accent-ink"
-                            />
-                            {child.name}
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+        <div className="mt-8 flex flex-col gap-4">
+          <div className="glass-card rounded-3xl p-4 flex flex-wrap items-center gap-3">
+            <div className="flex-1 min-w-[220px]">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full rounded-full border border-surface-muted bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+              />
             </div>
-          </div>
-
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center justify-end gap-4">
-              <label className="text-sm text-ink-muted">Sort by</label>
+            <div className="flex items-center gap-3">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="rounded-full border border-surface-muted bg-white px-4 py-2 text-sm"
+              >
+                {categoryList.map((cat) => (
+                  <option key={cat.slug} value={cat.slug}>{cat.name}</option>
+                ))}
+              </select>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -232,11 +198,13 @@ function Categories() {
                 <option value="newest">Newest Arrivals</option>
               </select>
             </div>
+          </div>
 
-            <div className="mt-8">
+          <div className="flex-1">
+            <div className="mt-2">
               {loading ? (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {[1, 2, 3].map((i) => (
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="glass-card h-80 animate-pulse" />
                   ))}
                 </div>
@@ -255,7 +223,7 @@ function Categories() {
                   {error || "No products found in this category."}
                 </p>
               ) : (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                   {filteredProducts.map((item) => (
                     <Link key={item._id} to={`/product/${item._id}`}>
                       

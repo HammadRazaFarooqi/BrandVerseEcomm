@@ -37,17 +37,17 @@ function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-surface via-white to-surface-muted text-ink">
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
-        <div className="flex items-center justify-between p-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur border-b border-surface-muted shadow-md">
+        <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-100 rounded-md"
+            className="p-2 rounded-full hover:bg-surface-muted transition"
           >
             {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          <h1 className="text-xl font-serif text-primary">Affi Mall</h1>
+          <h1 className="text-xl font-serif text-brand-600">Affi Mall</h1>
           <div className="w-10"></div>
         </div>
       </div>
@@ -55,20 +55,20 @@ function AdminLayout() {
       {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:translate-x-0 bg-white shadow-md`}
+          } lg:translate-x-0 bg-white/90 backdrop-blur border-r border-surface-muted shadow-xl`}
       >
         <div className="h-full flex flex-col">
           {/* Desktop Logo */}
-          <div className="p-6 border-b hidden lg:block">
-            <h1 className="text-2xl font-serif text-primary">Affi Mall</h1>
-            <p className="text-sm text-gray-600">Admin Panel</p>
+          <div className="p-6 border-b border-surface-muted/70 hidden lg:block">
+            <h1 className="text-2xl font-serif text-brand-600">Affi Mall</h1>
+            <p className="text-sm text-ink-muted">Admin Panel</p>
           </div>
 
           {/* Mobile Logo Section */}
-          <div className="p-6 mt-14 border-b lg:hidden">
-            <p className="text-sm text-gray-600">Admin Panel</p>
+          <div className="p-6 mt-14 border-b border-surface-muted/70 lg:hidden">
+            <p className="text-sm text-ink-muted">Admin Panel</p>
             <Link to="/">
-              <button className="mt-3 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200 transition w-full">
+              <button className="mt-3 px-4 py-2 rounded-full border border-surface-muted bg-white text-ink hover:bg-surface-muted/70 transition w-full">
                 Back to Site
               </button>
             </Link>
@@ -83,9 +83,9 @@ function AdminLayout() {
                   key={item.path}
                   to={item.path}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${location.pathname === item.path
-                      ? 'bg-black text-white'
-                      : 'hover:bg-gray-100'
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === item.path
+                      ? 'bg-brand-500 text-white shadow-card'
+                      : 'hover:bg-surface-muted/80 text-ink'
                     }`}
                 >
                   <Icon size={20} />
@@ -96,10 +96,10 @@ function AdminLayout() {
           </nav>
 
           {/* Logout */}
-          <div className="p-4 border-t">
+          <div className="p-4 border-t border-surface-muted/70">
             <Link to="/" className="w-full">
               <button
-                className="flex items-center gap-3 px-4 py-3 w-full rounded-md hover:bg-gray-100 text-black-600"
+                className="flex items-center gap-3 px-4 py-3 w-full rounded-xl hover:bg-surface-muted/80 text-ink"
               >
                 <FiArrowLeft />
                 Back to Site
@@ -108,7 +108,7 @@ function AdminLayout() {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 w-full rounded-md hover:bg-gray-100 text-black-600 mt-2"
+              className="flex items-center gap-3 px-4 py-3 w-full rounded-xl hover:bg-surface-muted/80 text-brand-700 mt-2"
             >
               <FiLogOut size={20} />
               Logout
@@ -120,7 +120,7 @@ function AdminLayout() {
 
       {/* Main Content */}
       <div className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
-        <div className="p-8">
+        <div className="p-6 lg:p-10">
           <Outlet />
         </div>
       </div>

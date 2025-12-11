@@ -37,15 +37,31 @@ function HeroSection() {
 
   const renderLeftContent = () => (
     <div className="space-y-8 text-left">
-      <p className="eyebrow">Everything you love — in one store</p>
-      <h1 className="text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
-        Shop <span className="text-accent-soft">smart</span>, shop{" "}
-        <span className="text-accent-soft">better</span>.
+      <div className="inline-flex items-center gap-3 rounded-full bg-white/15 px-4 py-2 text-sm text-white shadow-inner">
+        <span className="rounded-full bg-accent px-2 py-1 text-xs font-bold text-brand-900">-45%</span>
+        Flash Sale • Limited time only
+      </div>
+      <h1 className="text-4xl font-semibold text-white sm:text-5xl lg:text-6xl leading-tight">
+        Bright, festive deals in every category.
       </h1>
-      <p className="text-lg text-white/80 lg:text-xl">
-        Explore trending products across electronics, fashion, beauty, kitchen,
-        gadgets and more — premium quality with exclusive deals.
+      <p className="text-lg text-white/85 lg:text-xl">
+        Seasonal promotions across electronics, fashion, beauty, home and more. Shop the drop with fast delivery and easy returns.
       </p>
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        <a
+          href="/category"
+          className="btn btn-primary bg-white text-brand-900 hover:bg-accent-soft"
+        >
+          Shop Now
+        </a>
+        <a
+          href="/support"
+          className="btn btn-secondary border-white/60 text-white bg-transparent hover:bg-white/10"
+        >
+          Need Help?
+        </a>
+      </div>
 
       <div className="grid gap-6 sm:grid-cols-3">
         {heroStats.map((stat) => (
@@ -63,11 +79,11 @@ function HeroSection() {
   );
 
   return (
-    <section className="relative min-h-[90vh] overflow-hidden bg-hero-gradient text-white">
+    <section className="relative min-h-[90vh] overflow-hidden bg-hero-gradient text-white border-b border-white/10">
       {/* Background glowing blobs */}
       <div className="absolute inset-0">
-        <div className="absolute -left-32 top-10 h-96 w-96 rounded-full bg-accent/40 blur-[200px]" />
-        <div className="absolute bottom-0 right-0 h-[32rem] w-[32rem] rounded-full bg-white/10 blur-[220px]" />
+        <div className="absolute -left-24 top-10 h-96 w-96 rounded-full bg-accent/35 blur-[200px]" />
+        <div className="absolute bottom-0 right-0 h-[32rem] w-[32rem] rounded-full bg-brand-700/30 blur-[220px]" />
       </div>
 
       <div className="container-custom relative z-10 grid gap-12 lg:grid-cols-2 lg:items-center py-20">
@@ -75,7 +91,7 @@ function HeroSection() {
 
         {/* IMAGE CAROUSEL - Mobile and Desktop */}
         <div className="relative">
-          <div className="relative h-[400px] lg:h-[520px] overflow-hidden rounded-[2.5rem] glass-card">
+          <div className="relative h-[420px] lg:h-[540px] overflow-hidden rounded-[2.5rem] glass-card">
 
             {sliderImages.map((img, index) => (
               <img
@@ -88,7 +104,7 @@ function HeroSection() {
               />
             ))}
 
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-900/70 via-brand-900/30 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8 text-white">
               <p className="text-sm uppercase tracking-[0.4em] text-white/70">
                 Top Picks

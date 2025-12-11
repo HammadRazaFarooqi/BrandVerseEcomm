@@ -394,7 +394,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-6 w-11/12 max-w-6xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">
@@ -441,7 +441,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
           </div>
         </div>
         {errorMessage && (
-          <div className="bg-red-100 text-red-700 border border-red-300 rounded-md p-3 mb-4 text-center">
+          <div className="bg-accent-soft text-brand-800 border border-brand-300 rounded-md p-3 mb-4 text-center">
             {errorMessage}
           </div>
         )}
@@ -499,11 +499,11 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                 ></textarea>
               </div>
 
-              <div className="flex justify-end space-x-4 pt-6">
+              <div className="flex justify-end space-x-4 ">
                 <button
                   type="button"
                   onClick={() => setActiveTab(1)}
-                  className="px-6 py-2 bg-black text-white font-medium rounded-lg flex items-center gap-2"
+                  className="px-6 py-2 bg-primary text-white font-medium rounded-lg flex items-center gap-2"
                 >
                   Next: Price & Inventory <FiArrowRight />
                 </button>
@@ -574,7 +574,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                 <button
                   type="button"
                   onClick={() => setActiveTab(2)}
-                  className="px-6 py-2 bg-black text-white font-medium rounded-lg hover:bg-black flex items-center gap-2"
+                  className="px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary flex items-center gap-2"
                 >
                   Next: Images <FiArrowRight />
                 </button>
@@ -679,7 +679,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                                 onClick={() => removeGalleryImage(index)}
                                 className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition"
                               >
-                                <FiX size={16} className="text-red-500" />
+                                <FiX size={16} className="text-brand-700" />
                               </button>
                             </div>
                           ))}
@@ -700,7 +700,7 @@ const AddProductForm = ({ onAddProduct, productID }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-black text-white font-medium rounded-lg hover:bg-black shadow-md hover:shadow-lg flex items-center gap-2"
+                  className="px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary shadow-md hover:shadow-lg flex items-center gap-2"
                   disabled={isSubmitting}
                 >
                   {isSubmitting

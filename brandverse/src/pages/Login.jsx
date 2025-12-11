@@ -70,7 +70,7 @@ function Login() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               {errors.apiError && (
-                <p className="text-red-500 text-center text-sm mb-2">{errors.apiError}</p>
+                <p className="text-brand-700 text-center text-sm mb-2">{errors.apiError}</p>
               )}
               <label className="block text-sm font-medium text-ink-muted">Email address</label>
               <input
@@ -81,7 +81,7 @@ function Login() {
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
                 required
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-brand-700 text-sm mt-1">{errors.email}</p>}
             </div>
 
             <div>
@@ -94,7 +94,7 @@ function Login() {
                 className="mt-2 w-full rounded-full border border-surface-muted px-5 py-3"
                 required
               />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-brand-700 text-sm mt-1">{errors.password}</p>}
             </div>
             <Link to="/forget-password" className="text-sm text-ink-muted hover:text-ink" > Forgot password </Link>
 

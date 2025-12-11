@@ -282,7 +282,7 @@ function Checkout() {
           <div className="space-y-10">
             {/* Top error modal */}
             {Object.keys(errors).length > 0 && (
-              <div ref={errorRef} className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg text-center mb-6">
+              <div ref={errorRef} className="bg-accent-soft border border-brand-300 text-brand-800 px-6 py-3 rounded-lg text-center mb-6">
                 <ul className="list-disc list-inside text-left">
                   {Object.entries(errors).map(([field, message]) => (
                     <li key={field}>{message}</li>
@@ -412,12 +412,12 @@ function Checkout() {
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
-                      className="block w-full text-sm text-ink
+                      className=" block w-full text-sm text-ink
                         file:mr-4 file:py-3 file:px-6
                         file:rounded-full file:border-0
                         file:text-sm file:font-semibold
-                        file:bg-ink file:text-white
-                        hover:file:bg-ink/90
+                        file:bg-primary file:text-white
+                        hover:file:bg-primary/90
                         file:cursor-pointer cursor-pointer"
                       required
                     />

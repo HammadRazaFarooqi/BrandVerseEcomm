@@ -1,33 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --ink: #0b1220;
-  --ink-soft: #4b5164;
-  --surface: #f8f7f3;
+  --ink: #0c1b33;
+  --ink-soft: #4a5568;
+  --surface: #e7f8ef;
   --surface-contrast: #ffffff;
-  --surface-muted: #ebe9df;
-  --accent: #ecb22e;
-  --accent-soft: #f6d88d;
-  --brand-strong: #101428;
+  --surface-muted: #f5f5f5;
+  --accent: #3cb371;
+  --accent-soft: #d8f1e4;
+  --brand-strong: #2e8b57;
+  --brand-accent: #3cb371;
+  --highlight: #ffd34e;
 }
 
 @layer base {
   body {
     @apply font-sans bg-surface text-ink;
-    background-image: radial-gradient(
-        circle at 10% 20%,
-        rgba(236, 178, 46, 0.07),
-        transparent 22%
-      ),
-      radial-gradient(
-        circle at 90% 10%,
-        rgba(16, 20, 40, 0.25),
-        transparent 45%
-      ),
-      var(--surface);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(46, 139, 87, 0.14), transparent 30%),
+      radial-gradient(circle at 80% 0%, rgba(60, 179, 113, 0.16), transparent 35%),
+      linear-gradient(180deg, #f3fbf7 0%, #e7f8ef 40%, #fff 100%);
     color: var(--ink);
   }
 
@@ -37,7 +32,7 @@
   h4,
   h5,
   h6 {
-    @apply font-serif tracking-tight text-ink;
+    @apply font-sans font-bold tracking-tight text-ink;
   }
 
   ::selection {
@@ -52,11 +47,11 @@
   }
 
   .btn-primary {
-    @apply bg-ink text-white shadow-floating hover:-translate-y-0.5 hover:bg-brand-800;
+    @apply bg-brand-500 text-white shadow-floating hover:-translate-y-0.5 hover:bg-brand-600;
   }
 
   .btn-secondary {
-    @apply border border-ink text-ink bg-white hover:bg-ink hover:text-white;
+    @apply border border-brand-500 text-brand-500 bg-white hover:bg-brand-50 hover:text-brand-600;
   }
 
   .btn-ghost {
@@ -64,12 +59,12 @@
   }
 
   .container-custom {
-    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-10;
   }
 
   .glass-card {
-    @apply rounded-2xl border border-white/40 bg-white/80 backdrop-blur;
-    box-shadow: 0 25px 80px rgba(15, 18, 32, 0.12);
+    @apply rounded-2xl border border-white/60 bg-white/85 backdrop-blur;
+    box-shadow: 0 25px 80px rgba(12, 27, 51, 0.12);
   }
 
   .section-shell {
@@ -83,8 +78,8 @@
     border-radius: 32px;
     background: radial-gradient(
       circle at top,
-      rgba(255, 255, 255, 0.7),
-      transparent 65%
+      rgba(255, 255, 255, 0.75),
+      transparent 72%
     );
     z-index: -1;
   }
@@ -93,4 +88,21 @@
     @apply text-sm uppercase tracking-[0.25em] text-ink-muted;
     letter-spacing: 0.3em;
   }
+}@keyframes smooth-marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-flex;
+  animation: smooth-marquee 18s linear infinite;
 }

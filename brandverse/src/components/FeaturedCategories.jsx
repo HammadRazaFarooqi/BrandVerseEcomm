@@ -1,10 +1,5 @@
-import { ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
 
 function FeaturedCategories() {
   const [categories, setCategories] = useState([]);
@@ -32,96 +27,72 @@ function FeaturedCategories() {
     }
   };
 
+  const withFallback = useMemo(() => {
+    if (categories?.length > 0) return categories;
+    // Fallback generic categories to keep layout consistent
+    return [
+      { _id: "c1", name: "Electronics", slug: "electronics" },
+      { _id: "c2", name: "Fashion", slug: "fashion" },
+      { _id: "c3", name: "Beauty", slug: "beauty" },
+      { _id: "c4", name: "Groceries", slug: "groceries" },
+      { _id: "c5", name: "Accessories", slug: "accessories" },
+      { _id: "c6", name: "Home Items", slug: "home-items" },
+      { _id: "c7", name: "Kitchen Tools", slug: "kitchen-tools" },
+      { _id: "c8", name: "Gadgets", slug: "gadgets" },
+    ];
+  }, [categories]);
+
   return (
     <section className="section-shell bg-surface">
       <div className="container-custom">
-        <div className="max-w-2xl mx-auto text-center mb-16">
-          <p className="eyebrow mb-3">Featured collections</p>
-          <h2 className="text-4xl font-semibold text-ink">Shop by category</h2>
+        <div className="max-w-2xl mx-auto text-center mb-12">
+          <p className="eyebrow mb-3 text-ink-muted">Explore categories</p>
+          <h2 className="text-4xl font-semibold text-ink">Everything in one marketplace</h2>
           <p className="mt-4 text-ink-muted">
-            Browse our most popular product categories — electronics, fashion, home & lifestyle,
-            beauty, and more. Find everything you need in one place.
+            Auto-generated categories that flex for any catalog—fashion, tech, home, beauty, groceries, and more.
           </p>
         </div>
 
         {categories?.length === 0 && !error ? (
-          // Skeleton Loader
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, idx) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, idx) => (
               <div
                 key={idx}
-                className="rounded-[2rem] border border-white/20 bg-gray-200 animate-pulse h-[300px]"
+                className="rounded-2xl border border-white/60 bg-white/70 animate-pulse h-40"
               />
             ))}
           </div>
         ) : categories?.length === 0 && error ? (
-          <p className="text-center text-red-500">{error}</p>
+          <p className="text-center text-brand-700">{error}</p>
         ) : (
-          <div className="relative">
-            <Swiper
-              modules={[Navigation]}
-              navigation={{
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-              }}
-              spaceBetween={20}
-              slidesPerView={1.2}
-              breakpoints={{
-                640: { slidesPerView: 2 },
-                1024: { slidesPerView: 4 },
-              }}
-              className="my-6"
-            >
-              {categories.map((category) => (
-                <SwiperSlide key={category._id}>
-                  <Link
-                    to={`category/${category.slug}`}
-                    className="group relative overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-card"
-                  >
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem]">
-                      <img
-                        src={category.image}
-                        alt={category.name}
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-110 rounded-[2rem]"
-                      />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
-
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <h3 className="text-2xl font-semibold text-white">
-                          {category.name}
-                        </h3>
-                        <span className="mt-3 inline-flex items-center text-sm font-medium text-white/80">
-                          View products
-                          <ChevronRight className="ml-1 h-4 w-4 transition group-hover:translate-x-1" />
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-
-                </SwiperSlide>
-              ))}
-
-              {/* Swiper navigation arrows */}
-              <div className="swiper-button-next text-white after:!text-white" />
-              <div className="swiper-button-prev text-white after:!text-white" />
-            </Swiper>
-
-            {/* Visible slider hint button */}
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <button
-                className="flex items-center gap-2 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full hover:bg-white/40 transition"
-                onClick={() => document.querySelector('.swiper-button-next').click()}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+            {withFallback.map((category) => (
+              <Link
+                key={category._id}
+                to={`category/${category.slug}`}
+                className="group rounded-2xl border border-white/80 bg-white shadow-card p-4 flex flex-col items-center gap-3 transition hover:-translate-y-1 hover:shadow-lg"
               >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 overflow-hidden border border-surface-muted">
+                  {category.image ? (
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-surface-muted" />
+                  )}
+                </div>
+                <p className="text-base font-semibold text-ink text-center">{category.name}</p>
+                <span className="text-xs uppercase tracking-[0.3em] text-brand-500 opacity-0 group-hover:opacity-100 transition">
+                  View
+                </span>
+              </Link>
+            ))}
           </div>
         )}
       </div>
     </section>
-
   );
 }
 

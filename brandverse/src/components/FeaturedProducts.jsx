@@ -30,15 +30,15 @@ function FeaturedProducts() {
   };
 
   return (
-    <section className="section-shell bg-white">
-      {/* <div className="container-custom">
+    <section className="section-shell bg-surface">
+      <div className="container-custom">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="eyebrow mb-3">Featured Picks</p>
+            <p className="eyebrow mb-3 text-ink-muted">Featured Picks</p>
             <h2 className="text-4xl font-semibold text-ink">
               Top Products of the Week
             </h2>
-            <p className="mt-3 text-ink-muted">
+            <p className="mt-3 text-ink-muted max-w-2xl">
               Discover trending items loved by our customers — from electronics and accessories
               to home essentials and lifestyle products.
             </p>
@@ -46,7 +46,7 @@ function FeaturedProducts() {
 
           <Link
             to="/category"
-            className="inline-flex items-center text-ink font-semibold tracking-[0.3em] uppercase"
+            className="inline-flex items-center text-brand-900 font-semibold tracking-[0.3em] uppercase hover:text-accent"
           >
             Browse All
             <ChevronRight className="ml-2 h-5 w-5" />
@@ -56,53 +56,48 @@ function FeaturedProducts() {
         {loading ? (
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="glass-card h-[420px] animate-pulse" />
+              <div key={i} className="glass-card h-[420px] animate-pulse bg-surface-muted/60" />
             ))}
           </div>
         ) : featureProducts.length === 0 ? (
-          <p className="mt-12 text-center text-red-500">{error}</p>
+          <p className="mt-12 text-center text-brand-700">{error}</p>
         ) : (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featureProducts.map((product) => (
-              <Link
-                key={product._id}
-                to={`/product/${product._id}`}
-                className="group"
-              >
-                <div className="glass-card h-full overflow-hidden rounded-[2rem]">
-                  <div className="relative h-80 overflow-hidden">
+              <div key={product._id} className="group glass-card overflow-hidden rounded-2xl border border-surface-muted/60">
+                <Link to={`/product/${product._id}`} className="block">
+                  <div className="relative h-64 overflow-hidden bg-surface-muted">
                     <img
                       src={product.images.primary}
                       alt={product.title}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
-                    <div className="absolute top-5 left-5 rounded-full bg-white/80 px-4 py-1 text-xs uppercase tracking-[0.3em] text-ink">
-                      Limited
-                    </div>
-                    <div className="absolute bottom-5 left-5 text-white">
-                      <p className="text-xs uppercase tracking-[0.4em] text-white/60">
-                        Starting from
-                      </p>
-                      <p className="text-2xl font-semibold">
-                        PKR {product.price}
-                      </p>
+                    <div className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-600">
+                      Featured
                     </div>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-ink">
-                      {product.title}
-                    </h3>
-                    <p className="mt-3 text-sm uppercase tracking-[0.4em] text-ink-muted">
-                      View Product
-                    </p>
+                </Link>
+                <div className="p-5 space-y-3">
+                  <Link to={`/product/${product._id}`}>
+                    <h3 className="text-lg font-semibold text-ink line-clamp-2">{product.title}</h3>
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl font-bold text-brand-500">PKR {product.price}</span>
+                    <span className="text-xs uppercase tracking-[0.3em] text-ink-muted">incl. tax</span>
                   </div>
+                  <div className="flex items-center gap-2 text-amber-400 text-sm">
+                    {"★★★★★"}
+                    <span className="text-ink-muted text-xs">(4.8)</span>
+                  </div>
+                  <button className="btn btn-primary w-full justify-center">
+                    Add to Cart
+                  </button>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}
-      </div> */}
+      </div>
     </section>
   );
 }

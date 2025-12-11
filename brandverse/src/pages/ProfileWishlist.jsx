@@ -50,19 +50,19 @@ function ProfileWshlist() {
                     alt={item.name}
                     className="w-full h-60 object-cover transform group-hover:scale-105 transition duration-500"
                   />
-                  <button className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:bg-red-500 hover:text-white transition">
+                  <button className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:bg-brand-600 hover:text-white transition">
                     <Heart className="h-5 w-5" />
                   </button>
                   <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition duration-300"></div>
                 </div>
                 <div className="p-6">
-                  <h3 className="font-medium text-lg text-gray-800 group-hover:text-red-500 transition">
+                  <h3 className="font-medium text-lg text-gray-800 group-hover:text-brand-700 transition">
                     {item.name}
                   </h3>
-                  <p className="text-red-500 font-bold mt-2 text-lg">
+                  <p className="text-brand-700 font-bold mt-2 text-lg">
                     PKR {item.price.toFixed(2)}
                   </p>
-                  <button className="w-full mt-4 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-red-500 transition">
+                  <button className="w-full mt-4 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-brand-700 transition">
                     Add to Cart
                   </button>
                 </div>
@@ -81,7 +81,7 @@ function ProfileWshlist() {
             </p>
             <Link
               to="/category"
-              className="px-8 py-3 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="px-8 py-3 bg-brand-600 text-white font-medium rounded-full hover:bg-brand-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               Explore Collections
             </Link>

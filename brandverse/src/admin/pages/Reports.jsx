@@ -58,7 +58,7 @@ const Reports = () => {
     { name: 'Accessories', value: 10 },
   ];
 
-  const COLORS = ['#dc2626', '#1a1a1a', '#666666', '#999999'];
+  const COLORS = ['#2E8B57', '#3CB371', '#FFD34E', '#0C1B33'];
   
   // Get current data based on selected date range
   const currentData = salesData[dateRange];
@@ -98,12 +98,12 @@ const Reports = () => {
   return (
     <div className="space-y-8 mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 className="text-3xl font-serif">Reports & Analytics</h1>
-        <div className="flex flex-col sm:flex-row gap-4">
+        <h1 className="text-3xl font-serif text-ink">Reports & Analytics</h1>
+        <div className="flex flex-col sm:flex-row gap-3">
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="px-6 py-2 border bg-white rounded-full"
+            className="px-6 py-2 border border-surface-muted bg-white rounded-full text-ink focus:outline-none focus:ring-2 focus:ring-brand-200"
           >
             <option value="week">Last Week</option>
             <option value="month">Last Month</option>
@@ -111,7 +111,7 @@ const Reports = () => {
           </select>
           <button 
             onClick={handleExport}
-            className="px-8 py-3 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="px-8 py-3 bg-brand-500 text-white font-medium rounded-full hover:bg-brand-600 transition shadow-card hover:shadow-floating transform hover:-translate-y-0.5"
           >
             Export Report
           </button>
@@ -120,29 +120,29 @@ const Reports = () => {
 
       {/* Revenue Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-serif mb-4">Revenue Overview</h2>
+        <div className="bg-white/90 border border-surface-muted rounded-2xl shadow-card">
+          <h2 className="text-xl font-serif text-ink mb-4 px-6 pt-6">Revenue Overview</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={currentData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e7f8ef" />
+                <XAxis dataKey="month" stroke="#0C1B33" />
+                <YAxis stroke="#0C1B33" />
                 <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Revenue']} />
                 <Line
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#dc2626"
-                  strokeWidth={2}
-                  activeDot={{ r: 8 }}
+                  stroke="#2E8B57"
+                  strokeWidth={2.5}
+                  activeDot={{ r: 7, fill: "#FFD34E" }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-serif mb-4">Sales by Category</h2>
+        <div className="bg-white/90 border border-surface-muted rounded-2xl shadow-card">
+          <h2 className="text-xl font-serif text-ink mb-4 px-6 pt-6">Sales by Category</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -173,32 +173,32 @@ const Reports = () => {
       </div>
 
       {/* Monthly Sales Report */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-serif mb-4">{dateRange === 'week' ? 'Weekly' : dateRange === 'month' ? 'Monthly' : 'Yearly'} Sales Report</h2>
+      <div className="bg-white/90 border border-surface-muted rounded-2xl shadow-card">
+        <h2 className="text-xl font-serif text-ink mb-4 px-6 pt-6">{dateRange === 'week' ? 'Weekly' : dateRange === 'month' ? 'Monthly' : 'Yearly'} Sales Report</h2>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-surface-muted">
+            <thead className="bg-surface-muted">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">
                   {dateRange === 'week' ? 'Day' : 'Month'}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">
                   Revenue
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">
                   Orders
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">
                   Avg. Order Value
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">
                   Growth
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-surface-muted">
               {currentData.map((item) => (
-                <tr key={item.month} className="hover:bg-gray-50">
+                <tr key={item.month} className="hover:bg-surface-muted/70">
                   <td className="px-6 py-4 whitespace-nowrap">{item.month}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     ${item.revenue.toLocaleString()}
@@ -208,7 +208,7 @@ const Reports = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">$500</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-accent-soft text-ink">
                       +5.2%
                     </span>
                   </td>

@@ -9,6 +9,8 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Cart from "./pages/Cart";
 import Categories from "./pages/Categories";
+// import Products from "./pages/Products";
+import CategoryIcons from "./pages/CategoryIcons";
 import Checkout from "./pages/Checkout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -76,8 +78,10 @@ function App() {
         {/* Client Routes WITH Navbar/Footer */}
         <Route element={<ClientLayout />}>
           <Route index element={<Home />} />
-          <Route path="category" element={<Categories />} />
+          {/* <Route path="category" element={<Categories />} /> */}
           <Route path="category/:category" element={<Categories />} />
+          <Route path="products" element={<Categories />} />
+          <Route path="categories-list" element={<CategoryIcons />} />
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />

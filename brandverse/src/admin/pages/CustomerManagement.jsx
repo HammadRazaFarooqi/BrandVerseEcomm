@@ -95,13 +95,13 @@ function CustomerManagement() {
 
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+        <div className="bg-accent-soft border border-brand-300 text-brand-800 px-4 py-3 rounded relative">
           <span className="flex justify-between">
             <span className="block sm:inline">
               <strong className="font-bold">Error! </strong> {error}
             </span>
             <button
-              className="text-red-900 hover:text-red-700"
+              className="text-brand-700 hover:text-brand-900"
               onClick={() => setError(null)}
             >
               <FiXSquare />

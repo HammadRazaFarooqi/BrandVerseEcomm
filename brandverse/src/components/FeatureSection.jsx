@@ -27,22 +27,25 @@ const features = [
 
 function FeatureSection() {
   return (
-    <section className="section-shell bg-white">
+    <section className="section-shell bg-surface">
       <div className="container-custom">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
-          <div>
-            <p className="eyebrow mb-4">Why shop with Affi Mall</p>
-            <h2 className="text-4xl font-semibold text-ink">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr] items-center">
+          <div className="space-y-4">
+            <p className="eyebrow mb-2 text-ink-muted">Why shop with Affi Mall</p>
+            <h2 className="text-4xl font-semibold text-ink leading-tight">
               Smart shopping,
               <span className="text-accent">&nbsp;made simple</span>
             </h2>
-            <p className="mt-6 text-lg text-ink-muted">
+            <p className="mt-4 text-lg text-ink-muted">
               From quality products and secure payments to hassle-free returns and
               fast delivery — we’re committed to giving you a seamless shopping experience.
             </p>
             <div className="mt-8 flex gap-4">
               <Link to="/category">
                 <button className="btn btn-primary">Start Shopping</button>
+              </Link>
+              <Link to="/support">
+                <button className="btn btn-secondary">Need help?</button>
               </Link>
             </div>
           </div>
@@ -51,9 +54,9 @@ function FeatureSection() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="glass-card flex h-full flex-col gap-4 rounded-3xl p-6"
+                className="glass-card flex h-full flex-col gap-4 rounded-3xl p-6 border border-surface-muted/70"
               >
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-ink/5 text-ink">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-900/10 text-brand-900">
                   <feature.icon className="h-6 w-6" />
                 </div>
                 <h3 className="text-xl font-semibold text-ink">

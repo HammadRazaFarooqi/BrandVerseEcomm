@@ -254,12 +254,21 @@ function Dashboard() {
   };
 
   const STATUS_COLORS = {
-    delivered: "#4CAF50",
-    processing: "#f59e0b",
-    shipped: "#6dbffc",
+    delivered: "#2E8B57",
+    processing: "#FFD34E",
+    shipped: "#3CB371",
     cancelled: "#dc2626",
-    confirmed: "#5C6BC0",
+    confirmed: "#2E8B57",
     default: "#6b7280"
+  };
+
+  const STATUS_STYLES = {
+    delivered: "bg-emerald-100 text-emerald-800",
+    processing: "bg-accent-soft text-ink",
+    shipped: "bg-brand-50 text-brand-700",
+    cancelled: "bg-brand-200 text-brand-900",
+    confirmed: "bg-brand-100 text-brand-800",
+    default: "bg-surface-muted text-ink"
   };
 
   const COLORS = orderStatusData.map((item) => {
@@ -268,15 +277,15 @@ function Dashboard() {
   });
 
   const StatCard = ({ icon: Icon, title, value, prefix = '', color = "#000" }) => (
-    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col justify-between">
+    <div className="bg-white/90 p-5 border border-surface-muted rounded-2xl shadow-card hover:shadow-floating transition-shadow flex flex-col justify-between">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-gray-600">{title}</p>
-          <p className="text-2xl font-serif font-bold mt-1">
+          <p className="text-sm text-ink-muted">{title}</p>
+          <p className="text-2xl font-serif font-bold mt-1 text-ink">
             {prefix}{typeof value === 'number' ? value.toLocaleString() : value}
           </p>
         </div>
-        <div className="p-3 bg-gray-100 rounded-full flex items-center justify-center">
+        <div className="p-3 bg-surface-muted rounded-full flex items-center justify-center">
           <Icon className="w-6 h-6" color={color} />
         </div>
       </div>
@@ -298,17 +307,17 @@ function Dashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-serif">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back! Here's what's happening.</p>
+          <h1 className="text-3xl font-serif text-ink">Dashboard</h1>
+          <p className="text-ink-muted mt-1">Welcome back! Here's what's happening.</p>
         </div>
 
         {/* Date Filter */}
-        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-md">
-          <FiCalendar className="w-5 h-5 text-gray-600" />
+        <div className="flex items-center gap-2 bg-white/90 border border-surface-muted px-4 py-2 rounded-full shadow-card">
+          <FiCalendar className="w-5 h-5 text-brand-500" />
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="bg-transparent border-none outline-none cursor-pointer font-medium text-gray-700"
+            className="bg-transparent border-none outline-none cursor-pointer font-medium text-ink"
           >
             {dateFilterOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -327,28 +336,28 @@ function Dashboard() {
           value={stats.totalRevenue}
           growth={parseFloat(stats.revenueGrowth)}
           prefix=" "
-          color="#22c55e"   // Green
+          color="#2E8B57"
         />
 
         <StatCard
           icon={FiShoppingBag}
           title="Total Orders"
           value={stats.totalOrders}
-          color="#3b82f6"   // Blue
+          color="#3CB371"
         />
 
         <StatCard
           icon={FiPackage}
           title="Total Products"
           value={stats.totalProducts}
-          color="#a855f7"   // Purple
+          color="#FFD34E"
         />
 
         <StatCard
           icon={FiActivity}
           title="Pending Orders"
           value={stats.pendingOrders}
-          color="#f59e0b"   // Yellow
+          color="#3CB371"
         />
       </div>
 
@@ -356,38 +365,32 @@ function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales Chart */}
         {/* Recent Orders */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-serif mb-4">Recent Orders</h3>
+        <div className="bg-white/90 border border-surface-muted p-6 rounded-2xl shadow-card">
+          <h3 className="text-lg font-serif text-ink mb-4">Recent Orders</h3>
           <div className="space-y-3">
             {recentOrders.map((order, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+              <div key={index} className="flex items-center justify-between p-3 bg-surface-muted rounded-xl">
                 <div className="flex-1">
-                  <div className="text-sm font-medium">{order.orderNumber}</div>
-                  <div className="text-xs text-gray-600">{order.customer}</div>
+                  <div className="text-sm font-semibold text-ink">{order.orderNumber}</div>
+                  <div className="text-xs text-ink-muted">{order.customer}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium">PKR {order.amount.toLocaleString()}</div>
-                  <div className={`text-xs px-2 py-1 rounded-full inline-block ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                    order.status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
-                      order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                        order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                          order.status === 'confirmed' ? 'bg-indigo-100 text-indigo-800' :
-                            'bg-gray-100 text-gray-800'
-                    }`}>
+                  <div className="text-sm font-semibold text-ink">PKR {order.amount.toLocaleString()}</div>
+                  <div className={`text-xs px-2 py-1 rounded-full inline-block ${STATUS_STYLES[order.status] || STATUS_STYLES.default}`}>
                     {order.status}
                   </div>
                 </div>
               </div>
             ))}
             {recentOrders.length === 0 && (
-              <div className="text-center py-8 text-gray-500">No recent orders</div>
+              <div className="text-center py-8 text-ink-muted">No recent orders</div>
             )}
           </div>
         </div>
 
         {/* Order Status Pie Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-serif mb-4">Orders by Status</h3>
+        <div className="bg-white/90 border border-surface-muted p-6 rounded-2xl shadow-card">
+          <h3 className="text-lg font-serif text-ink mb-4">Orders by Status</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -430,8 +433,8 @@ function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
         </div> */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-serif mb-4">
+        <div className="bg-white/90 border border-surface-muted p-6 rounded-2xl shadow-card">
+          <h3 className="text-lg font-serif text-ink mb-4">
             Sales Overview ({dateFilterOptions.find(opt => opt.value === dateFilter)?.label})
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -439,13 +442,13 @@ function Dashboard() {
               data={salesData}
               margin={{ top: 20, right: 30, left: 10, bottom: 20 }}
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e7f8ef" />
+              <XAxis dataKey="date" stroke="#0C1B33" />
+              <YAxis stroke="#0C1B33" />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#000000" strokeWidth={2} name="Revenue (PKR)" />
-              <Line type="monotone" dataKey="orders" stroke="#6b7280" strokeWidth={2} name="Orders" />
+              <Line type="monotone" dataKey="revenue" stroke="#2E8B57" strokeWidth={2.5} name="Revenue (PKR)" />
+              <Line type="monotone" dataKey="orders" stroke="#FFD34E" strokeWidth={2.5} name="Orders" />
             </LineChart>
           </ResponsiveContainer>
         </div>

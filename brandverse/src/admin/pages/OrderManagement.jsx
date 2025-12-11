@@ -216,7 +216,7 @@ function OrderManagement() {
         </div>
       )}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+        <div className="bg-accent-soft border border-brand-300 text-brand-800 px-4 py-3 rounded relative">
           <strong className="font-bold">Error! </strong> {error}
         </div>
       )}
@@ -292,7 +292,7 @@ function OrderManagement() {
                       <div className="text-sm">{order.payment}</div>
                       <div className="text-xs mt-1">
                         {order.paymentProof ? (
-                          <a href={order.paymentProof} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-blue-600 underline">
+                          <a href={order.paymentProof} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-brand-600 underline">
                             <FiExternalLink /> View Proof
                           </a>
                         ) : (
@@ -355,9 +355,9 @@ function OrderManagement() {
               >
                 Cancel
               </button>
-              <button
+                <button
                 onClick={confirmStatusChange}
-                className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="px-5 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700"
               >
                 Confirm
               </button>
@@ -419,7 +419,7 @@ function OrderManagement() {
                   <div>{selectedOrder.payment}</div>
                   {selectedOrder.paymentProof ? (
                     <div className="mt-2">
-                      <a href={selectedOrder.paymentProof} target="_blank" rel="noreferrer" className="text-blue-600 underline flex items-center gap-2">
+                      <a href={selectedOrder.paymentProof} target="_blank" rel="noreferrer" className="text-brand-600 underline flex items-center gap-2">
                         <FiExternalLink /> View Proof
                       </a>
                     </div>

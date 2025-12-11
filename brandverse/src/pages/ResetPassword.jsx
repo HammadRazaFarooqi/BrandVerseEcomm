@@ -81,7 +81,7 @@ function ResetPassword() {
           </div>
 
           {message && (
-            <div className="mt-6 rounded-2xl bg-red-100 px-4 py-3 text-sm text-red-700">
+            <div className="mt-6 rounded-2xl bg-accent-soft px-4 py-3 text-sm text-brand-800">
               {message}
             </div>
           )}

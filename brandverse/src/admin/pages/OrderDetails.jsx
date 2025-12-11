@@ -74,15 +74,15 @@ function OrderDetail() {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "processing":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-accent-soft text-primary";
       case "shipped":
-        return "bg-blue-100 text-blue-800";
+        return "bg-brand-50 text-brand-700";
       case "delivered":
-        return "bg-green-100 text-green-800";
+        return "bg-brand-100 text-brand-800";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-brand-200 text-brand-900";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-surface-muted text-ink";
     }
   };
 
@@ -99,7 +99,7 @@ function OrderDetail() {
         <div className="flex items-center space-x-4">
           <Link
             to={userRole === "admin" ? "/admin/orders" : "/profile"}
-            className="text-blue-600 hover:text-blue-900 flex items-center"
+            className="text-brand-600 hover:text-brand-700 flex items-center"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back to {userRole === "user" ? "Profile" : "Order"}
@@ -109,7 +109,7 @@ function OrderDetail() {
         {!loading && !error && order && (
           <button
             onClick={handlePrint}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="px-4 py-2 bg-brand-600 text-white rounded hover:bg-brand-700 transition"
           >
             Print Info / Save PDF
           </button>
@@ -125,7 +125,7 @@ function OrderDetail() {
         </div>
       )}
       {error && (
-        <div className="bg-red-100 text-red-700 p-4 rounded">{error}</div>
+        <div className="bg-accent-soft text-primary p-4 rounded">{error}</div>
       )}
 
       {!loading && !error && order && (
@@ -172,7 +172,7 @@ function OrderDetail() {
                   {userRole === "user" && order.status === "processing" && (
                     <button
                       onClick={() => updateOrderStatus("cancelled")}
-                      className="ml-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                      className="ml-4 px-4 py-2 bg-brand-700 text-white rounded hover:bg-brand-800"
                       disabled={updating}
                     >
                       Cancel Order

@@ -133,7 +133,7 @@ function Settings() {
           </div>
 
           <div className="flex justify-end">
-            <button type="submit" className="btn btn-red-600">
+            <button type="submit" className="btn bg-primary text-white hover:bg-primary">
               Save Changes
             </button>
           </div>

@@ -60,7 +60,7 @@ function Profile() {
         ></div>
         <div className="relative z-10 container mx-auto px-6">
           <h1 className="text-4xl font-bold mb-2 text-white leading-tight">
-            Your <span className="text-black">Personal</span> Account
+            Your <span className="text-primary">Personal</span> Account
           </h1>
           <p className="text-xl text-black max-w-xl mx-auto">
             Manage your profile, track orders, and discover your next style
@@ -74,7 +74,7 @@ function Profile() {
         <div className="bg-white rounded-xl shadow-lg p-6 mb-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-6 transform">
-              <div className="w-24 h-24 bg-black rounded-full flex items-center justify-center shadow-md">
+              <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-md">
               <span className="text-3xl font-bold text-white">{initial || "?"}</span>
               </div>
               <div>
@@ -84,7 +84,7 @@ function Profile() {
             </div>
             <button
               onClick={onLogout}
-              className="px-6 py-3 flex items-center gap-2 text-white bg-black rounded-full hover:bg-black transition shadow-sm hover:shadow-md transform hover:-translate-y-1"
+              className="px-6 py-3 flex items-center gap-2 text-white bg-primary rounded-full hover:bg-primary transition shadow-sm hover:shadow-md transform hover:-translate-y-1"
             >
               <LogOut className="h-4 w-4" />
               Logout
@@ -100,7 +100,7 @@ function Profile() {
                 <button
                   className={`w-full flex items-center justify-between px-6 py-4 rounded-xl transition transform ${
                     activeTab === "profile"
-                      ? "bg-black text-white shadow-md"
+                      ? "bg-primary text-white shadow-md"
                       : "text-gray-700 hover:bg-gray-100 hover:-translate-y-1"
                   }`}
                   onClick={() => setActiveTab("profile")}
@@ -117,7 +117,7 @@ function Profile() {
                 <button
                   className={`w-full flex items-center justify-between px-6 py-4 rounded-xl transition transform ${
                     activeTab === "orders"
-                      ? "bg-black text-white shadow-md"
+                      ? "bg-primary text-white shadow-md"
                       : "text-gray-700 hover:bg-gray-100 hover:-translate-y-1"
                   }`}
                   onClick={() => setActiveTab("orders")}
@@ -134,7 +134,7 @@ function Profile() {
                 <button
                   className={`w-full flex items-center justify-between px-6 py-4 rounded-xl transition transform ${
                     activeTab === "settings"
-                      ? "bg-black text-white shadow-md"
+                      ? "bg-primary text-white shadow-md"
                       : "text-gray-700 hover:bg-gray-100 hover:-translate-y-1"
                   }`}
                   onClick={() => setActiveTab("settings")}

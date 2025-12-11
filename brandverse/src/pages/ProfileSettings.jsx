@@ -62,7 +62,7 @@ function ProfileSettings() {
         <div className="border-b pb-8">
           <h3 className="text-xl font-medium mb-6">Change Password</h3>
           {message && <p className="text-green-600">{message}</p>}
-          {error && <p className="text-red-600">{error}</p>}
+          {error && <p className="text-brand-700">{error}</p>}
           <form onSubmit={handlePasswordChange} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -72,7 +72,7 @@ function ProfileSettings() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-brand-500 focus:border-brand-500 transition"
                 required
               />
             </div>
@@ -84,7 +84,7 @@ function ProfileSettings() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-brand-500 focus:border-brand-500 transition"
                 required
               />
             </div>
@@ -96,13 +96,13 @@ function ProfileSettings() {
                 type="password"
                 value={confirmNewPassword}
                 onChange={(e) => setConfirmNewPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-brand-500 focus:border-brand-500 transition"
                 required
               />
             </div>
             <button
               type="submit"
-              className="px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="px-8 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               disabled={loading}
             >
               {loading ? "Updating..." : "Update Password"}
@@ -111,12 +111,12 @@ function ProfileSettings() {
         </div>
 
         {/* <div>
-          <h3 className="text-xl font-medium mb-6 text-red-500">Danger Zone</h3>
+          <h3 className="text-xl font-medium mb-6 text-brand-700">Danger Zone</h3>
           <p className="text-gray-600 mb-6">
             Once you delete your account, there is no going back. Please be
             certain.
           </p>
-          <button className="px-8 py-3 bg-white border-2 border-red-500 text-red-500 font-medium rounded-full hover:bg-red-50 transition">
+          <button className="px-8 py-3 bg-white border-2 border-brand-500 text-brand-700 font-medium rounded-full hover:bg-brand-50 transition">
             Delete Account
           </button>
         </div> */}

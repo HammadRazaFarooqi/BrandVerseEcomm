@@ -38,7 +38,7 @@ function AdminLogin() {
                   setCredentials({ ...credentials, email: e.target.value })
                 }
                 required
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:ring-red-600 focus:border-red-600"
+                className="mt-1 w-full px-4 py-2 border rounded-md focus:ring-brand-600 focus:border-brand-600"
               />
             </div>
             <div>
@@ -56,7 +56,7 @@ function AdminLogin() {
                   setCredentials({ ...credentials, password: e.target.value })
                 }
                 required
-                className="mt-1 w-full px-4 py-2 border rounded-md focus:ring-red-600 focus:border-red-600"
+                className="mt-1 w-full px-4 py-2 border rounded-md focus:ring-brand-600 focus:border-brand-600"
               />
             </div>
           </div>

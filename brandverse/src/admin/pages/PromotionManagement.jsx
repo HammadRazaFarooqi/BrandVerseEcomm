@@ -218,7 +218,7 @@ const PromotionsManager = ({ onClose }) => {
                       <button
                         type="button"
                         onClick={() => handleRemovePromotion(promo.id)}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                        className="absolute top-2 right-2 bg-brand-600 text-white p-1 rounded-full hover:bg-brand-700"
                       >
                         <FiTrash2 size={16} />
                       </button>
@@ -310,7 +310,7 @@ const PromotionsManager = ({ onClose }) => {
               type="button"
               onClick={savePromotions}
               disabled={isSaving}
-              className="px-8 py-3 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="px-8 py-3 bg-brand-600 text-white font-medium rounded-full hover:bg-brand-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               {isSaving ? "Saving..." : "Save Promotions"}
             </button>

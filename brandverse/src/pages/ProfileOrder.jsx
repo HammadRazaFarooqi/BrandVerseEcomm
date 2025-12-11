@@ -64,23 +64,23 @@ function ProfileOrder() {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "processing":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-accent-soft text-primary";
       case "shipped":
-        return "bg-blue-100 text-blue-800";
+        return "bg-brand-50 text-brand-700";
       case "delivered":
-        return "bg-green-100 text-green-800";
+        return "bg-brand-100 text-brand-800";
       case "confirmed":
-        return "bg-indigo-100 text-indigo-800"; // Updated color
+        return "bg-accent-muted text-primary";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-brand-200 text-brand-900";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-surface-muted text-ink";
     }
   };  
 
   // --- Loading/Error/No Login State ---
   if (loading) return <p className="text-center p-4">Loading orders...</p>;
-  if (error) return <p className="text-center text-red-500 font-medium p-4">{error}</p>;
+if (error) return <p className="text-center text-brand-700 font-medium p-4">{error}</p>;
 
   // --- Component JSX (UNCHANGED for rendering) ---
   return (
@@ -136,7 +136,7 @@ function ProfileOrder() {
                         <p className="text-gray-600 text-sm md:text-base">
                           PKR {item.price?.toLocaleString('en-PK')} × {item.quantity}
                         </p>
-                        <p className="text-red-500 font-semibold text-base md:text-lg">
+                        <p className="text-brand-700 font-semibold text-base md:text-lg">
                           PKR {(item.price * item.quantity).toLocaleString('en-PK')}
                         </p>
                       </div>
@@ -160,7 +160,7 @@ function ProfileOrder() {
             </p>
             <Link
               to="/category"
-              className="inline-block px-6 md:px-8 py-2.5 md:py-3 bg-black text-white text-sm md:text-base font-medium rounded-full hover:bg-black transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="inline-block px-6 md:px-8 py-2.5 md:py-3 bg-brand-600 text-white text-sm md:text-base font-medium rounded-full hover:bg-brand-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               Start Shopping
             </Link>

@@ -164,12 +164,12 @@ function ProfileDetails() {
               <input
                 type="text"
                 name="firstName"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.firstName ? "border-red-500" : "border-gray-300"}`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-brand-500 focus:border-brand-500 transition ${errors.firstName ? "border-brand-500" : "border-gray-300"}`}
                 value={profile.firstName}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
-              {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+              {errors.firstName && <p className="text-brand-700 text-sm mt-1">{errors.firstName}</p>}
             </div>
 
             <div>
@@ -177,12 +177,12 @@ function ProfileDetails() {
               <input
                 type="text"
                 name="lastName"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.lastName ? "border-red-500" : "border-gray-300"}`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-brand-500 focus:border-brand-500 transition ${errors.lastName ? "border-brand-500" : "border-gray-300"}`}
                 value={profile.lastName}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
-              {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+              {errors.lastName && <p className="text-brand-700 text-sm mt-1">{errors.lastName}</p>}
             </div>
 
             <div>
@@ -201,12 +201,12 @@ function ProfileDetails() {
               <input
                 type="tel"
                 name="phone"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.phone ? "border-red-500" : "border-gray-300"}`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-brand-500 focus:border-brand-500 transition ${errors.phone ? "border-brand-500" : "border-gray-300"}`}
                 value={profile.phone}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              {errors.phone && <p className="text-brand-700 text-sm mt-1">{errors.phone}</p>}
             </div>
           </div>
 
@@ -215,12 +215,12 @@ function ProfileDetails() {
             <textarea
               name="address"
               rows="3"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-red-500 focus:border-red-500 transition ${errors.address ? "border-red-500" : "border-gray-300"}`}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-brand-500 focus:border-brand-500 transition ${errors.address ? "border-brand-500" : "border-gray-300"}`}
               value={profile.address}
               onChange={handleChange}
               disabled={!isEditing}
             />
-            {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+            {errors.address && <p className="text-brand-700 text-sm mt-1">{errors.address}</p>}
           </div>
 
           {isEditing && (
@@ -228,7 +228,7 @@ function ProfileDetails() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-8 py-3 bg-black text-white font-medium rounded-full hover:bg-gray-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>

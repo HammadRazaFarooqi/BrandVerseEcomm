@@ -111,7 +111,7 @@ function CategoryManagement() {
           Category Management
         </h1>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base"
+          <button className="flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-primary text-white font-medium rounded-full hover:bg-primary transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap text-sm sm:text-base"
             onClick={() => setShowAddModal(true)}>
             <Plus className="w-5 h-5" />
             Add New Category
@@ -152,13 +152,13 @@ function CategoryManagement() {
       )}
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+        <div className="bg-accent-soft border border-brand-300 text-brand-800 px-4 py-3 rounded relative">
           <span className="flex justify-between">
             <span className="block sm:inline">
               <strong className="font-bold">Error! </strong> {error}
             </span>
             <button
-              className="text-red-900 hover:text-red-700"
+              className="text-brand-700 hover:text-brand-900"
               onClick={() => setError(null)}
             >
               <FiXSquare />
@@ -234,13 +234,13 @@ function CategoryManagement() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
-                            className="text-blue-600 hover:text-blue-900"
+                            className="text-brand-600 hover:text-brand-700"
                             onClick={() => handleEditCategory(category)}
                           >
                             <FiEdit2 />
                           </button>
                           <button
-                            className="text-red-600 hover:text-red-900"
+                            className="text-brand-700 hover:text-brand-900"
                             onClick={() => {
                               setCategoryToDelete(category.id);
                               setShowDeleteModal(true);
@@ -286,7 +286,7 @@ function CategoryManagement() {
 
               <button
                 onClick={handleDeleteCategory}
-                className="px-5 py-2 bg-red-600 text-white rounded-md"
+                className="px-5 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700"
               >
                 Delete
               </button>

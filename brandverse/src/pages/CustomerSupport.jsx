@@ -125,7 +125,7 @@ export default function CustomerSupport() {
                                             className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                             required
                                         />
-                                        {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
+                                        {errors.name && <p className="text-brand-700 text-sm mt-1">{errors.name}</p>}
                                     </label>
 
                                     <label className="flex flex-col">
@@ -139,7 +139,7 @@ export default function CustomerSupport() {
                                             className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                             required
                                         />
-                                        {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
+                                        {errors.email && <p className="text-brand-700 text-sm mt-1">{errors.email}</p>}
                                     </label>
                                 </div>
 
@@ -154,7 +154,7 @@ export default function CustomerSupport() {
                                         className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                         required
                                     />
-                                    {errors.subject && <p className="text-red-400 text-sm mt-1">{errors.subject}</p>}
+                                    {errors.subject && <p className="text-brand-700 text-sm mt-1">{errors.subject}</p>}
                                 </label>
 
                                 <label className="flex flex-col">
@@ -168,7 +168,7 @@ export default function CustomerSupport() {
                                         className="rounded-lg border border-white/10 bg-white/3 px-3 py-2 text-black placeholder-white/50 focus:outline-none"
                                         required
                                     />
-                                    {errors.message && <p className="text-red-400 text-sm mt-1">{errors.message}</p>}
+                                    {errors.message && <p className="text-brand-700 text-sm mt-1">{errors.message}</p>}
                                 </label>
 
                                 <button

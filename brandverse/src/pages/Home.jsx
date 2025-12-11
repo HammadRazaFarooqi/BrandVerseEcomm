@@ -1,19 +1,17 @@
 // import HeroSection from "../components/HeroSection";
 
 import FeaturedCategories from "../components/FeaturedCategories";
-import FeaturedProducts from "../components/FeaturedProducts";
-import FeatureSection from "../components/FeatureSection";
+import CategoryProductBlocks from "../components/CategoryProductBlocks";
 import HeroSection from "../components/HeroSection";
-import NewsLetterSection from "../components/NewsLetterSection";
+import SupportSection from "../components/SupportSection";
 
 function Home() {
   return (
     <div>
       <HeroSection />
       <FeaturedCategories />
-      <FeatureSection />
-      <FeaturedProducts />
-      <NewsLetterSection />
+      <CategoryProductBlocks />
+      <SupportSection />
     </div>
   );
 }

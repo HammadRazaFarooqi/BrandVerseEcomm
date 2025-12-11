@@ -127,7 +127,7 @@ function ProductDetail() {
       {loading ? (
         <div className="container-custom">Loading...</div>
       ) : !selectedProduct ? (
-        <p className="text-center text-red-500">{error}</p>
+        <p className="text-center text-brand-700">{error}</p>
       ) : (
         <div className="container-custom">
           <div className="grid gap-12 lg:grid-cols-2">
