@@ -68,7 +68,7 @@ function Cart() {
           <p className="mt-4 text-ink-muted">
             Discover tailored looks curated just for you.
           </p>
-          <Link to="/Category" className="btn btn-primary mt-8 inline-flex">
+          <Link to="/products" className="btn btn-primary mt-8 inline-flex">
             Continue shopping
           </Link>
         </div>

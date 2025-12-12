@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL || "affimall50@gmail.com";
 const SUPPORT_HOURS = import.meta.env.VITE_SUPPORT_HOURS || "Mon–Fri, 9:00 — 18:00 (PKT)";
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
+const VITE_WEB3FORMS_KEY = "d222b4e6-6d03-4dfd-8c1a-59a1ca72ed6f";
 
 export default function CustomerSupport() {
     const [formData, setFormData] = useState({
@@ -58,7 +58,7 @@ export default function CustomerSupport() {
 
         // Prepare data to send
         const formDataToSend = new FormData();
-        formDataToSend.append("access_key", WEB3FORMS_KEY);
+        formDataToSend.append("access_key", VITE_WEB3FORMS_KEY);
         formDataToSend.append("name", formData.name);
         formDataToSend.append("email", formData.email);
         formDataToSend.append("subject", formData.subject || "Support Request");

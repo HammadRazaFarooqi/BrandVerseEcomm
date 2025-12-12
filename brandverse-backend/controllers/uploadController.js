@@ -11,15 +11,15 @@ export const getUploadedFile = async (req, res) => {
 
         const signature = cloudinary.utils.api_sign_request(
             paramsToSign,
-            process.env.CLOUDINARY_API_SECRET
+            process.env.VITE_CLOUDINARY_API_SECRET
         );
 
         res.json({
             success: true,
             signature,
-            api_key: process.env.CLOUDINARY_API_KEY,
+            api_key: process.env.VITE_CLOUDINARY_API_KEY,
             timestamp,
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            cloud_name: process.env.VITE_CLOUDINARY_CLOUD_NAME,
             folder: paramsToSign.folder,
         });
     } catch (err) {

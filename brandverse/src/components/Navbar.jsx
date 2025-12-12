@@ -306,7 +306,7 @@ function Navbar() {
                 <div className="relative" ref={profileMenuRef}>
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center justify-center h-10 w-10 rounded-full border border-surface-muted bg-primary shadow-sm"
+                    className="flex items-center justify-center h-10 w-10 rounded-full border border-surface-muted bg-white shadow-sm"
                   >
                     {isLoggedIn && initial ? (
                       <span className="font-bold uppercase text-sm text-ink">
@@ -319,7 +319,7 @@ function Navbar() {
 
                   {/* Dropdown Menu */}
                   {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-primary shadow-xl border border-surface-muted rounded-2xl py-2 z-50">
+                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-xl border border-surface-muted rounded-2xl py-2 z-50">
                       <button
                         onClick={() => {
                           navigate(isLoggedIn ? "/profile" : "/login");
