@@ -321,23 +321,13 @@ const AddProductForm = ({ onAddProduct, productID }) => {
         }));
 
         setCategoryList(formattedCategory);
-        if (!productID) {
+        // Preselect the first category (by id) only when creating a new product
+        if (!productID && formattedCategory.length > 0) {
           setProductData((prevData) => ({
             ...prevData,
-            category: formattedCategory[0]?._id || "", // default to first category ID
+            category: formattedCategory[0].id,
           }));
         }
-
-        if (!productID) {
-          setProductData((prevData) => ({
-            ...prevData,
-            category:
-              formattedCategory && formattedCategory[0]
-                ? formattedCategory[0].slug
-                : "",
-          }));
-        }
-        setCategoryList(formattedCategory);
       }
     } catch (error) {
       console.warn(`Failed to fetch category: ${error.message}`);

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FiLogIn, FiShoppingCart } from "react-icons/fi";
+import { FiLogIn, FiShoppingCart, FiMenu, FiX, FiHome, FiGrid, FiPackage } from "react-icons/fi";
 import { RiCustomerService2Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -17,8 +17,10 @@ function Navbar() {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [userRole, setUserRole] = useState("");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const searchRef = useRef(null);
   const profileMenuRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
@@ -191,6 +193,9 @@ function Navbar() {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
         setShowProfileMenu(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) {
+        setShowMobileMenu(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -244,7 +249,48 @@ function Navbar() {
     localStorage.removeItem("isLogin");
     window.dispatchEvent(new Event("userDataUpdated"));
     setShowProfileMenu(false);
+    setShowMobileMenu(false);
     navigate("/");
+  };
+
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowProfileMenu(false);
+    setShowMobileMenu(false);
+    
+    if (isLoggedIn) {
+      navigate("/profile");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleAdminClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowProfileMenu(false);
+    setShowMobileMenu(false);
+    navigate("/admin");
+  };
+
+  const handleSupportClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowProfileMenu(false);
+    setShowMobileMenu(false);
+    navigate("/support");
+  };
+
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleLogout();
+  };
+
+  const handleMobileNavClick = (path) => {
+    setShowMobileMenu(false);
+    navigate(path);
   };
 
   return (
@@ -252,24 +298,29 @@ function Navbar() {
       <nav className="bg-surface/95 backdrop-blur-xl border-b border-white/40 shadow-card">
         <div className="hidden lg:block bg-brand-900 text-white">
           <div className="container-custom py-2 text-sm marquee-container">
-
             <div className="marquee-track">
-              {/* Original Content */}
               <span className="mx-8 text-white/80">
                 Fast delivery & easy returns across Pakistan
               </span>
               <span className="mx-8 text-white/80">Customer Support</span>
               <span className="mx-8 text-white/80">Deals of the Day</span>
-
             </div>
-
           </div>
         </div>
+        
         <div className="container-custom">
           {/* Mobile Layout */}
           <div className="lg:hidden">
-            {/* Top Row: Logo, Cart, Profile */}
+            {/* Top Row: Menu, Logo, Cart, Profile */}
             <div className="flex items-center justify-between py-4">
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="flex items-center justify-center h-10 w-10 rounded-full border border-surface-muted bg-white shadow-sm"
+              >
+                {showMobileMenu ? <FiX size={20} /> : <FiMenu size={20} />}
+              </button>
+
               <Link to="/" className="flex items-center space-x-2">
                 <img
                   src="/logo.png"
@@ -302,69 +353,107 @@ function Navbar() {
                   )}
                 </Link>
 
-                {/* Profile Icon with Dropdown */}
-                <div className="relative" ref={profileMenuRef}>
+                {/* Profile Icon */}
+                <Link
+                  to={isLoggedIn ? "/profile" : "/login"}
+                  className="flex items-center justify-center h-10 w-10 rounded-full border border-surface-muted bg-white shadow-sm"
+                >
+                  {isLoggedIn && initial ? (
+                    <span className="font-bold uppercase text-sm text-ink">
+                      {initial}
+                    </span>
+                  ) : (
+                    <FiLogIn size={18} />
+                  )}
+                </Link>
+              </div>
+            </div>
+
+            {/* Mobile Menu Dropdown */}
+            {showMobileMenu && (
+              <div 
+                ref={mobileMenuRef}
+                className="absolute left-0 right-0 top-full bg-white shadow-xl border-t border-surface-muted z-50 max-h-[80vh] overflow-y-auto"
+              >
+                <div className="py-2">
+                  {/* Navigation Links */}
                   <button
-                    onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center justify-center h-10 w-10 rounded-full border border-surface-muted bg-white shadow-sm"
+                    onClick={() => handleMobileNavClick("/")}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      handleMobileNavClick("/");
+                    }}
+                    className="w-full text-left px-6 py-3 hover:bg-surface-muted/40 active:bg-surface-muted/60 flex items-center gap-3 transition-colors"
                   >
-                    {isLoggedIn && initial ? (
-                      <span className="font-bold uppercase text-sm text-ink">
-                        {initial}
-                      </span>
-                    ) : (
-                      <FiLogIn size={18} />
-                    )}
+                    <FiHome size={18} />
+                    <span className="font-medium">Home</span>
                   </button>
 
-                  {/* Dropdown Menu */}
-                  {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-xl border border-surface-muted rounded-2xl py-2 z-50">
-                      <button
-                        onClick={() => {
-                          navigate(isLoggedIn ? "/profile" : "/login");
-                          setShowProfileMenu(false);
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-surface-muted/40 text-sm"
-                      >
-                        {isLoggedIn ? "Profile" : "Login"}
-                      </button>
+                  <button
+                    onClick={() => handleMobileNavClick("/categories-list")}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      handleMobileNavClick("/categories-list");
+                    }}
+                    className="w-full text-left px-6 py-3 hover:bg-surface-muted/40 active:bg-surface-muted/60 flex items-center gap-3 transition-colors"
+                  >
+                    <FiGrid size={18} />
+                    <span className="font-medium">Categories</span>
+                  </button>
 
-                      {isLoggedIn && userRole === "admin" && (
-                        <button
-                          onClick={() => {
-                            navigate("/admin");
-                            setShowProfileMenu(false);
-                          }}
-                          className="w-full text-left px-4 py-2 hover:bg-surface-muted/40 text-sm"
-                        >
-                          Admin Dashboard
-                        </button>
-                      )}
+                  <button
+                    onClick={() => handleMobileNavClick("/products")}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      handleMobileNavClick("/products");
+                    }}
+                    className="w-full text-left px-6 py-3 hover:bg-surface-muted/40 active:bg-surface-muted/60 flex items-center gap-3 transition-colors"
+                  >
+                    <FiPackage size={18} />
+                    <span className="font-medium">Products</span>
+                  </button>
 
-                      <button
-                        onClick={() => {
-                          navigate("/support");
-                          setShowProfileMenu(false);
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-surface-muted/40 text-sm"
-                      >
-                        Customer Support
-                      </button>
+                  <div className="border-t border-surface-muted my-2"></div>
 
-                      {isLoggedIn && (
-                        <button
-                          onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 hover:bg-surface-muted/40 text-brand-700 text-sm border-t border-surface-muted mt-1"
-                        >
-                          Logout
-                        </button>
-                      )}
-                    </div>
+                  {/* User Menu Items */}
+                  <button
+                    onClick={handleProfileClick}
+                    onTouchEnd={handleProfileClick}
+                    className="w-full text-left px-6 py-3 hover:bg-surface-muted/40 active:bg-surface-muted/60 transition-colors"
+                  >
+                    {isLoggedIn ? "Profile" : "Login"}
+                  </button>
+
+                  {isLoggedIn && userRole === "admin" && (
+                    <button
+                      onClick={handleAdminClick}
+                      onTouchEnd={handleAdminClick}
+                      className="w-full text-left px-6 py-3 hover:bg-surface-muted/40 active:bg-surface-muted/60 transition-colors"
+                    >
+                      Admin Dashboard
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handleSupportClick}
+                    onTouchEnd={handleSupportClick}
+                    className="w-full text-left px-6 py-3 hover:bg-surface-muted/40 active:bg-surface-muted/60 transition-colors"
+                  >
+                    Customer Support
+                  </button>
+
+                  {isLoggedIn && (
+                    <button
+                      onClick={handleLogoutClick}
+                      onTouchEnd={handleLogoutClick}
+                      className="w-full text-left px-6 py-3 hover:bg-surface-muted/40 active:bg-surface-muted/60 text-brand-700 border-t border-surface-muted mt-2 transition-colors"
+                    >
+                      Logout
+                    </button>
                   )}
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Search Bar Row */}
             <div className="pb-4">
@@ -427,10 +516,15 @@ function Navbar() {
                     {filteredCategories.map((cat, index) => (
                       <li
                         key={index}
-                        className={`px-4 py-2 cursor-pointer text-sm ${index === focusedIndex ? "bg-surface-muted/60" : "hover:bg-surface-muted/60"
-                          }`}
+                        className={`px-4 py-3 cursor-pointer text-sm transition-colors ${
+                          index === focusedIndex ? "bg-surface-muted/60" : "hover:bg-surface-muted/60 active:bg-surface-muted/80"
+                        }`}
                         onMouseEnter={() => setFocusedIndex(index)}
                         onClick={() => handleSelectCategory(cat.slug)}
+                        onTouchEnd={(e) => {
+                          e.preventDefault();
+                          handleSelectCategory(cat.slug);
+                        }}
                       >
                         {cat.name}
                       </li>
@@ -468,6 +562,31 @@ function Navbar() {
                     setShowSuggestions(true);
                   }}
                   onFocus={() => searchQuery && setShowSuggestions(true)}
+                  onKeyDown={(e) => {
+                    if (!filteredCategories || filteredCategories.length === 0) return;
+
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setFocusedIndex((prev) =>
+                        prev + 1 < filteredCategories.length ? prev + 1 : 0
+                      );
+                    }
+
+                    if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setFocusedIndex((prev) =>
+                        prev - 1 >= 0 ? prev - 1 : filteredCategories.length - 1
+                      );
+                    }
+
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const item = filteredCategories[focusedIndex];
+                      if (item) {
+                        handleSelectCategory(item.slug);
+                      }
+                    }
+                  }}
                 />
 
                 <button
@@ -475,7 +594,7 @@ function Navbar() {
                   onClick={() => {
                     if (!searchQuery) return;
                     if (filteredCategories?.length > 0) {
-                      handleSelectCategory(filteredCategories[0].slug);
+                      handleSelectCategory(filteredCategories[focusedIndex].slug);
                     }
                   }}
                 >
@@ -483,11 +602,14 @@ function Navbar() {
                 </button>
 
                 {showSuggestions && filteredCategories?.length > 0 && (
-                  <ul className="absolute top-full mt-1 w-full bg-white border border-surface-muted shadow-xl rounded-2xl z-50">
+                  <ul className="absolute top-full mt-1 w-full bg-white border border-surface-muted shadow-xl rounded-2xl z-50 max-h-60 overflow-y-auto">
                     {filteredCategories.map((cat, index) => (
                       <li
                         key={index}
-                        className="px-4 py-2 cursor-pointer hover:bg-surface-muted/60"
+                        className={`px-4 py-3 cursor-pointer transition-colors ${
+                          index === focusedIndex ? "bg-surface-muted/60" : "hover:bg-surface-muted/60"
+                        }`}
+                        onMouseEnter={() => setFocusedIndex(index)}
                         onClick={() => handleSelectCategory(cat.slug)}
                       >
                         {cat.name}
@@ -500,22 +622,22 @@ function Navbar() {
 
             {/* Right Section */}
             <div className="flex items-center gap-4">
-              <Link to="/" className="text-ink font-medium hover:text-brand-600">
+              <Link to="/" className="text-ink font-medium hover:text-brand-600 transition-colors">
                 Home
               </Link>
 
-              <Link to="/categories-list" className="text-ink font-medium hover:text-brand-600">
+              <Link to="/categories-list" className="text-ink font-medium hover:text-brand-600 transition-colors">
                 Categories
               </Link>
 
-              <Link to="/products" className="text-ink font-medium hover:text-brand-600">
+              <Link to="/products" className="text-ink font-medium hover:text-brand-600 transition-colors">
                 Products
               </Link>
 
               {/* Cart Icon */}
               <Link
                 to="/cart"
-                className="relative flex items-center justify-center h-10 w-10 rounded-full bg-surface-muted hover:bg-surface-muted/70"
+                className="relative flex items-center justify-center h-10 w-10 rounded-full bg-surface-muted hover:bg-surface-muted/70 transition-colors"
               >
                 <FiShoppingCart size={18} />
                 {cartCount > 0 && (
@@ -528,8 +650,11 @@ function Navbar() {
               {/* Profile / Admin / Logout */}
               <div className="relative" ref={profileMenuRef}>
                 <button
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className="flex items-center justify-center h-10 w-10 rounded-full bg-prmary hover:bg-surface-muted/70"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowProfileMenu(!showProfileMenu);
+                  }}
+                  className="flex items-center justify-center h-10 w-10 rounded-full bg-surface-muted hover:bg-surface-muted/70 transition-colors"
                 >
                   {isLoggedIn ? (
                     <span className="font-bold uppercase text-sm">{initial}</span>
@@ -542,39 +667,32 @@ function Navbar() {
                 {showProfileMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white shadow-xl border border-surface-muted rounded-2xl py-2 z-50">
                     <button
-                      className="w-full text-left px-4 py-2 hover:bg-surface-muted/40 text-sm"
-                      onClick={() => {
-                        navigate(isLoggedIn ? "/profile" : "/login");
-                        setShowProfileMenu(false);
-                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-surface-muted/40 text-sm transition-colors"
+                      onClick={handleProfileClick}
                     >
                       {isLoggedIn ? "Profile" : "Login"}
                     </button>
 
-                    {/* Admin Button on Desktop */}
                     {isLoggedIn && userRole === "admin" && (
                       <button
-                        className="w-full text-left px-4 py-2 hover:bg-surface-muted/40 text-sm"
-                        onClick={() => {
-                          navigate("/admin");
-                          setShowProfileMenu(false);
-                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-surface-muted/40 text-sm transition-colors"
+                        onClick={handleAdminClick}
                       >
                         Admin Dashboard
                       </button>
                     )}
 
                     <button
-                      className="w-full text-left px-4 py-2 hover:bg-surface-muted/40 text-sm"
-                      onClick={() => navigate("/support")}
+                      className="w-full text-left px-4 py-3 hover:bg-surface-muted/40 text-sm transition-colors"
+                      onClick={handleSupportClick}
                     >
                       Customer Support
                     </button>
 
                     {isLoggedIn && (
                       <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-brand-700 border-t border-surface-muted mt-1 text-sm hover:bg-surface-muted/40"
+                        onClick={handleLogoutClick}
+                        className="w-full text-left px-4 py-3 text-brand-700 border-t border-surface-muted mt-1 text-sm hover:bg-surface-muted/40 transition-colors"
                       >
                         Logout
                       </button>
@@ -584,7 +702,6 @@ function Navbar() {
               </div>
             </div>
           </div>
-
         </div>
       </nav>
     </header>

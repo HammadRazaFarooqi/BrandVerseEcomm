@@ -37,7 +37,8 @@ const AddCategoryForm = ({ onAddCategory, categoryID }) => {
     setCategoryData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
-      slug: name === "name" ? value : prev.slug,
+      // keep slug in sync with the title, but use a safe slug format
+      slug: name === "name" ? generateSlug(value) : prev.slug,
     }));
   };
 
