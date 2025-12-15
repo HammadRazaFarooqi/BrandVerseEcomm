@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FiFilter, FiX } from "react-icons/fi";
@@ -22,11 +21,13 @@ function Categories() {
   const getProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BACKEND_URL}/products`, {
+      // FIXED: Added limit=1000 to fetch all products
+      const response = await fetch(`${BACKEND_URL}/products?limit=1000`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
+      console.log('Fetched products:', data.products.length); // Debug log
       setProducts(data.products);
       setLoading(false);
     } catch (error) {
@@ -47,7 +48,7 @@ function Categories() {
 
         // Create a flat list of all categories with proper mappings
         const formattedCategory = [
-          { id: "all", name: "All", slug: "all" }, // Ensure this is the first item
+          { id: "all", name: "All", slug: "all" },
           ...data.category.map((category) => ({
             id: category._id,
             name: category.name,
@@ -61,9 +62,8 @@ function Categories() {
 
         // Create tree structure
         const buildCategoryTree = () => {
-          // Find root level categories (those with no parent or parent is null)
           const rootCategories = [
-            { id: "all", name: "All", slug: "all" }, // Always include "All" at the root
+            { id: "all", name: "All", slug: "all" },
             ...data.category
               .filter((cat) => !cat.parentCategory)
               .map((cat) => ({
@@ -76,10 +76,8 @@ function Categories() {
               })),
           ];
 
-          // Find children for each parent category
           rootCategories.forEach((parent) => {
             if (parent.id !== "all") {
-              // Skip "All" category
               parent.children = data.category
                 .filter((cat) => cat.parentCategory === parent.id)
                 .map((child) => ({
@@ -102,6 +100,7 @@ function Categories() {
       setError("Failed to load categories. Please try again later.");
     }
   };
+
   const applyFilters = useCallback(() => {
     let filtered = [...products];
 
@@ -123,6 +122,7 @@ function Categories() {
       (cat) => cat.slug === selectedCategory
     );
     setCurrentCategoryData(currentCategory);
+
     // Sorting
     if (sortBy === "price-low") {
       filtered.sort((a, b) => a.price - b.price);
@@ -132,6 +132,7 @@ function Categories() {
       filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
+    console.log('Filtered products:', filtered.length); // Debug log
     setFilteredProducts(filtered);
   }, [products, selectedCategory, sortBy, categoryList, searchTerm]);
 
@@ -162,7 +163,9 @@ function Categories() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="eyebrow">The marketplace</p>
-            <h1 className="text-4xl font-semibold text-ink">All products</h1>
+            <h1 className="text-4xl font-semibold text-ink">
+              All products {filteredProducts.length > 0 && `(${filteredProducts.length})`}
+            </h1>
           </div>
         </div>
 

@@ -58,18 +58,6 @@ function Footer() {
             Your trusted marketplace for quality products.  
             Discover amazing deals and shop with confidence.
           </p>
-
-          {/* Social Icons */}
-          <div className="flex gap-4 mt-6">
-            {[FiFacebook, FiTwitter, FiInstagram, FiYoutube].map((Icon, i) => (
-              <div
-                key={i}
-                className="h-10 w-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition"
-              >
-                <Icon size={18} />
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* QUICK LINKS */}
@@ -128,22 +116,11 @@ function Footer() {
             <FiMail className="text-primary" />
             affimall50@gmail.com
           </div>
-
-          <div className="flex items-center gap-3 mt-3 text-white/70">
-            <FiPhone className="text-primary" />
-            +92 300 1234567
-          </div>
         </div>
       </div>
 
       {/* FOOTER BOTTOM */}
       <div className="mt-12 border-t border-white/10 pt-6 text-center text-white/60">
-        <div className="flex flex-col sm:flex-row gap-6 justify-center mb-4">
-          <Link to="/privacy-policy">Privacy Policy</Link>
-          <Link to="/terms">Terms of Service</Link>
-          <Link to="/about">About Us</Link>
-        </div>
-
         © {new Date().getFullYear()} Affi Mall. All rights reserved.
       </div>
     </footer>

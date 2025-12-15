@@ -7,15 +7,19 @@ function CategoryProductBlocks() {
   const [loading, setLoading] = useState(true);
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
+  // Fetch categories and products
   useEffect(() => {
     const load = async () => {
       try {
         const [catRes, prodRes] = await Promise.all([
           fetch(`${BACKEND_URL}/category`),
-          fetch(`${BACKEND_URL}/products`),
+          // FIXED: Added limit=1000 to fetch all products
+          fetch(`${BACKEND_URL}/products?limit=1000`)
         ]);
+
         const catData = await catRes.json();
         const prodData = await prodRes.json();
+
         setCategories(catData?.category || []);
         setProducts(prodData?.products || []);
       } catch (err) {
@@ -27,18 +31,32 @@ function CategoryProductBlocks() {
     load();
   }, [BACKEND_URL]);
 
+  // Combine categories with their products
   const categoryWithProducts = useMemo(() => {
-    const list = categories.length
-      ? categories
-      : [
-          { _id: "c1", name: "Electronics", slug: "electronics" },
-          { _id: "c2", name: "Fashion", slug: "fashion" },
-          { _id: "c3", name: "Beauty", slug: "beauty" },
-        ];
+    const defaultCategories = [
+      { _id: "c1", name: "Electronics", slug: "electronics" },
+      { _id: "c2", name: "Fashion", slug: "fashion" },
+      { _id: "c3", name: "Beauty", slug: "beauty" }
+    ];
+
+    const list = categories.length ? categories : defaultCategories;
+
     return list.map((cat) => {
       const catProducts = products
-        .filter((p) => p?.category?.slug === cat.slug)
-        .slice(0, 4);
+        .filter((p) => {
+          if (!p.category) return false;
+
+          const productCatId = p.category._id ? p.category._id.toString() : p.category.toString();
+          const categoryId = cat._id.toString();
+
+          const productCatSlug = p.category.slug || "";
+          const categorySlug = cat.slug || "";
+
+          return productCatId === categoryId || productCatSlug === categorySlug;
+        })
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // FIXED: Sort by newest first
+        .slice(0, 8); // FIXED: Changed from 4 to 8 products
+
       return { ...cat, products: catProducts };
     });
   }, [categories, products]);
@@ -46,6 +64,7 @@ function CategoryProductBlocks() {
   return (
     <section className="section-shell bg-surface">
       <div className="container-custom space-y-10">
+        {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="eyebrow text-ink-muted">Top products of the week</p>
@@ -53,6 +72,7 @@ function CategoryProductBlocks() {
           </div>
         </div>
 
+        {/* Category blocks */}
         <div className="space-y-8">
           {categoryWithProducts.map((cat) => (
             <div key={cat._id || cat.slug} className="glass-card rounded-[20px] p-6">
@@ -69,6 +89,7 @@ function CategoryProductBlocks() {
                 </Link>
               </div>
 
+              {/* Products grid */}
               {loading ? (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {[1, 2, 3, 4].map((i) => (
@@ -78,7 +99,9 @@ function CategoryProductBlocks() {
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {cat.products.length === 0 ? (
-                    <div className="col-span-full text-ink-muted">No products yet in this category.</div>
+                    <div className="col-span-full text-ink-muted">
+                      No products yet in this category.
+                    </div>
                   ) : (
                     cat.products.map((product) => (
                       <Link
@@ -88,15 +111,21 @@ function CategoryProductBlocks() {
                       >
                         <div className="h-40 bg-surface-muted/60 overflow-hidden">
                           <img
-                            src={product.images?.primary}
+                            src={product.images?.primary || "https://source.unsplash.com/random/300x300/?product"}
                             alt={product.title}
                             className="h-full w-full object-cover"
-                            onError={(e) => (e.currentTarget.style.display = "none")}
+                            onError={(e) => {
+                              e.currentTarget.src = "https://source.unsplash.com/random/300x300/?product";
+                            }}
                           />
                         </div>
                         <div className="p-3 space-y-1">
-                          <p className="text-sm font-semibold text-ink line-clamp-1">{product.title}</p>
-                          <p className="text-brand-500 font-bold">PKR {product.price}</p>
+                          <p className="text-sm font-semibold text-ink line-clamp-1">
+                            {product.title}
+                          </p>
+                          <p className="text-brand-500 font-bold">
+                            PKR {product.price?.toLocaleString("en-PK") || "-"}
+                          </p>
                         </div>
                       </Link>
                     ))
@@ -112,4 +141,3 @@ function CategoryProductBlocks() {
 }
 
 export default CategoryProductBlocks;
-

@@ -110,6 +110,7 @@ export const createProduct = async (req, res) => {
       stock: quantity,
       defaultQuantity: quantity,
       categorySlug: categoryDoc.slug,
+      status: "published",
     };
 
     const product = new Product(productData);
@@ -122,12 +123,13 @@ export const createProduct = async (req, res) => {
 };
 
 
-// GET all products
+// GET all products - FIXED: Increased default limit to 1000
 export const getAllProducts = async (req, res) => {
   try {
     await connectDB();
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-    const limit = Math.min(parseInt(req.query.limit, 10) || 12, 100);
+    // FIXED: Changed default from 12 to 1000
+    const limit = Math.min(parseInt(req.query.limit, 10) || 1000, 1000);
     const skip = (page - 1) * limit;
 
     const filters = buildProductFilters(req.query);
@@ -140,7 +142,7 @@ export const getAllProducts = async (req, res) => {
         .sort(sort)
         .skip(skip)
         .limit(limit)
-        .populate("category", "name slug")
+        .populate("category")
         .select({
           title: 1,
           slug: 1,
@@ -152,6 +154,8 @@ export const getAllProducts = async (req, res) => {
           categorySlug: 1,
           tags: 1,
           stock: 1,
+          createdAt: 1, // Added for sorting
+          discountRate: 1, // Added for display
           ...projection,
         }),
       Product.countDocuments(filters),
